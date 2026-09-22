@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+  "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+  "dataset": "SiouxFalls",
+  "dataset_sha256": "74c3469f21dd1b0370691f7a7e4a16ffc21fb283bdd7abfe5bfa9c7a0d63c84c",
+  "k": 3,
+  "witnesses": [
+    {
+      "kind": "submodular",
+      "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "k": 3,
+      "anchors": [
+        [],
+        [
+          10,
+          15,
+          16
+        ],
+        [
+          10,
+          16,
+          22
+        ],
+        [
+          11,
+          16,
+          22
+        ]
+      ],
+      "upper_bound": "524/601"
+    },
+    {
+      "kind": "branch_partition",
+      "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "k": 3,
+      "tokens": [
+        9,
+        21,
+        -1,
+        -1,
+        15,
+        14,
+        -1,
+        21,
+        -1,
+        -1,
+        -1
+      ],
+      "feasible_selected": [
+        11,
+        16,
+        22
+      ],
+      "max_routes": 200000,
+      "upper_bound": "2413/3606",
+      "lower_bound": "2413/3606",
+      "optimality_proved": true,
+      "diagnostics": {
+        "expanded_nodes": 5,
+        "closed_leaves": 6,
+        "frontier_leaves_at_limit": 0,
+        "max_expansions": 100000,
+        "preparation_seconds": 0.0012804579999965426,
+        "independent_verification_seconds": 0.002430146999927274,
+        "total_seconds_including_preparation_and_verification": 0.005027698000048986
+      }
+    }
+  ],
+  "feasible_references": [
+    [
+      10,
+      16,
+      15
+    ],
+    [
+      10,
+      22,
+      16
+    ],
+    [
+      11,
+      16,
+      22
+    ],
+    [
+      11,
+      16,
+      22
+    ]
+  ]
+}
