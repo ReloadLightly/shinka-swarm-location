@@ -1,0 +1,55 @@
+name: M3 Chicago input audit
+on:
+  push:
+    branches: [work/m3-heldout-campaign]
+    paths: [.github/workflows/m3-chicago-audit.yml]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Audit pinned Chicago input only
+        run: |
+          mkdir chicago-audit
+          python - <<'PY'
+          from fractions import Fraction
+          import hashlib,json,pathlib,re,urllib.request,sys
+          sys.path.insert(0,'.')
+          from scripts.prepare_suite import parse_tntp
+          from swarm_location.core import Instance,ShortestPathCoverage
+          pin='977ee75c6906337c0c7d229a1336107c7cdb533e'
+          files={'net':'38422742ac82c06915d6acf056ffbb38adf8b590','trips':'2524ea5826790536558e2a54dbeae542d068a797'}
+          texts={};audit={'solver_evaluations':0,'files':{}}
+          for kind,digest in files.items():
+            url=f'https://raw.githubusercontent.com/bstabler/TransportationNetworks/{pin}/Chicago-Sketch/ChicagoSketch_{kind}.tntp'
+            with urllib.request.urlopen(url,timeout=60) as r: b=r.read()
+            assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==digest
+            texts[kind]=b.decode();audit['files'][kind]={'git_blob_sha1':digest,'sha256':hashlib.sha256(b).hexdigest()}
+          body=texts['trips'].split('<END OF METADATA>')[1]
+          total=sum((Fraction(q) for q in re.findall(r'\d+\s*:\s*([\d.eE+-]+)\s*;',body)),Fraction(0))
+          header=re.search(r'<TOTAL OD FLOW>\s*([\d.eE+-]+)',texts['trips'])[1]
+          audit.update(exact_sum=str(total),header=header,difference=str(total-Fraction(header)))
+          if abs(total-Fraction(header))>max(Fraction(1,10**9),total/Fraction(10**12)):raise ValueError('substantive header mismatch')
+          from decimal import Decimal,localcontext
+          with localcontext() as c:
+            c.prec=100; exact=format(Decimal(total.numerator)/Decimal(total.denominator),'f')
+          normalized=re.sub(r'(<TOTAL OD FLOW>\s*)[\d.eE+-]+',lambda m:m[1]+exact,texts['trips'])
+          try:
+            data=parse_tntp(texts['net'],normalized,'Chicago-Sketch')
+            instance=Instance.from_dict(data);o=ShortestPathCoverage(instance)
+            audit.update(compatible=True,nodes=len(instance.nodes),edges=len(instance.edges),positive_od_pairs=len(instance.od),origins=len(o.dags),total_demand=o.total_demand,first_thru_node=instance.first_thru_node)
+          except Exception as e:audit.update(compatible=False,error=str(e))
+          pathlib.Path('chicago-audit/audit.json').write_text(json.dumps(audit,indent=2)+'\n')
+          print(json.dumps(audit,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chicago-input-audit
+          path: chicago-audit/
+          retention-days: 30
