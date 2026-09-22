@@ -1,47 +1,36 @@
-# Next executable research step
+# Next executable research step after M2
 
-The step-1 code and measured results are complete; zero evolutionary generations
-have been run. Continue from these files rather than rebuilding scaffolding.
+M2 preserves the live M1 source and results. It adds exact-route all-node marginal
+gains, external anytime reporting/deadlines, two hash-verified development source
+networks, same-budget fixed controls, per-case feedback, and a pinned native launcher.
+See README and docs/m2_method.md for measured evidence and exact limits.
 
-First benchmark the DAG evaluator and an efficient marginal-gain backend on
-additional documented transportation networks. Keep all shortest routes and the
-same OD objective; if an approximation is proposed, label and measure it instead
-of silently replacing the model. Inspect each network's terms, centroid
-restrictions, directed/parallel links, and demand conventions. Resolve the
-original Israeli dataset/code availability separately. Do not call alternative
-data a reproduction of its reported curves.
+Do not rebuild the evaluator or replace the objective. Read the M2 timing traces:
+small differences between the same-rule seed and greedy at early checkpoints show
+why repeat measurements are needed. Do not promote a noisy positive development
+score to an algorithmic discovery. Fixed greedy+swap remains a required control.
 
-Use whole source networks for train/validation/test separation. Demand variants
-and relabeled copies of one network are not independent empirical networks. All
-of Sioux Falls is public development/commissioning data; none of its runs is a
-held-out test. The exact small-instance results already show that a fixed swap
-control closes the greedy gap at k=3 and k=4. Beating greedy alone is therefore
-not adequate evidence of an evolutionary contribution.
+The next research work is additional documented transportation networks with
+whole-network validation/test separation, followed by a predeclared native campaign.
+Use the existing manifest schema; never label a demand variant or relabelled copy
+of a development network as an independent holdout. Both current graphs are public
+development cases. Source-graph identities are declared metadata, not automatic
+isomorphism detection. Preserve centroid-through restrictions and all positive OD
+mass; unsupported inputs must be reported rather than silently simplified.
 
-Implement independently timed anytime incumbent reporting and isolate candidate
-execution from writable evaluators and benchmark artifacts. Preserve the best
-valid solution before a normal deadline; fail malformed outputs. Step 1's local
-process timeout is not this anytime protocol and is not a hostile-code sandbox.
+The full native run path is configured for 100 generation slots, four islands,
+migration, inspirations, UCB mutation-model selection, novelty, and separate meta
+recommendations. Supply economical supported model roles and an explicit API
+threshold; no model calls were required for M2's seed checks. The old 3 x 100-run
+idea remains a prospective design, not an executed protocol. Size a campaign from
+measured evaluation throughput and actual available compute/API budget.
 
-Then connect the existing `initial.py`/`evaluate.py` to the actual pinned native
-Shinka runner. The optional `--backend shinka` calls `run_shinka_eval`, but its
-integration has only been source-checked here, not executed with the installed
-package. Do not replace native evolution with a handwritten loop and call it
-ShinkaEvolve. Native islands, parent/inspiration sampling, diff/rewrite/crossover,
-novelty, economical mutation-model bandit, and meta-recommendations belong in the
-next integration. Meta interpretation uses its separate model client; do not
-assert the mutation bandit automatically selects the meta model.
+Use a disposable isolated worker for untrusted generated code. The current
+same-user temporary-directory worker is not a hostile-code sandbox. Keep final
+holdout inputs outside the evolutionary worker and independently score finalists.
 
-For the research protocol, replace the explicitly labeled commissioning fitness
-(mean final coverage over budgets on one graph) with the predeclared matched-time
-coverage comparison across development instances. Report coverage, solver time,
-preprocessing, failures, per-instance differences, and uncertainty separately.
-The proposed 3 independent runs x 100 generation slots remains a plan, not an
-executed protocol. Size and time it from measured evaluation throughput, then
-record the chosen protocol before collecting comparative evidence. Models and
-paid-run budgets must be explicit; no credentials go into the repository.
-
-At each session end update README methods/status and conclusions from artifacts.
-Record actual unique valid descendants, not just attempted slots. Preserve
-negative results. A champion is reusable deployment-search code, not a fixed set
-of locations, a drone, or a social network.
+After a substantive run, preserve actual candidates, failures, timings, raw scores,
+seeds, configuration, source hashes and native database. Update README methods,
+results, interpretation and limitations together. Count unique valid descendants
+separately from attempted generations. No original Israeli-network reproduction,
+paid evolutionary result, or held-out champion is established by M2 commissioning.
