@@ -1,0 +1,11 @@
+{
+  "package_version": "0.0.7",
+  "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "correct": true,
+  "native_scheduler": "JobScheduler",
+  "wall_seconds": 45.51266694068909,
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "combined_score": 100.88428301004319,
+  "suite_sha256": "79a9b15de458133c01fe8eec8eee1cd1e622b2fe106aa8dd3a1bd24ac325467a"
+}

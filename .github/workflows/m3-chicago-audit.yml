@@ -1,0 +1,42 @@
+name: M3 Chicago input audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Inspect pinned original records without scoring deployments
+        run: |
+          mkdir chicago-audit
+          python - <<'PY'
+          import hashlib,json,pathlib,re,urllib.request
+          pin='977ee75c6906337c0c7d229a1336107c7cdb533e'
+          files={'net':'38422742ac82c06915d6acf056ffbb38adf8b590','trips':'2524ea5826790536558e2a54dbeae542d068a797'}
+          for kind,digest in files.items():
+            url=f'https://raw.githubusercontent.com/bstabler/TransportationNetworks/{pin}/Chicago-Sketch/ChicagoSketch_{kind}.tntp'
+            with urllib.request.urlopen(url,timeout=60) as r: b=r.read()
+            assert hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()==digest
+            pathlib.Path(f'chicago-audit/ChicagoSketch_{kind}.tntp').write_bytes(b)
+            if kind=='trips':text=b.decode()
+          lines=[]
+          for n,line in enumerate(text.split('<END OF METADATA>')[1].splitlines()):
+            if not line.strip() or re.fullmatch(r'\s*Origin\s+(\d+)\s*',line):continue
+            entries=re.findall(r'(\d+)\s*:\s*([\d.eE+-]+)\s*;',line)
+            residue=re.sub(r'\d+\s*:\s*[\d.eE+-]+\s*;','',line).strip()
+            if not entries or residue:lines.append({'line_after_metadata':n+1,'text':line,'residue':residue})
+          report={'unparsed_count':len(lines),'examples':lines[:10],'solver_evaluations':0}
+          pathlib.Path('chicago-audit/unparsed.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chicago-original-records
+          path: chicago-audit/
+          retention-days: 30

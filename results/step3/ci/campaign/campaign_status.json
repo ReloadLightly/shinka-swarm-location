@@ -1,0 +1,77 @@
+{
+  "requested_utc": "2026-09-22T22:09:58.089354+00:00",
+  "request_sha256": "3906e4c17d77d281d8026192da07c724e4fc9b52ae99dafd440b303dd4b79662",
+  "catalog_sha256": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+  "request": {
+    "schema_version": 1,
+    "campaign_id": "m3-first-native-100-v1",
+    "framework_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+    "generations": 100,
+    "seed": 0,
+    "max_api_cost_usd": 3.0,
+    "shortlist_size": 5,
+    "models": {
+      "mutation": [
+        "gpt-5-mini",
+        "gpt-4.1-mini"
+      ],
+      "meta": "gpt-4.1-mini",
+      "novelty": "gpt-4.1-mini",
+      "embedding": "text-embedding-3-small"
+    },
+    "scope": "First bounded discovery campaign, not three completed independent replications. Validate one frozen shortlist and test one frozen program.",
+    "cost_note": "Native submission threshold may overshoot with in-flight calls. No automatic recharge or provider fallback. A target of 100 slots is not a completed-generation count."
+  },
+  "status": "blocked_model_access",
+  "inference_calls": 0,
+  "native_runner_started": false,
+  "valid_evolved_descendants": 0,
+  "validation_solver_evaluations": 0,
+  "test_solver_evaluations": 0,
+  "native_installation": {
+    "package_version": "0.0.7",
+    "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50"
+  },
+  "sampled_native_model_kwargs": {
+    "gpt-5-mini": {
+      "model_name": "gpt-5-mini",
+      "max_output_tokens": 8192,
+      "reasoning": {
+        "effort": "low",
+        "summary": "auto"
+      }
+    },
+    "gpt-4.1-mini": {
+      "model_name": "gpt-4.1-mini",
+      "temperature": 0.0,
+      "max_output_tokens": 8192
+    }
+  },
+  "access_issues": [
+    {
+      "model_kind": "llm",
+      "model_name": "gpt-5-mini",
+      "provider": "openai",
+      "missing_env_vars": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "model_kind": "llm",
+      "model_name": "gpt-4.1-mini",
+      "provider": "openai",
+      "missing_env_vars": [
+        "OPENAI_API_KEY"
+      ]
+    },
+    {
+      "model_kind": "embedding",
+      "model_name": "text-embedding-3-small",
+      "provider": "openai",
+      "missing_env_vars": [
+        "OPENAI_API_KEY"
+      ]
+    }
+  ],
+  "reason": "Required model credentials are not available to this execution environment"
+}

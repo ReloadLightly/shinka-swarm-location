@@ -1,0 +1,100 @@
+name: M3 access and source audit
+on:
+  push:
+    branches: [work/m3-heldout-campaign]
+    paths: [.github/workflows/m3-access-audit.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Access presence only; do not print credentials or call providers
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          mkdir -p m3-audit
+          python - <<'PY'
+          import json,os,pathlib,platform,shutil
+          keys=['OPENAI_API_KEY','OPENROUTER_API_KEY','ANTHROPIC_API_KEY','GEMINI_API_KEY','GOOGLE_API_KEY']
+          r={'provider_credential_present':{k:bool(os.environ.get(k)) for k in keys},
+             'codex_executable_present':shutil.which('codex') is not None,
+             'codex_auth_present':(pathlib.Path.home()/'.codex/auth.json').is_file(),
+             'docker_executable_present':shutil.which('docker') is not None,
+             'source_commit':os.environ['GITHUB_SHA'],'python':platform.python_version(),
+             'model_calls':0,'holdout_solver_evaluations':0}
+          pathlib.Path('m3-audit/access.json').write_text(json.dumps(r,indent=2)+'\n')
+          print(json.dumps(r,indent=2))
+          PY
+      - name: Retrieve original source metadata and audit parser compatibility
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib,sys,urllib.request
+          sys.path.insert(0,'.')
+          from scripts.prepare_suite import parse_tntp
+          from swarm_location.core import Instance,ShortestPathCoverage
+          pin='977ee75c6906337c0c7d229a1336107c7cdb533e'
+          root=pathlib.Path('m3-audit'); rows=[]
+          for name in ['Eastern-Massachusetts','Winnipeg','Berlin-Tiergarten','Barcelona']:
+            url=f'https://api.github.com/repos/bstabler/TransportationNetworks/contents/{name}?ref={pin}'
+            try:
+              with urllib.request.urlopen(url,timeout=60) as r: listing=json.load(r)
+              (root/name).mkdir(exist_ok=True)
+              row={'source_graph':name,'upstream_commit':pin,'files':[]}
+              found={}
+              for item in listing:
+                if item['type']!='file': continue
+                path=item['name']; lower=path.lower()
+                if not (lower.endswith('_net.tntp') or lower.endswith('_trips.tntp') or lower=='readme.md'): continue
+                with urllib.request.urlopen(item['download_url'],timeout=60) as r: blob=r.read()
+                git_sha=hashlib.sha1(b'blob '+str(len(blob)).encode()+b'\0'+blob).hexdigest()
+                assert git_sha==item['sha']
+                (root/name/path).write_bytes(blob)
+                row['files'].append({'path':item['path'],'url':item['download_url'],'git_blob_sha1':git_sha,
+                    'sha256':hashlib.sha256(blob).hexdigest(),'bytes':len(blob)})
+                if lower.endswith('_net.tntp'): found['network']=blob.decode('utf-8-sig')
+                if lower.endswith('_trips.tntp'): found['trips']=blob.decode('utf-8-sig')
+              data=parse_tntp(found['network'],found['trips'],name)
+              instance=Instance.from_dict(data)
+              # Input consistency/reachability only: never score a monitor group.
+              oracle=ShortestPathCoverage(instance)
+              row.update({'accepted_without_model_change':True,'nodes':len(instance.nodes),'edges':len(instance.edges),
+                  'positive_od_pairs':len(instance.od),'total_demand':oracle.total_demand,'origins':len(oracle.dags),
+                  'first_thru_node':instance.first_thru_node,'shortest_routes':sum(d.counts[t] for d in oracle.dags for t,_ in d.destinations),
+                  'solver_evaluations':0})
+            except Exception as e:
+              row=locals().get('row',{'source_graph':name})
+              row.update({'accepted_without_model_change':False,'error':type(e).__name__+': '+str(e),'solver_evaluations':0})
+            rows.append(row)
+          (root/'datasets.json').write_text(json.dumps(rows,indent=2)+'\n')
+          print(json.dumps(rows,indent=2))
+          PY
+      - name: Retrieve pinned native implementation for source inspection
+        run: |
+          python -m pip install -e . -r requirements-shinka.txt > m3-audit/native-install.txt 2>&1
+          python - <<'PY'
+          import importlib.metadata,pathlib,tarfile,shinka
+          root=pathlib.Path(shinka.__file__).parent
+          with tarfile.open('m3-audit/pinned-shinka.tar.gz','w:gz') as t:
+            for p in root.rglob('*.py'):t.add(p,arcname='shinka/'+str(p.relative_to(root)))
+          d=importlib.metadata.distribution('shinka-evolve')
+          pathlib.Path('m3-audit/native-origin.json').write_text(d.read_text('direct_url.json') or '{}')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m3-access-source-audit
+          path: m3-audit/
+          retention-days: 30

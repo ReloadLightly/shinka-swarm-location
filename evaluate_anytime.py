@@ -10,6 +10,7 @@ import json
 from math import fsum
 from pathlib import Path
 import platform
+import os
 import random
 import sys
 from time import perf_counter
@@ -67,6 +68,10 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
             tracked.append(candidate)
         before = {str(p): file_sha256(p) for p in tracked}
         methods = ["random", "topk", "greedy", "greedy_swap"] if baselines_only else ["greedy", "greedy_swap", "candidate"]
+        extras = protocol.get("extra_baselines", [])
+        if not isinstance(extras, list) or any(m not in ("random", "topk") for m in extras) or len(set(extras)) != len(extras):
+            raise ValueError("extra_baselines may contain unique random/topk controls")
+        methods = list(dict.fromkeys([*methods, *extras]))
         checkpoints = protocol["checkpoints_seconds"]
         for entry, instance in instances:
             then = perf_counter()
@@ -126,6 +131,7 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                         "candidate_sha256": None if candidate is None else before[str(candidate)],
                         "implementation_sha256": {str(p.relative_to(ROOT)): before[str(p)] for p in tracked if p.is_relative_to(ROOT) and p != candidate and p != suite_path},
                         "python": platform.python_version(), "platform": platform.platform(),
+                        "docker_image_id": os.environ.get("SWARM_DOCKER_IMAGE"),
                         "wall_seconds": perf_counter() - started,
                         "evaluated_utc": datetime.now(timezone.utc).isoformat()},
             "extra_data": {"summary": summary, "preprocessing": prep, "failures": failures},

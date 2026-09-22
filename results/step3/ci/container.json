@@ -1,0 +1,136 @@
+{
+  "scope": "Controlled synthetic security/protocol checks, not evolved programs",
+  "success": true,
+  "model_calls": 0,
+  "holdout_evaluations": 0,
+  "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "checks": [
+    "nonroot",
+    "no host canary",
+    "no Docker socket",
+    "no provider environment",
+    "read-only supplied code",
+    "no new privileges",
+    "no effective capabilities",
+    "no external connection",
+    "deadline retains valid incumbent"
+  ],
+  "probe": {
+    "checkpoints_seconds": [
+      0.1,
+      0.5
+    ],
+    "coverage_at_checkpoints": [
+      1.0,
+      1.0
+    ],
+    "mean_checkpoint_coverage": 1.0,
+    "final_coverage": 1.0,
+    "selected": [
+      1
+    ],
+    "improvements": [
+      {
+        "received_seconds": 0.0,
+        "coverage": 0.0,
+        "selected": []
+      },
+      {
+        "received_seconds": 0.00783463599999834,
+        "coverage": 1.0,
+        "selected": [
+          1
+        ]
+      }
+    ],
+    "correct": true,
+    "error": null,
+    "termination": "completed",
+    "setup_wall_seconds": 0.566686813000004,
+    "total_wall_seconds_before_scoring": 0.6389466800000037,
+    "received_deployments": 2,
+    "events": [
+      [
+        0.00783463599999834,
+        [
+          1
+        ]
+      ],
+      [
+        0.00783463599999834,
+        [
+          1
+        ]
+      ]
+    ],
+    "seed": 0,
+    "k": 2,
+    "instance": "containment-unit-fixture",
+    "isolation": {
+      "mode": "docker",
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "network": "none",
+      "user": "65534:65534",
+      "read_only": true,
+      "memory_mib": 768,
+      "cpus": 1,
+      "pids_limit": 64
+    }
+  },
+  "deadline": {
+    "checkpoints_seconds": [
+      0.1,
+      0.3
+    ],
+    "coverage_at_checkpoints": [
+      0.5,
+      0.5
+    ],
+    "mean_checkpoint_coverage": 0.5,
+    "final_coverage": 0.5,
+    "selected": [
+      2
+    ],
+    "improvements": [
+      {
+        "received_seconds": 0.0,
+        "coverage": 0.0,
+        "selected": []
+      },
+      {
+        "received_seconds": 0.0005828420000000278,
+        "coverage": 0.5,
+        "selected": [
+          2
+        ]
+      }
+    ],
+    "correct": true,
+    "error": null,
+    "termination": "deadline",
+    "setup_wall_seconds": 0.22383254300000033,
+    "total_wall_seconds_before_scoring": 0.5742834410000057,
+    "received_deployments": 1,
+    "events": [
+      [
+        0.0005828420000000278,
+        [
+          2
+        ]
+      ]
+    ],
+    "seed": 0,
+    "k": 2,
+    "instance": "containment-unit-fixture",
+    "isolation": {
+      "mode": "docker",
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "network": "none",
+      "user": "65534:65534",
+      "read_only": true,
+      "memory_mib": 768,
+      "cpus": 1,
+      "pids_limit": 64
+    }
+  }
+}

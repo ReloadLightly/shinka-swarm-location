@@ -11,3 +11,5 @@ results/local*
 *.pdf
 data/commissioning/
 source.tar
+data/raw_m3/
+data/commissioning_m3/

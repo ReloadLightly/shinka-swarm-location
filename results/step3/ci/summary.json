@@ -1,0 +1,32 @@
+{
+  "stage": "m3",
+  "campaign_status": "blocked_model_access",
+  "test_count": 63,
+  "accepted_source_networks": 4,
+  "source_partitions": {
+    "SiouxFalls": "development",
+    "Anaheim": "development",
+    "Eastern-Massachusetts": "validation",
+    "Barcelona": "test"
+  },
+  "docker_probe_passed": true,
+  "native_development_seed_correct": true,
+  "development_cases": 24,
+  "native_development_model_calls": 0,
+  "campaign_native_runner_started": false,
+  "campaign_inference_calls": 0,
+  "valid_evolved_descendants": 0,
+  "validation_solver_evaluations": 0,
+  "test_solver_evaluations": 0,
+  "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "catalog_sha256": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+  "scope": "Readiness results and actual campaign state; no inferred completion",
+  "evidence_sha256": {
+    "tests.txt": "45d42ef7820f4222035b6855588520a73e4348cde513ceabc1a4db75eece7cb9",
+    "audit/data_audit.json": "bc19a870882de14860cac71e4a2056b97f2a57b28d574ebd2dafcfd04c7c4f52",
+    "container.json": "212bd825ccac832b9a9f3910d62059a715f2e4077f09bbac3e77c025c4304546",
+    "native/native_seed_check.json": "7947be1ef929f2afbd383ebaaa23885b9871ca158de1d2571df752204ab85844",
+    "native/seed/metrics.json": "51629ea0dbd0123f7d82042c82cc4041628a811f714e9cb96279ee8261a80b1e",
+    "campaign/campaign_status.json": "8309c20c5089a2f6128a4c27cbafc2a433febec18adb64c7f328a32cc5a7e5a0"
+  }
+}

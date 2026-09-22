@@ -19,6 +19,7 @@ import tempfile
 from time import perf_counter
 
 from .core import Instance, ShortestPathCoverage
+from .isolation import command as worker_command, cleanup as cleanup_container
 
 
 TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py")
@@ -98,7 +99,8 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
         request = {"instance": instance.to_dict(), "k": k, "seed": seed,
                    "budget": checkpoints[-1], "baseline": baseline}
-        with subprocess.Popen([sys.executable, "-I", "-u", str(package / "anytime_worker.py")],
+        argv, container_name, isolation = worker_command(work, package)
+        with subprocess.Popen(argv,
                               cwd=directory, env=env, stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                               start_new_session=True) as proc:
@@ -178,6 +180,7 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                 except ProcessLookupError:
                     pass
                 proc.wait()
+                cleanup_container(container_name, env)
     elapsed_total = perf_counter() - setup_started
     try:
         scored = score_trace(instance, k, checkpoints, events, oracle)
@@ -188,4 +191,4 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
             "termination": reason, "setup_wall_seconds": setup_seconds,
             "total_wall_seconds_before_scoring": elapsed_total,
             "received_deployments": len(events), "events": events,
-            "seed": seed, "k": k, "instance": instance.name}
+            "seed": seed, "k": k, "instance": instance.name, "isolation": isolation}
