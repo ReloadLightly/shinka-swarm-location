@@ -1,0 +1,28 @@
+test_all_subsets_against_independent_enumeration (test_core.CoverageTests.test_all_subsets_against_independent_enumeration) ... ok
+test_centroid_not_intermediate (test_core.CoverageTests.test_centroid_not_intermediate) ... ok
+test_empty (test_core.CoverageTests.test_empty) ... ok
+test_endpoints (test_core.CoverageTests.test_endpoints) ... ok
+test_exact_decimal_ties (test_core.CoverageTests.test_exact_decimal_ties) ... ok
+test_exponential_paths_stay_compact (test_core.CoverageTests.test_exponential_paths_stay_compact) ... ok
+test_invalid_budget (test_core.CoverageTests.test_invalid_budget) ... ok
+test_invalid_edges (test_core.CoverageTests.test_invalid_edges) ... ok
+test_invalid_od (test_core.CoverageTests.test_invalid_od) ... ok
+test_invalid_selections (test_core.CoverageTests.test_invalid_selections) ... ok
+test_nearly_equal_is_not_equal (test_core.CoverageTests.test_nearly_equal_is_not_equal) ... ok
+test_no_rerouting (test_core.CoverageTests.test_no_rerouting) ... ok
+test_path_not_branch_uniformity (test_core.CoverageTests.test_path_not_branch_uniformity) ... ok
+test_roundtrip (test_core.CoverageTests.test_roundtrip) ... ok
+test_route_limit_does_not_sample (test_core.CoverageTests.test_route_limit_does_not_sample) ... ok
+test_ties_and_overlap (test_core.CoverageTests.test_ties_and_overlap) ... ok
+test_unreachable_positive_demand (test_core.CoverageTests.test_unreachable_positive_demand) ... ok
+test_weighted_demand_and_direction (test_core.CoverageTests.test_weighted_demand_and_direction) ... ok
+test_zero_demand_unreachable_is_ignored (test_core.CoverageTests.test_zero_demand_unreachable_is_ignored) ... ok
+test_invalid_output_overwrites_stale_success (test_evaluate.EvaluatorTests.test_invalid_output_overwrites_stale_success) ... ok
+test_returned_scores_are_not_trusted (test_evaluate.EvaluatorTests.test_returned_scores_are_not_trusted) ... ok
+test_seed_evaluation (test_evaluate.EvaluatorTests.test_seed_evaluation) ... ok
+test_sioux_falls_identity_and_full_coverage (test_evaluate.EvaluatorTests.test_sioux_falls_identity_and_full_coverage) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 2.815s
+
+OK

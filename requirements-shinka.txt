@@ -1,0 +1,2 @@
+# Optional native evaluation adapter. Not required for step-1 local runs.
+shinka-evolve @ git+https://github.com/SakanaAI/ShinkaEvolve.git@9912af12d423504b8d580f4179fd15f5f88b8c50

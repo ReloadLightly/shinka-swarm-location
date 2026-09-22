@@ -1,0 +1,139 @@
+{
+  "combined_score": 71.74500831946756,
+  "public": {
+    "stage": "step1_seed_commissioning",
+    "instance": "SiouxFalls-free-flow",
+    "mean_improvement_over_greedy_pp": 0.0,
+    "evolved_generations": 0
+  },
+  "private": {
+    "candidate_sha256": "abd985936be26c6d85998b0a04ccf595c9b72b2c3b29e26ba2bc01f5da84f299",
+    "instance_sha256": "145896dfd9a9ef5efc2612907646f1bfe82326c8fabe058cc1d6717816e8154a",
+    "backend": "local",
+    "budgets": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "local_process_wall_seconds": [
+      0.6582853129998512,
+      0.6932677469999362,
+      0.6565678680001383,
+      0.6167780539999512,
+      0.6534364859999187,
+      0.6550504690001162,
+      0.6703780580000966,
+      0.6360512539999945
+    ]
+  },
+  "extra_data": {
+    "cases": [
+      {
+        "k": 1,
+        "selected": [
+          10
+        ],
+        "coverage": 0.3408208541320022,
+        "greedy_coverage": 0.3408208541320022,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 2,
+        "selected": [
+          10,
+          22
+        ],
+        "coverage": 0.5091514143094842,
+        "greedy_coverage": 0.5091514143094842,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 3,
+        "selected": [
+          10,
+          16,
+          22
+        ],
+        "coverage": 0.6450360510260676,
+        "greedy_coverage": 0.6450360510260676,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 4,
+        "selected": [
+          10,
+          11,
+          16,
+          22
+        ],
+        "coverage": 0.7343316694398225,
+        "greedy_coverage": 0.7343316694398225,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 5,
+        "selected": [
+          8,
+          10,
+          11,
+          16,
+          22
+        ],
+        "coverage": 0.8025513033832501,
+        "greedy_coverage": 0.8025513033832501,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 6,
+        "selected": [
+          8,
+          10,
+          11,
+          13,
+          16,
+          22
+        ],
+        "coverage": 0.8580144204104271,
+        "greedy_coverage": 0.8580144204104271,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 7,
+        "selected": [
+          8,
+          10,
+          11,
+          13,
+          16,
+          19,
+          22
+        ],
+        "coverage": 0.9107043815862451,
+        "greedy_coverage": 0.9107043815862451,
+        "improvement_pp": 0.0
+      },
+      {
+        "k": 8,
+        "selected": [
+          5,
+          8,
+          10,
+          11,
+          13,
+          16,
+          19,
+          22
+        ],
+        "coverage": 0.9389905712701054,
+        "greedy_coverage": 0.9389905712701054,
+        "improvement_pp": 0.0
+      }
+    ]
+  },
+  "text_feedback": "Fixed OD-weighted, endpoint-inclusive coverage; no route sampling or rerouting. This is a commissioning score on one public debugging benchmark, not the planned multi-network anytime fitness. Differences from greedy are in extra_data.cases. No evolutionary or generalization result is established."
+}

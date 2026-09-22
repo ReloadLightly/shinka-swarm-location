@@ -1,0 +1,403 @@
+{
+  "stage": "step1_reference_baselines",
+  "created_utc": "2026-09-22T20:12:41.838645+00:00",
+  "python": "3.13.5",
+  "platform": "Linux",
+  "instance": "SiouxFalls-free-flow",
+  "instance_sha256": "145896dfd9a9ef5efc2612907646f1bfe82326c8fabe058cc1d6717816e8154a",
+  "source_sha256": {
+    "benchmark.py": "89db8bbddbf4c31cdf80fb7dca327540184c8e594264c745d0dabc992a859dca",
+    "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+    "swarm_location/baselines.py": "8bc1ce91100d0a5e6333f26a655ee6ddfdcec46931b044bca4e9fd6f8ccd75a4"
+  },
+  "nodes": 24,
+  "directed_edges": 76,
+  "positive_od_pairs": 528,
+  "total_demand": 360600.0,
+  "exact_shortest_routes": 564,
+  "distinct_route_masks": 282,
+  "preprocessing_seconds": 0.00498983399984354,
+  "timing_note": "One descriptive timing per deterministic solver; shared preprocessing excluded and reported separately. Not a matched-time or anytime comparison.",
+  "random_seeds": [
+    0,
+    99
+  ],
+  "evolved_generations": 0,
+  "llm_calls": 0,
+  "rows": [
+    {
+      "k": 1,
+      "individual_bc": {
+        "coverage": 0.3408208541320022,
+        "locations": [
+          10
+        ],
+        "solver_seconds": 0.00017878899984680174
+      },
+      "greedy_gbc": {
+        "coverage": 0.3408208541320022,
+        "locations": [
+          10
+        ],
+        "solver_seconds": 0.0001478329998008121
+      },
+      "greedy_swap": {
+        "coverage": 0.3408208541320022,
+        "locations": [
+          10
+        ],
+        "solver_seconds": 0.00042199599988634873
+      },
+      "random": {
+        "mean": 0.1414087631724903,
+        "sample_sd": 0.0688133312088704,
+        "min": 0.03993344425956739,
+        "max": 0.3408208541320022,
+        "n": 100
+      },
+      "exact": {
+        "coverage": 0.3408208541320022,
+        "locations": [
+          10
+        ],
+        "solver_seconds": 0.0004552069999590458,
+        "groups_examined": 24
+      }
+    },
+    {
+      "k": 2,
+      "individual_bc": {
+        "coverage": 0.4911259012756517,
+        "locations": [
+          10,
+          16
+        ],
+        "solver_seconds": 0.00020986699996683456
+      },
+      "greedy_gbc": {
+        "coverage": 0.5091514143094842,
+        "locations": [
+          10,
+          22
+        ],
+        "solver_seconds": 0.0003064720001475507
+      },
+      "greedy_swap": {
+        "coverage": 0.5091514143094842,
+        "locations": [
+          10,
+          22
+        ],
+        "solver_seconds": 0.0007805570000982698
+      },
+      "random": {
+        "mean": 0.28106119430578663,
+        "sample_sd": 0.09505491049931182,
+        "min": 0.10870770937326678,
+        "max": 0.5074875207986689,
+        "n": 100
+      },
+      "exact": {
+        "coverage": 0.5091514143094842,
+        "locations": [
+          10,
+          22
+        ],
+        "solver_seconds": 0.003717476000019815,
+        "groups_examined": 276
+      }
+    },
+    {
+      "k": 3,
+      "individual_bc": {
+        "coverage": 0.620077648363838,
+        "locations": [
+          10,
+          15,
+          16
+        ],
+        "solver_seconds": 0.0001491549999173003
+      },
+      "greedy_gbc": {
+        "coverage": 0.6450360510260676,
+        "locations": [
+          10,
+          16,
+          22
+        ],
+        "solver_seconds": 0.0003468730001259246
+      },
+      "greedy_swap": {
+        "coverage": 0.6691625069328896,
+        "locations": [
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.0022505040001306043
+      },
+      "random": {
+        "mean": 0.38377518949898315,
+        "sample_sd": 0.10076033610538884,
+        "min": 0.1930116472545757,
+        "max": 0.5884636716583472,
+        "n": 100
+      },
+      "exact": {
+        "coverage": 0.6691625069328896,
+        "locations": [
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.023137892000022475,
+        "groups_examined": 2024
+      }
+    },
+    {
+      "k": 4,
+      "individual_bc": {
+        "coverage": 0.6941209095951193,
+        "locations": [
+          10,
+          11,
+          15,
+          16
+        ],
+        "solver_seconds": 0.0001991000001453358
+      },
+      "greedy_gbc": {
+        "coverage": 0.7343316694398225,
+        "locations": [
+          10,
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.00041477500008113566
+      },
+      "greedy_swap": {
+        "coverage": 0.7468108707709373,
+        "locations": [
+          5,
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.0025468209998962266
+      },
+      "random": {
+        "mean": 0.4789388056942133,
+        "sample_sd": 0.10178447726790758,
+        "min": 0.25540765391014975,
+        "max": 0.6957848031059346,
+        "n": 100
+      },
+      "exact": {
+        "coverage": 0.7468108707709373,
+        "locations": [
+          5,
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.13350272299999233,
+        "groups_examined": 10626
+      }
+    },
+    {
+      "k": 5,
+      "individual_bc": {
+        "coverage": 0.7687188019966722,
+        "locations": [
+          10,
+          11,
+          15,
+          16,
+          22
+        ],
+        "solver_seconds": 0.0002006019999498676
+      },
+      "greedy_gbc": {
+        "coverage": 0.8025513033832501,
+        "locations": [
+          8,
+          10,
+          11,
+          16,
+          22
+        ],
+        "solver_seconds": 0.0005689879999408731
+      },
+      "greedy_swap": {
+        "coverage": 0.8141985579589573,
+        "locations": [
+          8,
+          10,
+          11,
+          17,
+          22
+        ],
+        "solver_seconds": 0.003237592000004952
+      },
+      "random": {
+        "mean": 0.5640099833610649,
+        "sample_sd": 0.10423890399113703,
+        "min": 0.33444259567387685,
+        "max": 0.7534664448141986,
+        "n": 100
+      },
+      "exact": null
+    },
+    {
+      "k": 6,
+      "individual_bc": {
+        "coverage": 0.7875762617859123,
+        "locations": [
+          10,
+          11,
+          15,
+          16,
+          17,
+          22
+        ],
+        "solver_seconds": 0.00016682099999343336
+      },
+      "greedy_gbc": {
+        "coverage": 0.8580144204104271,
+        "locations": [
+          8,
+          10,
+          11,
+          13,
+          16,
+          22
+        ],
+        "solver_seconds": 0.000532914000132223
+      },
+      "greedy_swap": {
+        "coverage": 0.8696616749861342,
+        "locations": [
+          8,
+          10,
+          11,
+          13,
+          17,
+          22
+        ],
+        "solver_seconds": 0.0037707960000261664
+      },
+      "random": {
+        "mean": 0.6334414864115363,
+        "sample_sd": 0.09661513358863244,
+        "min": 0.41652800887409874,
+        "max": 0.8508042151968941,
+        "n": 100
+      },
+      "exact": null
+    },
+    {
+      "k": 7,
+      "individual_bc": {
+        "coverage": 0.7942318358291736,
+        "locations": [
+          10,
+          11,
+          15,
+          16,
+          17,
+          19,
+          22
+        ],
+        "solver_seconds": 0.00016685199989296962
+      },
+      "greedy_gbc": {
+        "coverage": 0.9107043815862451,
+        "locations": [
+          8,
+          10,
+          11,
+          13,
+          16,
+          19,
+          22
+        ],
+        "solver_seconds": 0.0005612260001726099
+      },
+      "greedy_swap": {
+        "coverage": 0.9107043815862451,
+        "locations": [
+          8,
+          10,
+          11,
+          13,
+          16,
+          19,
+          22
+        ],
+        "solver_seconds": 0.002481181000121069
+      },
+      "random": {
+        "mean": 0.6956951377334073,
+        "sample_sd": 0.09074332832860102,
+        "min": 0.43261231281198004,
+        "max": 0.8912922906267332,
+        "n": 100
+      },
+      "exact": null
+    },
+    {
+      "k": 8,
+      "individual_bc": {
+        "coverage": 0.8624514697726012,
+        "locations": [
+          8,
+          10,
+          11,
+          15,
+          16,
+          17,
+          19,
+          22
+        ],
+        "solver_seconds": 0.00016423800002485223
+      },
+      "greedy_gbc": {
+        "coverage": 0.9389905712701054,
+        "locations": [
+          5,
+          8,
+          10,
+          11,
+          13,
+          16,
+          19,
+          22
+        ],
+        "solver_seconds": 0.0006670259999737027
+      },
+      "greedy_swap": {
+        "coverage": 0.942318358291736,
+        "locations": [
+          4,
+          8,
+          10,
+          11,
+          16,
+          19,
+          22,
+          24
+        ],
+        "solver_seconds": 0.006660603999989689
+      },
+      "random": {
+        "mean": 0.7540534294694028,
+        "sample_sd": 0.08599916399494904,
+        "min": 0.502495840266223,
+        "max": 0.9073765945646145,
+        "n": 100
+      },
+      "exact": null
+    }
+  ]
+}

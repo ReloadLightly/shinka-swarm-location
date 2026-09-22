@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shinka-swarm-location"
+version = "0.1.0"
+description = "Chapter-grounded network-monitor placement and program-evolution research"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["swarm_location*"]
