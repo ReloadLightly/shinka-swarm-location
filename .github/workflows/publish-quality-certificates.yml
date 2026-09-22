@@ -1,0 +1,81 @@
+name: Publish verified quality certificates
+on:
+  push:
+    branches: [work/quality-certificates]
+    paths: ['.github/quality-delivery/**', '.github/workflows/publish-quality-certificates.yml']
+permissions:
+  contents: write
+jobs:
+  verify_and_publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Apply the exact user-approved patch and remove delivery-only files
+        run: |
+          set -eu
+          test "$GITHUB_REPOSITORY" = 'ReloadLightly/shinka-swarm-location'
+          test "$GITHUB_REF_NAME" = 'work/quality-certificates'
+          test "$(git rev-parse HEAD^)" = '170c9ee5682649ebee02f4e1f6bffd4873ce9617'
+          python - <<'PY'
+          import hashlib,lzma,pathlib,subprocess
+          parts=sorted(pathlib.Path('.github/quality-delivery').glob('part-*.xz'))
+          assert [p.name for p in parts] == [f'part-{i:02d}.xz' for i in range(8)]
+          patch=lzma.decompress(b''.join(p.read_bytes() for p in parts))
+          assert hashlib.sha256(patch).hexdigest() == '032a6680c43d2475b097b487b158924f07d81f4f9a3e66533506ddbb5661ca80'
+          path=pathlib.Path('/tmp/quality-certificates.patch');path.write_bytes(patch)
+          subprocess.run(['git','apply','--check','--index',str(path)],check=True)
+          subprocess.run(['git','apply','--index',str(path)],check=True)
+          PY
+          git rm -r -- .github/quality-delivery .github/workflows/publish-quality-certificates.yml
+          test "$(git write-tree)" = 'ab4af39489f45f3766d003e96db7cb0ffbcc0cf6'
+          mkdir -p /tmp/quality-publish-checks
+      - name: Install optional LP dependency to exercise all certificate tests
+        run: python -m pip install -r requirements-certificates.txt
+      - name: Re-run mathematical and protocol tests
+        run: |
+          python -m unittest discover -s tests -v > /tmp/quality-publish-checks/tests.txt 2>&1
+          cat /tmp/quality-publish-checks/tests.txt
+      - name: Verify the saved certificates without rerunning candidates or holdouts
+        run: |
+          python scripts/prepare_suite.py --download > /tmp/quality-publish-checks/development-preparation.txt
+          python scripts/verify_quality_results.py --suite data/commissioning/suite.json > /tmp/quality-publish-checks/certificate-verification.json
+          cat /tmp/quality-publish-checks/certificate-verification.json
+          python scripts/update_quality_readme.py --check
+          test "$(git write-tree)" = 'ab4af39489f45f3766d003e96db7cb0ffbcc0cf6'
+          git diff --exit-code
+      - name: Commit and push only the verified prepared implementation
+        run: |
+          set -eu
+          case "$(git remote get-url origin)" in
+            https://github.com/ReloadLightly/shinka-swarm-location|https://github.com/ReloadLightly/shinka-swarm-location.git) ;;
+            *) echo 'Wrong repository; refusing push'; exit 1 ;;
+          esac
+          git fetch origin work/quality-certificates main
+          test "$(git rev-parse origin/work/quality-certificates)" = "$GITHUB_SHA"
+          test "$(git rev-parse origin/main)" = '170c9ee5682649ebee02f4e1f6bffd4873ce9617'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Add independently verified coverage quality certificates and scientific results'
+          git push origin HEAD:work/quality-certificates
+          python - <<'PY'
+          import json,os,pathlib,subprocess
+          rev=lambda x:subprocess.check_output(['git','rev-parse',x],text=True).strip()
+          record={'repository':os.environ['GITHUB_REPOSITORY'],'branch':'work/quality-certificates',
+            'commit':rev('HEAD'),'tree':rev('HEAD^{tree}'),'expected_tree':'ab4af39489f45f3766d003e96db7cb0ffbcc0cf6',
+            'workflow_run':os.environ['GITHUB_RUN_ID'],'patch_sha256':'032a6680c43d2475b097b487b158924f07d81f4f9a3e66533506ddbb5661ca80',
+            'model_calls':0,'new_holdout_assessments':0,'scope':'Exact prepared implementation published after independent checks'}
+          pathlib.Path('/tmp/quality-publish-checks/publication.json').write_text(json.dumps(record,indent=2)+'\n')
+          print(json.dumps(record,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-certificate-publication-checks
+          path: /tmp/quality-publish-checks/
+          retention-days: 30
