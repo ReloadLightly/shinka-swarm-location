@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M2 exact-route anytime evaluator implemented; native integration evidence below; no evolutionary run yet.**
+**Status: M3 holdout/campaign pipeline implemented; actual campaign state: `blocked_model_access`. See Section 5.2.**
 
 ### Abstract
 
@@ -266,6 +266,83 @@ OS scheduling and message-receipt jitter. Tiny timing differences are not discov
 These are fixed-baseline and reviewed-seed calculations, not evolved results. The gain-pass comparison uses three alternating-order measurements at the empty selection; its speed ratio is not an end-to-end algorithm speedup. The tables average budgets and seeds within each dataset and do not establish cross-network confidence intervals.
 
 <!-- M2-RESULTS:END -->
+
+## 5.2 M3 whole-network holdouts and native campaign
+
+M3 continues the same objective and evaluator rather than rebuilding them. The
+new [source catalog](configs/source_catalog_m3.json) keeps Sioux Falls and Anaheim
+as development data, assigns the complete published Eastern Massachusetts highway
+benchmark to validation, and reserves Barcelona for test. The complete published
+benchmark is used, not a random subset of its nodes. EMA itself is a highway
+subnetwork, not every road in the region.
+
+The [M3 protocol and research note](docs/m3_protocol.md) explains source selection,
+excluded incompatible datasets, recorded header-roundoff handling, native model
+configuration, validation selection and one-time test access. It distinguishes
+new project decisions from Chapter 4 and preserves the historical M1/M2 results.
+Winnipeg, Berlin-Tiergarten and Chicago-Sketch are not silently simplified to fit
+our model. No positive trip is dropped, no zero-time link receives an invented
+epsilon weight, and the coverage objective is unchanged.
+
+`campaign.py` invokes the pinned **native** runner using the existing anytime
+entrypoint. It does not generate substitute descendants. After a real native run,
+it freezes at most five development leaders plus the original seed, evaluates that
+fixed shortlist on validation, freezes one program, and only then evaluates test
+performance. Code, source-family, suite, population and container identities are
+checked. Both held-out graphs remain unscored until their corresponding stage.
+
+The worker now has an opt-in Docker backend: no network, non-root, read-only code
+and root filesystem, no host-repository/secret/socket mount, bounded resources and
+explicit immutable image identity. The existing parent clock and independent
+scorer remain in charge. Docker startup is outside the warm search budget and
+is recorded in total trial cost. Controlled probes are not a formal security proof.
+
+<!-- M3-RESULTS:START -->
+
+| Source network | Partition | Nodes | Directed links | Positive OD pairs |
+|---|---|---:|---:|---:|
+| SiouxFalls | development | 24 | 76 | 528 |
+| Anaheim | development | 416 | 914 | 1406 |
+| Eastern-Massachusetts | validation | 74 | 258 | 1113 |
+| Barcelona | test | 1020 | 2522 | 7922 |
+
+**Measured software evidence:** 63 tests passed; Docker containment/deadline probes passed; native development seed completed 24 paired cases successfully. The seed run made zero model calls and is not an evolutionary result.
+
+**Campaign state: `blocked_model_access`.** Native evolutionary runner started: `False`. Recorded campaign inference calls: `0`; valid evolved descendants: `0`. Validation solver trials: `0`; test solver trials: `0`.
+
+For `blocked_model_access`, no model credential was available to the verified native preflight. No validation/test performance or champion is fabricated to fill that gap.
+
+[Summary](results/step3/ci/summary.json), [input audit](results/step3/ci/audit/data_audit.json), [container probes](results/step3/ci/container.json), [native seed](results/step3/ci/native/native_seed_check.json), [campaign status](results/step3/ci/campaign/campaign_status.json), and [test transcript](results/step3/ci/tests.txt).
+
+<!-- M3-RESULTS:END -->
+
+### Execute the first bounded campaign
+
+The explicit request targets 100 native slots, four islands and a $3 submission
+threshold with a two-model mutation pool. It is neither a claim of completed
+generations nor a guarantee that 100 slots fit that cost. See
+[`configs/m3_launch_request.json`](configs/m3_launch_request.json). The threshold
+may overshoot with in-flight calls; there is no automatic top-up or fallback.
+Mutation-model bandit selection remains separate from interpretation-model routing.
+
+With an authenticated model route available securely in the execution environment:
+
+```bash
+python -m pip install -e . -r requirements-shinka.txt
+docker pull python:3.11-slim
+IMAGE_ID=$(docker image inspect python:3.11-slim --format '{{.Id}}')
+python campaign.py --execute --download --docker-image "$IMAGE_ID" \
+  --output results/local_m3_campaign
+```
+
+The driver materializes development data first and does not open validation/test
+performance during evolution. Without its required model credential it exits with
+`blocked_model_access` before inference. Put credentials in environment variables
+or repository Actions secrets, never in source files or the chat. The GitHub
+**M3 research** workflow also supports an explicit manual campaign request; ordinary
+check reruns do not automatically spend a provider budget. A started/interrupted
+campaign is preserved, not silently overwritten; continuation must retain its
+original native manifest and separately document any interrupted holdout assessment.
 
 ## 6. Reproduce the first milestone
 

@@ -1,0 +1,130 @@
+{
+  "combined_score": 100.88428301004319,
+  "public": {
+    "stage": "m2_anytime_candidate_evaluation",
+    "split": "development",
+    "paired_cases": 24,
+    "source_datasets": 2,
+    "mean_checkpoint_coverage_pct": 65.41835081125785,
+    "delta_vs_greedy_pp": 0.8842830100431978,
+    "delta_vs_greedy_swap_pp": 0.3991068707373137,
+    "failed_cases": 0
+  },
+  "private": {
+    "suite_sha256": "79a9b15de458133c01fe8eec8eee1cd1e622b2fe106aa8dd3a1bd24ac325467a",
+    "candidate_sha256": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+    "implementation_sha256": {
+      "evaluate_anytime.py": "e202f3478979adabc601e7693cf72fbde247fe612649f234c2c71fda13343fad",
+      "swarm_location/__init__.py": "a5719c2125edcb86c2e488fee1c2f65aa30a30bcd46f82f1c68fb3086b6c62f1",
+      "swarm_location/anytime.py": "612779612b31927025d4ad576ae80b7fc62eb1b1aa848a594f149b489c1b883d",
+      "swarm_location/anytime_baselines.py": "6f633ecc38f8ba5b8324f238b08623fa9fc0e4b15fc29280b6f3f1f0840115ce",
+      "swarm_location/anytime_worker.py": "f5eb73978cc9254f4b8d967465091d8eedd870aaa164593da365070a60b61143",
+      "swarm_location/baselines.py": "8bc1ce91100d0a5e6333f26a655ee6ddfdcec46931b044bca4e9fd6f8ccd75a4",
+      "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+      "swarm_location/isolation.py": "e31f1a5e398f79d066e816efe79411e08352071cce348c4db8f78f8a5ef8780d",
+      "swarm_location/search.py": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+      "swarm_location/selection.py": "bc9b1fafdbe010a47233229fa421e27925826b912e8734835e357c81803a0908",
+      "swarm_location/suite.py": "e48480609fcb8676a2eb16db993efb8b02f4b51673063f000f25cdfffb8fbf26",
+      "swarm_location/worker.py": "56cef512b75d01d8fe65cf11b3ebf72fec0441b8a8e5dc3ee6627b11566b2125"
+    },
+    "python": "3.11.16",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "docker_image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+    "wall_seconds": 45.26101916499999,
+    "evaluated_utc": "2026-09-22T22:09:57.377564+00:00"
+  },
+  "extra_data": {
+    "summary": [
+      {
+        "dataset": "Anaheim",
+        "method": "candidate",
+        "runs": 12,
+        "mean_final_coverage_pct": 79.90916897178838,
+        "mean_checkpoint_coverage_pct": 66.38162674730773,
+        "mean_delta_vs_greedy_pp": 1.7685660200863955
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "greedy",
+        "runs": 12,
+        "mean_final_coverage_pct": 79.90916897178838,
+        "mean_checkpoint_coverage_pct": 64.61306072722132,
+        "mean_delta_vs_greedy_pp": 0.0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "greedy_swap",
+        "runs": 12,
+        "mean_final_coverage_pct": 79.90998085857507,
+        "mean_checkpoint_coverage_pct": 64.377090210492,
+        "mean_delta_vs_greedy_pp": -0.23597051672932892
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "topk",
+        "runs": 12,
+        "mean_final_coverage_pct": 69.87794953693799,
+        "mean_checkpoint_coverage_pct": 69.87794953693799,
+        "mean_delta_vs_greedy_pp": 5.264888809716661
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "candidate",
+        "runs": 12,
+        "mean_final_coverage_pct": 64.45507487520798,
+        "mean_checkpoint_coverage_pct": 64.45507487520798,
+        "mean_delta_vs_greedy_pp": 0.0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "greedy",
+        "runs": 12,
+        "mean_final_coverage_pct": 64.45507487520798,
+        "mean_checkpoint_coverage_pct": 64.45507487520798,
+        "mean_delta_vs_greedy_pp": 0.0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "greedy_swap",
+        "runs": 12,
+        "mean_final_coverage_pct": 65.66139767054908,
+        "mean_checkpoint_coverage_pct": 65.66139767054908,
+        "mean_delta_vs_greedy_pp": 1.206322795341097
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "topk",
+        "runs": 12,
+        "mean_final_coverage_pct": 61.064891846921796,
+        "mean_checkpoint_coverage_pct": 61.064891846921796,
+        "mean_delta_vs_greedy_pp": -3.3901830282861893
+      }
+    ],
+    "preprocessing": [
+      {
+        "dataset": "SiouxFalls",
+        "parent_oracle_seconds": 0.005615257000002316,
+        "nodes": 24,
+        "edges": 76,
+        "positive_od_pairs": 528,
+        "origins": 24,
+        "first_thru_node": 1,
+        "shortest_routes": 564,
+        "dataset_sha256": "01675ff8f39359c0880a7793c674054448ec2d57e21c4a25f24250eca5f84ff1"
+      },
+      {
+        "dataset": "Anaheim",
+        "parent_oracle_seconds": 0.1788728910000117,
+        "nodes": 416,
+        "edges": 914,
+        "positive_od_pairs": 1406,
+        "origins": 38,
+        "first_thru_node": 39,
+        "shortest_routes": 1845,
+        "dataset_sha256": "bb8ef27bbc868f27d64b4797ef2d38bc7174384fd3f246b48e9c2fe89f560e3e"
+      }
+    ],
+    "failures": []
+  },
+  "text_feedback": "24 paired cases on 2 source datasets; split=development. Mean checkpoint coverage 65.418351%; delta versus timed greedy +0.884283 pp; delta versus timed fixed greedy+swap +0.399107 pp. Inspect per-source and per-budget records before proposing a mechanism. Scores are exact-route model calculations, not real-world detection or causal evidence. A result on development data is not generalization. Meta interpretations cannot change numerical fitness. Anaheim k=3: greedy +3.0278 pp, swap +3.0278 pp; Anaheim k=6: greedy +1.5139 pp, swap +1.5139 pp; Anaheim k=12: greedy +1.5139 pp, swap +2.4586 pp; Anaheim k=24: greedy +1.0187 pp, swap +1.0179 pp; SiouxFalls k=1: greedy +0.0000 pp, swap +0.0000 pp; SiouxFalls k=3: greedy +0.0000 pp, swap -2.4126 pp; SiouxFalls k=4: greedy +0.0000 pp, swap -1.2479 pp; SiouxFalls k=6: greedy +0.0000 pp, swap -1.1647 pp"
+}
