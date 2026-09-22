@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "scope": "Observed retry of the existing M3 native execution job; no evaluator, model configuration, dataset split or protocol changes.",
+  "repository": "ReloadLightly/shinka-swarm-location",
+  "workflow_run_id": 35790662060,
+  "workflow_job_id": 106963272323,
+  "workflow_job_url": "https://github.com/ReloadLightly/shinka-swarm-location/actions/runs/35790662060/job/106963272323",
+  "source_commit": "939f4d704e3a95f9e0971d1311395091112a9877",
+  "campaign_requested_utc": "2026-09-22T22:27:01.583655+00:00",
+  "execute_requested": true,
+  "campaign_exit_code": 2,
+  "campaign_status": "blocked_model_access",
+  "missing_environment_variables": ["OPENAI_API_KEY"],
+  "native_runner_started": false,
+  "inference_calls": 0,
+  "valid_evolved_descendants": 0,
+  "validation_solver_evaluations": 0,
+  "test_solver_evaluations": 0,
+  "native_seed_correct": true,
+  "generation_target": 100,
+  "api_submission_threshold_usd": 3.0,
+  "request_sha256": "3906e4c17d77d281d8026192da07c724e4fc9b52ae99dafd440b303dd4b79662",
+  "catalog_sha256": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+  "evidence": {
+    "artifact_id": 10722567765,
+    "artifact_zip_sha256": "45befbb9d1d9faf9ce3a89857d5eb3fae3d859fe389c24413d798ec7972d1c25",
+    "campaign_status_path": "results/local_m3_campaign/campaign_status.json",
+    "campaign_status_sha256": "73b458434c703ef3ac10b1ffa55c0bb57e4e7ff23e4d9c3f99ad32ab49251d58",
+    "native_seed_check_sha256": "10e3a21d8e458732970ebd39705e69b5dde34401fe1223cc97b85ddd7407c760",
+    "launch_outcome_sha256": "a999dcb768aefb544968f3d29aec4578eb6b6a4ab9c8bc0f20fc34493bd1854e"
+  },
+  "interpretation": "Workflow completion is not evolutionary completion. The native model-access preflight received no OPENAI_API_KEY. No provider calls or held-out performance assessments were made."
+}
