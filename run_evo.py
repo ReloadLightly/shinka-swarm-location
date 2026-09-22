@@ -54,11 +54,15 @@ def parser():
     p.add_argument('--embedding-model')
     p.add_argument('--max-api-cost', type=float)
     p.add_argument('--generations', type=int)
+    p.add_argument('--docker-image', help='Immutable local sha256 image ID; opt-in for M2, required by M3 campaign')
     p.add_argument('--seed', type=int, default=0, help='Host RNG seed; provider calls are not bitwise deterministic')
     return p
 
 
 def plan(args):
+    if args.docker_image:
+        from swarm_location.isolation import checked_image
+        checked_image(args.docker_image)
     config = json.loads(args.config.read_text())
     suite, instances = load_suite(args.suite, 'development')
     for role in ('models', 'meta_model', 'novelty_model', 'embedding_model'):
@@ -90,6 +94,7 @@ def plan(args):
         'max_proposal_jobs': config['max_proposal_jobs'], 'max_db_workers': config['max_db_workers'],
         'suite_sha256': file_sha256(args.suite),
         'candidate_sha256': file_sha256(ROOT/'anytime_initial.py'), 'host_seed': args.seed,
+        'docker_image_id': args.docker_image,
         'development_cases': sum(len(e['budgets']) for e, _ in instances)*len(suite['seeds']),
         'source_networks': len(instances), 'checkpoints_seconds': suite['checkpoints_seconds'],
         'model_calls_enabled': args.run,
@@ -108,6 +113,10 @@ def verify_native(commit):
 def main(argv=None):
     args = parser().parse_args(argv)
     resolved = plan(args)
+    if args.docker_image:
+        os.environ['SWARM_DOCKER_IMAGE'] = args.docker_image
+    elif os.environ.get('SWARM_DOCKER_IMAGE'):
+        raise ValueError('pass --docker-image explicitly to record an inherited container setting')
     output = args.results_dir.resolve()
     print(json.dumps(resolved, indent=2))
     if not (args.run or args.native_seed or args.check_native):

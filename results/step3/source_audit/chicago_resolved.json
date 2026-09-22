@@ -1,0 +1,14 @@
+{
+  "compatible": false,
+  "zero_weight_edges": 774,
+  "self_loops": 0,
+  "original_comment_lines": 5,
+  "sum_minus_header": "-0.0000005303",
+  "solver_evaluations": 0,
+  "source_files": {
+    "network": {"path": "Chicago-Sketch/ChicagoSketch_net.tntp", "git_blob_sha1": "38422742ac82c06915d6acf056ffbb38adf8b590"},
+    "trips": {"path": "Chicago-Sketch/ChicagoSketch_trips.tntp", "git_blob_sha1": "2524ea5826790536558e2a54dbeae542d068a797"},
+    "documentation": {"path": "Chicago-Sketch/README.md", "git_blob_sha1": "77666930629f4ebc2820e7bf340506731f470f8a"}
+  },
+  "decision": "Exclude rather than alter the positive-weight fixed-route model."
+}

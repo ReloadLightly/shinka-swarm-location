@@ -1,0 +1,135 @@
+name: M3 research
+on:
+  push:
+    branches: [work/m3-heldout-campaign]
+    paths-ignore: ['results/**', 'README.md', 'docs/**', 'data/README.md']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_campaign:
+        description: Execute the native campaign using the explicit checked-in request and model secrets
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  source_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Existing mathematics and new partition-selection tests
+        run: |
+          mkdir -p results/step3/ci
+          python -m unittest discover -s tests -v > results/step3/ci/tests.txt 2>&1
+          cat results/step3/ci/tests.txt
+      - name: Audit original input structure only; never score a holdout deployment
+        run: python scripts/prepare_research.py --split all --audit-only --download --output results/step3/ci/audit
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m3-input-audit
+          path: results/step3/ci/
+          retention-days: 30
+  native_execution:
+    needs: source_audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/download-artifact@v4
+        with:
+          name: m3-input-audit
+          path: results/step3/ci/
+      - name: Install the actual pinned native package
+        run: python -m pip install -e . -r requirements-shinka.txt
+      - name: Resolve a container image before any timed search
+        run: |
+          docker pull python:3.11-slim
+          IMAGE_ID=$(docker image inspect python:3.11-slim --format '{{.Id}}')
+          echo "M3_IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+          docker image inspect "$IMAGE_ID" --format '{{json .RepoDigests}}' > results/step3/ci/image_repo_digests.json
+      - name: Controlled container and deadline probes
+        run: python scripts/check_container.py --image "$M3_IMAGE_ID" --output results/step3/ci/container.json
+      - name: Materialize only development data in this execution job
+        run: python scripts/prepare_research.py --split development --download --output data/commissioning_m3
+      - name: Native contained development seed; no LLM calls
+        run: |
+          python run_evo.py --config configs/evolution_m3.json --check-native --suite data/commissioning_m3/suite.json --docker-image "$M3_IMAGE_ID" --results-dir results/step3/ci/native
+          python run_evo.py --config configs/evolution_m3.json --native-seed --suite data/commissioning_m3/suite.json --docker-image "$M3_IMAGE_ID" --results-dir results/step3/ci/native
+      - name: Requested native campaign or access-only preflight
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EXECUTE_REQUEST: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_campaign) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[execute-m3]')) }}
+        run: |
+          set +e
+          EXTRA=""
+          if [ "$EXECUTE_REQUEST" = "true" ]; then EXTRA="--execute"; fi
+          python campaign.py $EXTRA --download --docker-image "$M3_IMAGE_ID" --output results/local_m3_campaign
+          CODE=$?
+          set -e
+          mkdir -p results/step3/ci/campaign
+          cp results/local_m3_campaign/campaign_status.json results/step3/ci/campaign/
+          printf '{"execute_requested":%s,"exit_code":%s}\n' "$EXECUTE_REQUEST" "$CODE" > results/step3/ci/campaign/launch_outcome.json
+          if [ "$CODE" -ne 0 ] && [ "$CODE" -ne 2 ]; then exit "$CODE"; fi
+      - name: Record measured status and update the scientific README
+        run: |
+          python -m pip freeze > results/step3/ci/dependencies.txt
+          python scripts/report_m3.py
+          python - <<'PY'
+          import json,os,pathlib
+          pathlib.Path('results/step3/ci/provenance.json').write_text(json.dumps({
+            'source_commit':os.environ['GITHUB_SHA'],'workflow_run':os.environ['GITHUB_RUN_ID'],
+            'scope':'Native seed, input/containment checks and actual campaign status; not assumed evolution'},indent=2)+'\n')
+          PY
+      - name: Publish verified evidence to the exact implementation branch
+        if: github.event_name == 'push' && github.repository == 'ReloadLightly/shinka-swarm-location' && github.ref_name == 'work/m3-heldout-campaign'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          case "$(git remote get-url origin)" in
+            https://github.com/ReloadLightly/shinka-swarm-location|https://github.com/ReloadLightly/shinka-swarm-location.git) ;;
+            *) echo 'Unexpected repository; refusing publication'; exit 1 ;;
+          esac
+          gh auth setup-git
+          git fetch origin "$GITHUB_REF_NAME"
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            echo 'Branch advanced; measured evidence remains in the workflow artifact'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- README.md
+          find results/step3/ci -type f \( -name '*.json' -o -name '*.txt' \) -print0 | xargs -0 git add --
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record M3 input, contained-native and campaign-access evidence'
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+      - name: Archive the exact source and preserve incomplete campaign work
+        if: always()
+        run: git archive --format=tar HEAD > source.tar
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m3-research-${{ github.sha }}
+          path: |
+            source.tar
+            results/step3/ci/
+            results/local_m3_campaign/
+          retention-days: 30
