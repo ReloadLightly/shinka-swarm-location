@@ -1,8 +1,6 @@
 name: M3 Chicago input audit
 on:
-  push:
-    branches: [work/m3-heldout-campaign]
-    paths: [.github/workflows/m3-chicago-audit.yml]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
