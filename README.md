@@ -243,7 +243,27 @@ OS scheduling and message-receipt jitter. Tiny timing differences are not discov
 
 <!-- M2-RESULTS:START -->
 
-The committed CI evidence table is generated only after successful measured runs.
+| Development dataset | Method | Mean checkpoint coverage (%) | Mean final coverage (%) |
+|---|---|---:|---:|
+| Anaheim | greedy | 63.3847 | 79.9092 |
+| Anaheim | greedy_swap | 63.3849 | 79.9100 |
+| Anaheim | random | 33.6964 | 33.6964 |
+| Anaheim | topk | 69.8779 | 69.8779 |
+| SiouxFalls | greedy | 64.4551 | 64.4551 |
+| SiouxFalls | greedy_swap | 65.6614 | 65.6614 |
+| SiouxFalls | random | 32.6724 | 32.6724 |
+| SiouxFalls | topk | 61.0649 | 61.0649 |
+
+| Dataset | Reference gain pass (median ms) | Reverse-dependency pass (median ms) | Speed ratio | Max. absolute difference |
+|---|---:|---:|---:|---:|
+| SiouxFalls | 7.6442 | 0.4874 | 15.68x | 0 |
+| Anaheim | 2568.0292 | 12.9373 | 198.50x | 2.78e-17 |
+
+**Executed evidence:** 47 tests passed; 24 paired cases; 2 development source networks; zero failed baseline trials. Native seed correctness: `True`; native score: `100.231474`. The native score includes a +100 affine offset; its checkpoint difference can vary with timing.
+
+[Protocol and raw baseline trajectories](results/step2/ci/baselines/traces.json), [baseline metrics](results/step2/ci/baselines/metrics.json), [native integration record](results/step2/ci/native/native_seed_check.json), [native seed metrics](results/step2/ci/native/seed/metrics.json), [gain-pass timings](results/step2/ci/marginals.json), and [tests](results/step2/ci/tests.txt).
+
+These are fixed-baseline and reviewed-seed calculations, not evolved results. The gain-pass comparison uses three alternating-order measurements at the empty selection; its speed ratio is not an end-to-end algorithm speedup. The tables average budgets and seeds within each dataset and do not establish cross-network confidence intervals.
 
 <!-- M2-RESULTS:END -->
 

@@ -1,0 +1,10 @@
+{
+  "package_version": "0.0.7",
+  "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "configuration_constructed": true,
+  "model_calls": 0,
+  "islands": 4,
+  "mutation_bandit": "ucb",
+  "meta_is_separate": true,
+  "runner_imported": "ShinkaEvolveRunner"
+}

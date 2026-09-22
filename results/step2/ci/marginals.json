@@ -1,0 +1,45 @@
+{
+  "scope": "Empty-selection marginal calculation, three alternating-order repeats; not evolution",
+  "suite_sha256": "dd1aec44c64da895347e4bd7d286ac0192f8c5b5f194e85f4d2a2e0fa5977ecb",
+  "search_code_sha256": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+  "measurements": [
+    {
+      "dataset": "SiouxFalls",
+      "nodes": 24,
+      "edges": 76,
+      "dataset_sha256": "74c3469f21dd1b0370691f7a7e4a16ffc21fb283bdd7abfe5bfa9c7a0d63c84c",
+      "preprocessing_seconds": 0.007514180999976361,
+      "reference_seconds": [
+        0.007691774999983636,
+        0.007644214999999122,
+        0.007591847000014695
+      ],
+      "reverse_dependency_seconds": [
+        0.0005675250000081178,
+        0.00047597300002166776,
+        0.00048739500002170644
+      ],
+      "median_speed_ratio": 15.683819078280823,
+      "max_abs_disagreement": 0.0
+    },
+    {
+      "dataset": "Anaheim",
+      "nodes": 416,
+      "edges": 914,
+      "dataset_sha256": "b10c50e711ba3e5b9828445244c0faf0ec1a80a104ed11afb51f6dc688835d97",
+      "preprocessing_seconds": 0.24409238500001607,
+      "reference_seconds": [
+        2.539626835000007,
+        2.5680291909999937,
+        2.5732927040000106
+      ],
+      "reverse_dependency_seconds": [
+        0.012937268000001723,
+        0.012609112000006917,
+        0.013043627000001834
+      ],
+      "median_speed_ratio": 198.49856948156688,
+      "max_abs_disagreement": 2.7755575615628914e-17
+    }
+  ]
+}
