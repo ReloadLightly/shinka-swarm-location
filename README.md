@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: first executable milestone complete; no evolutionary run yet.**
+**Status: M2 exact-route anytime evaluator implemented; native integration evidence below; no evolutionary run yet.**
 
 ### Abstract
 
@@ -18,16 +18,24 @@ fixed one-for-one swap procedure improves on greedy at several monitor budgets;
 for three and four monitors it matches exhaustive enumeration. These are baseline
 results, not evidence of evolutionary improvement or large-scale generalization.
 
+M2 adds an all-node marginal-gain backend that does not enumerate routes, externally
+timed incumbent reporting, a hash-verified two-network development suite, strong
+same-budget controls, and a launcher using the pinned native ShinkaEvolve runner.
+The model remains fixed-route group coverage. Evidence is reported separately
+from the untouched historical M1 calculations; no LLM-generated discovery is claimed.
+
 | Research component | Current evidence |
 |---|---|
 | Chapter-grounded coverage objective and marginal greedy | Implemented; source deviations documented |
 | Directed, tied-shortest-path, endpoint-inclusive evaluator | Implemented and cross-checked |
 | Baseline results on a pinned public debugging network | Executed; artifacts committed |
-| Local seed-program evaluator | Executed; seed equals reference greedy |
-| Native `run_shinka_eval` adapter | Written and signature-checked against pinned source; not executed here |
+| Local M1 seed-program evaluator | Executed; seed equals reference greedy |
+| Native `run_shinka_eval` adapter | Subsequently executed in M2 commissioning; no model calls |
+| Independent anytime worker / fast DAG gains | Implemented; M2 checks and measured results below |
+| Native scheduler and full-run configuration | Seed path checked separately from unexecuted paid evolution |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
-| Multi-network held-out or anytime comparison | Planned; not conducted |
+| Matched-time comparison | Two development networks; no validation/test result |
 
 ## 1. Research question
 
@@ -73,7 +81,7 @@ isolate the placement problem.
 
 ## 3. Data and implementation
 
-### 3.1 Commissioning dataset
+### 3.1 M1 commissioning dataset
 
 | Property | Value |
 |---|---:|
@@ -108,9 +116,9 @@ aggregation and reported coverage use double precision.
 For this small benchmark, `compile_routes()` also produces an equivalent weighted
 route-mask representation. This enumerates **all** shortest routes, never a sample,
 and fails explicitly above a configurable route-count limit. The independent
-DAG scorer recalculates candidate coverage. Large-network optimization of this
-backend remains work to do; the route-mask commissioning path is not advertised
-as scalable to every network.
+DAG scorer recalculates candidate coverage. M1's route-mask path is retained for
+historical reproduction. M2 uses the DAG backend without route enumeration; this
+does not establish scaling to arbitrary large networks.
 
 ### 3.3 Reference algorithms
 
@@ -127,7 +135,7 @@ $10^{-12}$. Exhaustive search is run only for $k=1,2,3,4$, checking respectively
 24, 276, 2,024, and 10,626 groups. Reported optima are exhaustive best values under
 the specified model and numerical scoring, not general guarantees for other data.
 
-## 4. Experimental protocol
+## 4. Historical M1 experimental protocol
 
 The commissioning comparison uses the fixed unperturbed fixture, all eight monitor
 budgets, and 100 independent pseudorandom seeds (0-99) for random deployment at
@@ -146,15 +154,15 @@ process for each budget, validates returned node IDs and cardinality, and comput
 coverage in the parent. Candidate-reported scores are never accepted. Invalid
 runs overwrite any stale success artifacts with a failure record.
 
-The current commissioning fitness is simply
+The historical M1 commissioning fitness is simply
 
 $$
 F_{\mathrm{step1}}(A)=\frac{100}{8}\sum_{k=1}^{8} C(S_A(k)).
 $$
 
-It is explicitly **not** the proposed multi-network anytime research fitness.
+It is explicitly **not** the multi-network anytime research fitness.
 
-## 5. Measured results
+## 5. Historical M1 measured results
 
 <!-- RESULTS-TABLE:START -->
 
@@ -190,13 +198,74 @@ train/validation/test selection, or held-out champion evaluations occurred.
 - [Seed metrics](results/step1/seed/metrics.json) and [correctness record](results/step1/seed/correct.json)
 - [Local test transcript](results/step1/tests.txt)
 
-The local suite passed **23 tests** on Python **3.13.5**. It includes independent
+The local M1 suite passed **23 tests** on Python **3.13.5**. It includes independent
 all-simple-path enumeration on 10 small directed graphs, comparing both backends
 on all 64 monitoring subsets per graph. Other checks cover decimal ties, unequal
 branching with uniform route weighting, endpoints, overlap, no rerouting,
 centroid restrictions, invalid outputs, and a compact DAG with $2^{26}$ shortest
 routes. Passing these checks supports implementation correctness for the tested
 cases, not empirical validity of the transportation assumptions.
+
+## 5.1 M2 anytime method and executed evidence
+
+The new candidate contract is `solve(problem, k, random_seed, report, time_budget)`
+in [`anytime_initial.py`](anytime_initial.py). A candidate evolves its deployment
+search; it does not evolve the graph, routing, coverage measure, or evaluation clock.
+[`SearchProblem`](swarm_location/search.py) computes all marginal gains in two
+passes over each original shortest-path DAG. It uses no route sampling or route
+enumeration. The original M1 avoiding-path scorer independently checks submitted
+deployments. The derivation, arithmetic assumptions, timing semantics, and research
+sources are in [the M2 methods note](docs/m2_method.md).
+
+A parent process starts the search clock after common fixed DAG preprocessing,
+before candidate import. It stamps each complete received incumbent, kills the
+process group at the deadline, and retains the best valid earlier submission.
+Partial groups are allowed under the same `|S| <= k` constraint. Scoring is deferred
+until capture finishes; candidate-reported scores and timestamps are rejected.
+This is a **warm prepared-problem** comparison, not an end-to-end latency claim.
+Common startup/preprocessing is recorded separately.
+
+The pinned public development suite contains Sioux Falls (24 nodes, 76 directed
+links) and Anaheim's historical 1992 network (416 nodes, 914 directed links).
+Sioux Falls budgets are 1, 3, 4, 6; Anaheim budgets are 3, 6, 12, 24. Each uses
+seeds 0, 1, 2 and checkpoints 0.02, 0.10, 0.50, 2.00 seconds: **24 paired cases**.
+The parser preserves positive demands, exact free-flow edge weights, and centroid
+through-node restrictions, verifying original Git hashes and prepared-data SHA-256.
+**Neither network is held out.** A suite can declare whole-source-graph partitions;
+relabelled or perturbed copies must retain their source identity.
+
+The research statistic is mean checkpoint improvement over same-budget greedy,
+in percentage points. Native `combined_score` is `100 + improvement`; the +100 is
+an affine shift, not a second objective. Fixed greedy+swap is also reported. Any
+candidate or reference failure invalidates that evaluation instead of being omitted.
+Identical-rule seed and greedy runs can differ at early checkpoints due to imports,
+OS scheduling and message-receipt jitter. Tiny timing differences are not discovery.
+
+<!-- M2-RESULTS:START -->
+
+| Development dataset | Method | Mean checkpoint coverage (%) | Mean final coverage (%) |
+|---|---|---:|---:|
+| Anaheim | greedy | 63.3847 | 79.9092 |
+| Anaheim | greedy_swap | 63.3849 | 79.9100 |
+| Anaheim | random | 33.6964 | 33.6964 |
+| Anaheim | topk | 69.8779 | 69.8779 |
+| SiouxFalls | greedy | 64.4551 | 64.4551 |
+| SiouxFalls | greedy_swap | 65.6614 | 65.6614 |
+| SiouxFalls | random | 32.6724 | 32.6724 |
+| SiouxFalls | topk | 61.0649 | 61.0649 |
+
+| Dataset | Reference gain pass (median ms) | Reverse-dependency pass (median ms) | Speed ratio | Max. absolute difference |
+|---|---:|---:|---:|---:|
+| SiouxFalls | 7.6442 | 0.4874 | 15.68x | 0 |
+| Anaheim | 2568.0292 | 12.9373 | 198.50x | 2.78e-17 |
+
+**Executed evidence:** 47 tests passed; 24 paired cases; 2 development source networks; zero failed baseline trials. Native seed correctness: `True`; native score: `100.231474`. The native score includes a +100 affine offset; its checkpoint difference can vary with timing.
+
+[Protocol and raw baseline trajectories](results/step2/ci/baselines/traces.json), [baseline metrics](results/step2/ci/baselines/metrics.json), [native integration record](results/step2/ci/native/native_seed_check.json), [native seed metrics](results/step2/ci/native/seed/metrics.json), [gain-pass timings](results/step2/ci/marginals.json), and [tests](results/step2/ci/tests.txt).
+
+These are fixed-baseline and reviewed-seed calculations, not evolved results. The gain-pass comparison uses three alternating-order measurements at the empty selection; its speed ratio is not an end-to-end algorithm speedup. The tables average budgets and seeds within each dataset and do not establish cross-network confidence intervals.
+
+<!-- M2-RESULTS:END -->
 
 ## 6. Reproduce the first milestone
 
@@ -232,8 +301,9 @@ updating a table alone does not update its scientific interpretation.
 worker, fixed budget-specific arguments, and independent aggregation. The API
 signature was checked against commit
 `9912af12d423504b8d580f4179fd15f5f88b8c50` [4]. The package was **not installed or
-executed in this milestone**; the local results do not certify this adapter's
-end-to-end integration.
+executed during M1**. A subsequent M2 commissioning job installed this exact pin
+and executed the M1 native adapter successfully. M1's local results alone did not
+certify that adapter; the M2 native evidence is distinct.
 
 ```bash
 python -m pip install -e .
@@ -245,37 +315,89 @@ These commands evaluate a candidate, not an evolutionary population. The
 `--timeout` option applies only to the local backend. Neither this worker nor the
 native adapter is claimed to be a hostile-code security sandbox.
 
+### Reproduce M2 or launch native evolution
+
+The anytime worker uses Linux/WSL. Local baselines need only the standard library;
+preparing the historical benchmark files requires internet access once.
+
+```bash
+python scripts/prepare_suite.py --download
+python -m unittest discover -s tests -v
+python scripts/benchmark_marginals.py
+python evaluate_anytime.py --baselines-only --results_dir results/local_m2_baselines
+python evaluate_anytime.py --results_dir results/local_m2_seed
+python run_evo.py                         # Inspect the plan; no model calls.
+python -m pip install -e . -r requirements-shinka.txt
+python run_evo.py --check-native --results-dir results/local_native_check
+python run_evo.py --native-seed --results-dir results/local_native_check
+```
+
+For a real run, set supported model identifiers and provider credentials outside the
+repo, and supply the model roles and spending threshold explicitly:
+
+```bash
+python run_evo.py --run --generations 100 --seed 0 \
+  --models "$MUTATION_MODEL_1" "$MUTATION_MODEL_2" \
+  --meta-model "$META_MODEL" --novelty-model "$NOVELTY_MODEL" \
+  --embedding-model "$EMBEDDING_MODEL" --max-api-cost "$API_BUDGET_USD" \
+  --results-dir results/local_evolution_01
+```
+
+This command calls `ShinkaEvolveRunner.run()` with four native islands,
+archive/inspiration sampling, migration, diff/full/cross proposals, cost-aware UCB,
+novelty, and meta-recommendations every ten generations. The single evaluation
+worker avoids concurrent timing trials and excess memory duplication. Configuration
+is editable in [`configs/evolution.json`](configs/evolution.json). The meta model
+is **separate** from the mutation-model bandit; model roles are not silently
+assigned to an expensive default. The native API-cost threshold can overshoot due
+to in-flight requests. No real run was invoked to generate M2's results.
+
+Reuse a results directory to resume only with the same recorded source, data and
+configuration identity. A reviewed seed job is not a test of actual mutations,
+model routing, migrations, novelty judgments, or interpretation calls.
+
+The source checks, fresh working directory, and stripped child environment are not
+an adversarial security boundary. Use a disposable isolated execution environment
+for generated candidates; independently re-evaluate finalists in a clean worker.
+
+To regenerate the M2 evidence table after producing the documented CI-shaped
+results directory:
+
+```bash
+python scripts/update_m2_readme.py --evidence results/step2/ci
+python scripts/update_m2_readme.py --evidence results/step2/ci --check
+```
+
 ## 7. Evolution boundary and next experiment
 
-The mutable region in `initial.py` contains `solve(problem, k, random_seed)`.
-Future evolution may change construction, exchanges, restarts, search scheduling,
-and conditional strategies. The graph, OD demand, routing assumptions, feasibility
-checks, scoring code, benchmark splits, and computational budget remain external
-to that evolving region.
+The historical mutable M1 seed is `initial.py`. M2's mutable seed is
+`anytime_initial.py`, with the reporting contract documented above. Evolution may
+change construction, exchanges, restarts, search scheduling, and conditional
+strategies. The graph, OD demand, routing assumptions, feasibility checks, scoring
+code, benchmark splits, and computational budget remain external to that region.
 
-Next: establish a computationally practical multi-network evaluator, measure
-strong-baseline headroom, add independently timed anytime incumbents, and connect
-the seed to a genuine native ShinkaEvolve run [5]. Use whole-network held-out
-splits and repeat independent evolutionary runs. Native islands, inspiration
-sampling, mutation-model bandit selection, novelty, and meta-recommendations are
-planned integration components, **not features already exercised by this repo**.
-Meta interpretations must follow numerical evidence; they do not award fitness.
-The mutation-model bandit and the meta-analysis model client are distinct.
+Next: establish additional whole-network validation/test instances, calibrate timing
+variation before selecting champions, and execute a predeclared native campaign
+with explicit models/budget in an isolated worker. Compare against fixed
+greedy+swap, not merely weak placement baselines. Meta interpretations must follow
+measured per-source/per-budget evidence and cannot award fitness.
 
 The detailed handoff is in [docs/next_step.md](docs/next_step.md).
 
 ## 8. Limitations
 
 The original Israeli graph, demand matrix, calibration, and original code have
-not been recovered. Only one small substituted network has been evaluated. The
-current routes are free-flow shortest routes, not congestion-aware empirical
-trajectory distributions. Sampling quality, costs, heterogeneous fleets, failures,
-relocation, and dynamic response are not implemented. An improved simulated
-coverage score is not a demonstrated reduction in infrastructure losses.
+not been recovered. M1 used one small substituted network; M2 adds a second
+historical development network, not a held-out test. Current routes are free-flow
+shortest routes, not congestion-aware empirical trajectory distributions. Sampling
+quality, costs, heterogeneous fleets, failures, relocation, and dynamic response
+are not implemented. An improved simulated coverage score is not a demonstrated
+reduction in infrastructure losses.
 
-The first milestone's contribution is a transparent, executable reference task
-and measured baselines. It is neither a full Chapter 4 numerical replication nor
-a completed algorithm-discovery study.
+M1's contribution is a transparent executable reference task and measured
+baselines. M2 adds the efficient anytime evaluator and native job integration, not
+evidence of evolutionary superiority. Neither is a full Chapter 4 numerical
+replication or a completed algorithm-discovery study.
 
 ## 9. References
 
@@ -299,6 +421,9 @@ Research*, Sioux Falls dataset, pinned commit above. Accessed 2026-09-22.
 [5] Lange, R. T., Imajuku, Y., and Cetin, E. (2025). ShinkaEvolve: Towards
 Open-Ended and Sample-Efficient Program Evolution.
 [arXiv:2509.19349](https://arxiv.org/abs/2509.19349).
+
+Additional benchmarking research, exact pin references, and the Anaheim source are
+listed in [the M2 methods note](docs/m2_method.md).
 
 ## Licensing
 

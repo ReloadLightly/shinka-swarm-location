@@ -1,0 +1,6 @@
+{
+  "source_commit": "1098941979f8d1450faddbdd53a2cbc1b2945988",
+  "workflow_run": "35785255505",
+  "python": "3.11.16",
+  "scope": "Fixed baselines and native seed only; zero model calls"
+}
