@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "config": {
+    "schema_version": 1,
+    "study_id": "m5-docker-timing-v1",
+    "base_commit": "4c4838f0135812e90a5444657a4719c077c22be4",
+    "null_repeats": 12,
+    "control_repeats": 5,
+    "order_seed": 20260923,
+    "checkpoints_seconds": [
+      0.02,
+      0.1,
+      0.5,
+      2.0
+    ],
+    "controls": [
+      "greedy",
+      "greedy_swap",
+      "topk",
+      "early_celf_swap",
+      "iterated",
+      "dfbnb",
+      "potential"
+    ],
+    "screening_floor_pp": 0.1,
+    "screening_padding_pp": 0.05,
+    "confirmation_repeats": 5,
+    "longer_budget_assessment": null,
+    "scope": "Development-only, one host session, serial original Docker backend. Empirical screening guard, not a significance test or a population-wide noise bound."
+  },
+  "config_sha256": "077d67714ede484d6fe412c12b587bc0cf634ecfc9772d147d8db85178282097",
+  "source_commit": "402789ac41877533f64e07f78c3ae532e33c4b28",
+  "suite_sha256": "b7b8460e9fcd5bda94822728bc3f0266f14d3f46f4546346f8d4dc6ec4403911",
+  "schedule_sha256": "b9bacf9f3ef73ac3a48f96563473d49f08538e2a8eca564279b1e0faa358f971",
+  "implementation_sha256": {
+    "evaluate_anytime.py": "302852bc9f411a336a1ae4163e106b7b1ba4b6ebc627a5e74c1caaf08d6af72f",
+    "anytime_initial.py": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+    "scripts/calibrate_timing.py": "0b0721636696539432610810e2fa228f1028a1918df796708759b95026322141",
+    "configs/comparisons_m4.json": "8578acda3d513f5733f882b9a84b173bbba22937e4875500b5115a36508cc4e1",
+    "swarm_location/__init__.py": "a5719c2125edcb86c2e488fee1c2f65aa30a30bcd46f82f1c68fb3086b6c62f1",
+    "swarm_location/anytime.py": "21914ca9d80420031ca30f223722ed8eb668d3b10b458f5c8fe07946b054bfb7",
+    "swarm_location/anytime_baselines.py": "6f633ecc38f8ba5b8324f238b08623fa9fc0e4b15fc29280b6f3f1f0840115ce",
+    "swarm_location/anytime_worker.py": "3808b163d55b10de91ca1768518c360b5015b2f6d281ef2c5845b21692f1adb4",
+    "swarm_location/baseline_proofs.py": "0e77e319a97e1fa3efd059e64380ee5e7781e1ba84a6679fdd79cfb890142937",
+    "swarm_location/baselines.py": "8bc1ce91100d0a5e6333f26a655ee6ddfdcec46931b044bca4e9fd6f8ccd75a4",
+    "swarm_location/bounded_search.py": "b3bc730e59d166e5d34c6436a60a3f5d76ff9940cdf02ad63d1ba744233b28e5",
+    "swarm_location/certificate_references.py": "e3e4add23553cb9279c8f1c7685019a8fd3a0f393d3ee401a635dac956eddc59",
+    "swarm_location/certificates.py": "ee58f00fa5db572bd268c5394a601405f80e7109f1ca5c8f30b0f8a664379ec4",
+    "swarm_location/comparisons.py": "6aa3994a007e0229f8a39a785736296e7b18bf2c408b940744b5e3e005132100",
+    "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+    "swarm_location/exchange_landscape.py": "6d5c22ac31535e8a728554d803cd8385ca87cf970492c3c8be7e9492a83b8b97",
+    "swarm_location/isolation.py": "e31f1a5e398f79d066e816efe79411e08352071cce348c4db8f78f8a5ef8780d",
+    "swarm_location/route_search.py": "61070f2461354f3240e5d5f9a44cebbd52e11d09b56c8ac3e8ae69c76138aca7",
+    "swarm_location/search.py": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+    "swarm_location/selection.py": "359ea327d88de95678a7169bbbac3c8fec2e7750ddc899bf74ba037ed8f50f71",
+    "swarm_location/strong_baselines.py": "eb7dc79e4c1b6fac7cf73ee1d1e2829cb2095b02c0791313d91069606f40bddb",
+    "swarm_location/suite.py": "68840e8f6729d7b948ca9a9f3c60f43b37a8f3e60e3405300299d6ee7a9a31bf",
+    "swarm_location/timing_calibration.py": "7dca423f49b5223ac86aa33da14e6126b7596a32c001ff3a8a0200cb6f2ccaaa",
+    "swarm_location/worker.py": "56cef512b75d01d8fe65cf11b3ebf72fec0441b8a8e5dc3ee6627b11566b2125"
+  },
+  "environment": {
+    "identity": {
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "host_python": "3.11.16",
+      "kernel": "6.17.0-1022-azure",
+      "machine": "x86_64",
+      "cpu_models": [
+        "AMD EPYC 7763 64-Core Processor"
+      ],
+      "logical_cpus": 4,
+      "parent_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "docker_version": "28.0.4",
+      "docker_api": "1.48",
+      "host_cpu_max": null,
+      "host_memory_max": null
+    },
+    "hardware_runtime_key": "fe2df802633e5d787f4dfe297aa2db89c18d775fdeddddbccbe3d8e9560f254f",
+    "session_key": "5d329f1f064da16dfd3215f5cabc16e173e9edbc8887e8c90d01f4cdf5d5e709",
+    "clock": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "load_average": [
+      0.63671875,
+      0.20751953125,
+      0.07373046875
+    ],
+    "mem_available_kib": 15297880,
+    "governor_cpu0": null,
+    "captured_utc": "2026-09-23T07:53:18.488093+00:00"
+  },
+  "executor_probe": {
+    "isolation": {
+      "mode": "docker",
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "network": "none",
+      "user": "65534:65534",
+      "read_only": true,
+      "memory_mib": 768,
+      "cpus": 1,
+      "pids_limit": 64
+    },
+    "facts": {
+      "uid": 65534,
+      "python": "3.11.16",
+      "affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "cpu_max": "100000 100000",
+      "memory_max": "805306368",
+      "pids_max": "64",
+      "cgroup_v1_cpu_quota": null,
+      "cgroup_v1_cpu_period": null
+    },
+    "scope": "Separate diagnostic container, not a timed solver trial"
+  },
+  "continuity": {
+    "base_commit": "4c4838f0135812e90a5444657a4719c077c22be4",
+    "protected_files": 123,
+    "historical_readme_blocks": [
+      "RESULTS-TABLE",
+      "M2-RESULTS",
+      "M3-RESULTS",
+      "QUALITY-CERTIFICATES",
+      "EXCHANGE-LANDSCAPE",
+      "STRONG-BASELINES",
+      "M4-INTEGRATION"
+    ],
+    "unchanged": true
+  },
+  "expected_trials": 2688,
+  "candidate_sha256": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+  "same_code_probe": "candidate_a and candidate_b are copied from the very same unchanged file; greedy and early pairs use identical baseline IDs and identical worker dispatch",
+  "execution": "serial; independently timed original run_anytime; mirrored shuffled roles/cases; null and control blocks interleaved by frozen schedule; startup excluded only from inner clock",
+  "github_run": "35834030920",
+  "model_calls": 0,
+  "research_validation_test_trials": 0,
+  "created_utc": "2026-09-23T07:53:19.084439+00:00"
+}

@@ -1,0 +1,36 @@
+SiouxFalls k=1 seed=0: greedy=34.0821%, greedy_swap=34.0821%, topk=34.0821%, early_celf_swap=34.0821%, candidate=34.0821%
+SiouxFalls k=1 seed=1: greedy=34.0821%, greedy_swap=34.0821%, topk=34.0821%, early_celf_swap=34.0821%, candidate=34.0821%
+SiouxFalls k=1 seed=2: greedy=34.0821%, greedy_swap=34.0821%, topk=34.0821%, early_celf_swap=34.0821%, candidate=34.0821%
+SiouxFalls k=3 seed=0: greedy=64.5036%, greedy_swap=66.9163%, topk=62.0078%, early_celf_swap=66.9163%, candidate=64.5036%
+SiouxFalls k=3 seed=1: greedy=64.5036%, greedy_swap=66.9163%, topk=62.0078%, early_celf_swap=66.9163%, candidate=64.5036%
+SiouxFalls k=3 seed=2: greedy=64.5036%, greedy_swap=66.9163%, topk=62.0078%, early_celf_swap=66.9163%, candidate=64.5036%
+SiouxFalls k=4 seed=0: greedy=73.4332%, greedy_swap=74.6811%, topk=69.4121%, early_celf_swap=74.6811%, candidate=73.4332%
+SiouxFalls k=4 seed=1: greedy=73.4332%, greedy_swap=74.6811%, topk=69.4121%, early_celf_swap=74.6811%, candidate=73.4332%
+SiouxFalls k=4 seed=2: greedy=73.4332%, greedy_swap=74.6811%, topk=69.4121%, early_celf_swap=74.6811%, candidate=73.4332%
+SiouxFalls k=6 seed=0: greedy=85.8014%, greedy_swap=86.9662%, topk=78.7576%, early_celf_swap=86.9662%, candidate=85.8014%
+SiouxFalls k=6 seed=1: greedy=85.8014%, greedy_swap=86.9662%, topk=78.7576%, early_celf_swap=86.9662%, candidate=85.8014%
+SiouxFalls k=6 seed=2: greedy=85.8014%, greedy_swap=86.9662%, topk=78.7576%, early_celf_swap=86.9662%, candidate=85.8014%
+Anaheim k=3 seed=0: greedy=52.4683%, greedy_swap=52.4683%, topk=52.4683%, early_celf_swap=52.4683%, candidate=52.4683%
+Anaheim k=3 seed=1: greedy=52.4683%, greedy_swap=52.4683%, topk=52.4683%, early_celf_swap=52.4683%, candidate=52.4683%
+Anaheim k=3 seed=2: greedy=52.4683%, greedy_swap=52.4683%, topk=52.4683%, early_celf_swap=52.4683%, candidate=52.4683%
+Anaheim k=6 seed=0: greedy=74.4981%, greedy_swap=74.4981%, topk=61.3704%, early_celf_swap=74.4981%, candidate=74.4981%
+Anaheim k=6 seed=1: greedy=74.4981%, greedy_swap=74.4981%, topk=61.3704%, early_celf_swap=74.4981%, candidate=74.4981%
+Anaheim k=6 seed=2: greedy=74.4981%, greedy_swap=74.4981%, topk=61.3704%, early_celf_swap=74.4981%, candidate=74.4981%
+Anaheim k=12 seed=0: greedy=93.1237%, greedy_swap=93.1237%, topk=78.9126%, early_celf_swap=93.1237%, candidate=93.1237%
+Anaheim k=12 seed=1: greedy=93.1237%, greedy_swap=93.1237%, topk=78.9126%, early_celf_swap=93.1237%, candidate=93.1237%
+Anaheim k=12 seed=2: greedy=93.1237%, greedy_swap=93.1237%, topk=78.9126%, early_celf_swap=93.1237%, candidate=93.1237%
+Anaheim k=24 seed=0: greedy=99.5466%, greedy_swap=99.5498%, topk=86.7604%, early_celf_swap=99.5498%, candidate=99.5466%
+Anaheim k=24 seed=1: greedy=99.5466%, greedy_swap=99.5498%, topk=86.7604%, early_celf_swap=99.5498%, candidate=99.5466%
+Anaheim k=24 seed=2: greedy=99.5466%, greedy_swap=99.5498%, topk=86.7604%, early_celf_swap=99.5498%, candidate=99.5466%
+{
+  "promote_to_confirmation": false,
+  "threshold_pp": 1.97,
+  "paired_deltas_pp": {
+    "greedy": 0.4629485913286671,
+    "early_celf_swap": 1.1230352756949809
+  },
+  "discovery_established": false,
+  "rule": "Both paired checkpoint-mean deltas must strictly exceed the empirical guard; freeze code and run the declared independent development confirmation next.",
+  "confirmation_repeats": 5,
+  "next_step": "Freeze code, then five fresh development assessments against all seven controls; report every result; do not test until ordinary frozen selection protocol is satisfied."
+}

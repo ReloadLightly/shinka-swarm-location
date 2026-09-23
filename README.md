@@ -711,7 +711,41 @@ not individual seeds or checkpoints, are the statistical reporting unit.
 
 <!-- M5-TIMING:START -->
 
-Timing study planned; no measured noise threshold or completion is inferred from configuration.
+**Executed:** 12 complete null blocks and 5 complete strong-control blocks, 24 development cases per block; **2,688 Docker solver trials**, 0 failed trials. Independent replay rescored 22,835 deployments and 1,427 online bound snapshots.
+
+| Suite-level timing probe (percentage points) | Mean | SD across blocks | Range |
+|---|---:|---:|---:|
+| identical_candidate | +0.0164 | 0.1069 | -0.2719 to +0.1792 |
+| identical_fixed_greedy | +0.0429 | 0.4094 | -0.7989 to +0.6944 |
+| identical_early_hybrid | +0.1754 | 0.6238 | -0.5465 to +1.9151 |
+| refreshed_fitness_difference | -0.0265 | 0.4625 | -0.6944 to +0.9782 |
+| candidate_minus_fixed_greedy_a | +0.2667 | 0.3065 | +0.0000 to +0.9782 |
+| candidate_minus_fixed_greedy_b | +0.2932 | 0.2976 | -0.1045 to +0.7467 |
+
+**Host-session promotion guard: strictly greater than 1.97 pp** over both freshly measured greedy and the early hybrid. The observed six-probe envelope was 1.9151 pp. This is a conservative **screening heuristic**, not statistical significance or proof of superiority. It does not alter Shinka fitness or automatically open holdouts.
+
+| Network / method | 20 ms (%) | 100 ms (%) | 500 ms (%) | 2 s (%) | Mean checkpoints (%) |
+|---|---:|---:|---:|---:|---:|
+| Anaheim / greedy | 19.6290 | 71.3316 | 79.9092 | 79.9092 | 62.6947 |
+| Anaheim / greedy_swap | 20.3697 | 71.0808 | 79.9092 | 79.9100 | 62.8174 |
+| Anaheim / topk | 61.9042 | 69.8779 | 69.8779 | 69.8779 | 67.8845 |
+| Anaheim / early_celf_swap | 3.7841 | 79.9092 | 79.9100 | 79.9100 | 60.8783 |
+| Anaheim / iterated | 0.0000 | 79.9100 | 79.9123 | 79.9146 | 59.9342 |
+| Anaheim / dfbnb | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 59.9325 |
+| Anaheim / potential | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 59.9325 |
+| SiouxFalls / greedy | 64.4551 | 64.4551 | 64.4551 | 64.4551 | 64.4551 |
+| SiouxFalls / greedy_swap | 65.6614 | 65.6614 | 65.6614 | 65.6614 | 65.6614 |
+| SiouxFalls / topk | 61.0649 | 61.0649 | 61.0649 | 61.0649 | 61.0649 |
+| SiouxFalls / early_celf_swap | 65.6614 | 65.6614 | 65.6614 | 65.6614 | 65.6614 |
+| SiouxFalls / iterated | 65.6947 | 65.9664 | 65.9664 | 65.9664 | 65.8985 |
+| SiouxFalls / dfbnb | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 65.8902 |
+| SiouxFalls / potential | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 65.8902 |
+
+Means describe five complete repetitions on one host, not five independent networks. The exact mean step-function curves, all per-network/budget/checkpoint null distributions, final-coverage ranges, and all raw trials are retained. CPU quota is not a dedicated core. **Recalibrate on the actual future campaign host/session**; these thresholds are not portable to another Actions VM or WSL.
+
+**Model calls: 0; evolved descendants: 0; research validation/test trials: 0.** No longer-budget result was substituted for the unchanged two-second protocol.
+
+[Summary and full distributions](results/timing-calibration/study/summary.json), [frozen schedule and runtime](results/timing-calibration/study/manifest.json), [exact coverage curves](results/timing-calibration/study/curves.json), [losslessly compressed raw journal](results/timing-calibration/study/trials.jsonl.gz).
 
 <!-- M5-TIMING:END -->
 

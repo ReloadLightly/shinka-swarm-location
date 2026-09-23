@@ -1,0 +1,12 @@
+{
+  "promote_to_confirmation": false,
+  "threshold_pp": 1.97,
+  "paired_deltas_pp": {
+    "greedy": 0.4629485913286671,
+    "early_celf_swap": 1.1230352756949809
+  },
+  "discovery_established": false,
+  "rule": "Both paired checkpoint-mean deltas must strictly exceed the empirical guard; freeze code and run the declared independent development confirmation next.",
+  "confirmation_repeats": 5,
+  "next_step": "Freeze code, then five fresh development assessments against all seven controls; report every result; do not test until ordinary frozen selection protocol is satisfied."
+}

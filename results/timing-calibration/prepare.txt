@@ -1,0 +1,145 @@
+{
+  "catalog_sha256": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+  "scope": "Input structure, demand and reachability only; no deployment scoring",
+  "datasets": [
+    {
+      "id": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "split": "development",
+      "nodes": 24,
+      "edges": 76,
+      "positive_od_pairs": 528,
+      "total_demand": 360600.0,
+      "origins": 24,
+      "first_thru_node": 1,
+      "prepared_sha256": "01675ff8f39359c0880a7793c674054448ec2d57e21c4a25f24250eca5f84ff1",
+      "header_audit": {
+        "declared_header": "360600.0",
+        "exact_od_sum": "360600",
+        "sum_minus_header": "0",
+        "header_only_roundoff": false,
+        "tolerance": {
+          "absolute": "0.000000001",
+          "relative": "0.000000000001"
+        },
+        "od_entries_modified": 0,
+        "od_entries_dropped": 0,
+        "source_bytes_modified": false,
+        "comment_lines_ignored": 0
+      },
+      "files": {
+        "network": {
+          "path": "SiouxFalls/SiouxFalls_net.tntp",
+          "git_blob_sha1": "66d0eca4ddcfb82f861bea040060deab7a741b2f",
+          "sha256": "ace99b24cec69c273ff0cf3d6d074110177f0cc0ae24b0c7a9f4f4cb5e27635c"
+        },
+        "trips": {
+          "path": "SiouxFalls/SiouxFalls_trips.tntp",
+          "git_blob_sha1": "db70eda57738877811e9ac07c25a567973d3b6a0",
+          "sha256": "56f9566857f3f66730fd5c4232258d7ee3ac2931a476526331afd062f4958de7"
+        }
+      },
+      "shortest_routes": 564,
+      "positive_demand_reachable": true,
+      "solver_evaluations": 0
+    },
+    {
+      "id": "Anaheim",
+      "source_graph": "Anaheim",
+      "split": "development",
+      "nodes": 416,
+      "edges": 914,
+      "positive_od_pairs": 1406,
+      "total_demand": 104694.4,
+      "origins": 38,
+      "first_thru_node": 39,
+      "prepared_sha256": "bb8ef27bbc868f27d64b4797ef2d38bc7174384fd3f246b48e9c2fe89f560e3e",
+      "header_audit": {
+        "declared_header": "104694.40",
+        "exact_od_sum": "104694.4",
+        "sum_minus_header": "0",
+        "header_only_roundoff": false,
+        "tolerance": {
+          "absolute": "0.000000001",
+          "relative": "0.000000000001"
+        },
+        "od_entries_modified": 0,
+        "od_entries_dropped": 0,
+        "source_bytes_modified": false,
+        "comment_lines_ignored": 0
+      },
+      "files": {
+        "network": {
+          "path": "Anaheim/Anaheim_net.tntp",
+          "git_blob_sha1": "1a5600ffb343b9b391dab59a28b39d2a2869b645",
+          "sha256": "99933b415e9500b13907829c37a43cfa9141714fad5af279081e28e5f9356f9a"
+        },
+        "trips": {
+          "path": "Anaheim/Anaheim_trips.tntp",
+          "git_blob_sha1": "59146d9224872e06c00acee90bf25f7eed9c6fe3",
+          "sha256": "906893854cd0db4479c0b5f07678ce5616fa8e42e2b997f918c378309c66a94e"
+        },
+        "documentation": {
+          "path": "Anaheim/README.md",
+          "git_blob_sha1": "03cb28dbe432f1ae7dcee9004d2567908a30675a",
+          "sha256": "acb49443cc5d315ef0866a49ad1bbacc460286956ae7750b999d80cf0235b069"
+        }
+      },
+      "shortest_routes": 1845,
+      "positive_demand_reachable": true,
+      "solver_evaluations": 0
+    }
+  ],
+  "excluded": [
+    {
+      "id": "Winnipeg",
+      "reason": "Positive within-zone OD demand unsupported by the unchanged model; not dropped or reinterpreted.",
+      "source_git_blob_sha1": {
+        "network": "192e371f68a79d9b8122ef7a627062a2c052123b",
+        "trips": "66af602c02a8560fb57da27da91baab466a163a8"
+      },
+      "positive_intrazonal_pairs": 1,
+      "positive_intrazonal_demand": "9"
+    },
+    {
+      "id": "Berlin-Tiergarten",
+      "reason": "Zero-free-flow links violate the fixed positive-weight shortest-path DAG assumptions. No epsilon weights introduced.",
+      "zero_weight_edges": 206,
+      "source_files": {
+        "network": {
+          "path": "Berlin-Tiergarten/berlin-tiergarten_net.tntp",
+          "git_blob_sha1": "24c242fab3cdedf2012b30f03580d702561a324a"
+        },
+        "trips": {
+          "path": "Berlin-Tiergarten/berlin-tiergarten_trips.tntp",
+          "git_blob_sha1": "86cc50464a4cf78023b0a8e8a01fb503db41a9c5"
+        },
+        "documentation": {
+          "path": "Berlin-Tiergarten/README.md",
+          "git_blob_sha1": "86f598162676bd9fe62fbb78f2fc30333b1284b8"
+        }
+      }
+    },
+    {
+      "id": "Chicago-Sketch",
+      "reason": "Zero free-flow links violate unchanged positive-weight DAG assumptions; no epsilon weights or link deletion introduced. TNTP trip-body comments and header roundoff were separately resolved.",
+      "zero_weight_edges": 774,
+      "self_loops": 0,
+      "source_files": {
+        "network": {
+          "path": "Chicago-Sketch/ChicagoSketch_net.tntp",
+          "git_blob_sha1": "38422742ac82c06915d6acf056ffbb38adf8b590"
+        },
+        "trips": {
+          "path": "Chicago-Sketch/ChicagoSketch_trips.tntp",
+          "git_blob_sha1": "2524ea5826790536558e2a54dbeae542d068a797"
+        },
+        "documentation": {
+          "path": "Chicago-Sketch/README.md",
+          "git_blob_sha1": "77666930629f4ebc2820e7bf340506731f470f8a"
+        }
+      }
+    }
+  ],
+  "solver_evaluations": 0
+}

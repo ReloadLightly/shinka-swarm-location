@@ -1,0 +1,11 @@
+Collecting scipy==1.17.0 (from -r requirements-certificates.txt (line 2))
+  Downloading scipy-1.17.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting numpy<2.7,>=1.26.4 (from scipy==1.17.0->-r requirements-certificates.txt (line 2))
+  Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Downloading scipy-1.17.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.1/35.1 MB 133.4 MB/s  0:00:00
+Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.9/16.9 MB 266.1 MB/s  0:00:00
+Installing collected packages: numpy, scipy
+
+Successfully installed numpy-2.4.6 scipy-1.17.0

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "study_id": "m5-docker-timing-v1",
+  "complete": true,
+  "solver_trials": 2688,
+  "failed_trials": 0,
+  "failures": [],
+  "null_blocks": 12,
+  "control_blocks": 5,
+  "cases_per_block": 24,
+  "independently_rescored_deployments": 22835,
+  "verified_bound_snapshots": 1427,
+  "max_exact_vs_DAG_difference": 1.1102230246251565e-16,
+  "guard": {
+    "metric": "mean_checkpoint_coverage_pp",
+    "observed_envelope_pp": 1.9150966606937203,
+    "threshold_pp": 1.97,
+    "rule": "ceil_0.01(max(floor, max_abs_all_six_probes) + padding)",
+    "floor_pp": 0.1,
+    "padding_pp": 0.05,
+    "confirmation_repeats": 5,
+    "interpretation": "Empirical host-session screening guard, NOT a confidence interval, p-value, guaranteed false-positive rate or a discovery threshold."
+  },
+  "session_key": "5d329f1f064da16dfd3215f5cabc16e173e9edbc8887e8c90d01f4cdf5d5e709",
+  "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "wall_seconds": 2002.2522535540002,
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "research_validation_test_trials": 0,
+  "scope": "One Docker host session; finite deterministic probes; no universal error rate or transfer claim",
+  "manifest_sha256": "457b6c8a0615f099e03a810d5210e8f3df97976058aa7d98541471760423a157",
+  "journal_sha256": "2c9f42d3155f54772195134423ac16d5d1c426c5310e9f3539c762f771830c28"
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_sha256": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+  "environment": {
+    "identity": {
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "host_python": "3.11.16",
+      "kernel": "6.17.0-1022-azure",
+      "machine": "x86_64",
+      "cpu_models": [
+        "AMD EPYC 7763 64-Core Processor"
+      ],
+      "logical_cpus": 4,
+      "parent_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "docker_version": "28.0.4",
+      "docker_api": "1.48",
+      "host_cpu_max": null,
+      "host_memory_max": null
+    },
+    "hardware_runtime_key": "fe2df802633e5d787f4dfe297aa2db89c18d775fdeddddbccbe3d8e9560f254f",
+    "session_key": "5d329f1f064da16dfd3215f5cabc16e173e9edbc8887e8c90d01f4cdf5d5e709",
+    "clock": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "load_average": [
+      1.0,
+      1.0400390625,
+      1.083984375
+    ],
+    "mem_available_kib": 15338596,
+    "governor_cpu0": null,
+    "captured_utc": "2026-09-23T08:38:14.347701+00:00"
+  },
+  "calibration_summary_sha256": "2ba62953f30f9f819bc183e0c88ddcede2665cdf68056709ecfc47fd26355dbb",
+  "holdout_access": false
+}
