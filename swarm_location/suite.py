@@ -18,6 +18,8 @@ def load_suite(path, split="development"):
         raise ValueError("expected suite schema_version=2")
     if split not in ("development", "validation", "test"):
         raise ValueError("unknown split")
+    from .comparisons import comparison_spec
+    comparison_spec(data, split)
     checkpoints_checked(data["checkpoints_seconds"])
     seeds = data["seeds"]
     if not seeds or any(type(s) is not int for s in seeds) or len(set(seeds)) != len(seeds):

@@ -18,6 +18,8 @@ from time import perf_counter
 from swarm_location.anytime import run_anytime
 from swarm_location.core import ShortestPathCoverage
 from swarm_location.suite import file_sha256, load_suite
+from swarm_location.comparisons import (evaluation_methods, comparison_spec,
+                                        paired_comparisons, comparison_feedback)
 
 ROOT = Path(__file__).resolve().parent
 
@@ -57,6 +59,8 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
     # Mark incomplete before work, including interrupted or failed reruns.
     write_json(output / "correct.json", {"correct": False, "error": "evaluation incomplete"})
     write_json(output / "metrics.json", {"combined_score": 0.0, "text_feedback": "evaluation incomplete"})
+    # A failed rerun must not leave a seemingly current successful comparison.
+    (output / "comparisons.json").unlink(missing_ok=True)
     records, prep = [], []
     started = perf_counter()
     suite_path = Path(suite_path).resolve()
@@ -67,12 +71,8 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
         if candidate is not None:
             tracked.append(candidate)
         before = {str(p): file_sha256(p) for p in tracked}
-        methods = ["random", "topk", "greedy", "greedy_swap"] if baselines_only else ["greedy", "greedy_swap", "candidate"]
-        extras = protocol.get("extra_baselines", [])
-        from swarm_location.strong_baselines import METHODS
-        if not isinstance(extras, list) or any(m not in ("random", "topk", *METHODS) for m in extras) or len(set(extras)) != len(extras):
-            raise ValueError("extra_baselines must be unique registered fixed controls")
-        methods = list(dict.fromkeys([*methods, *extras]))
+        methods = evaluation_methods(protocol, split, baselines_only)
+        comparison = comparison_spec(protocol, split)
         checkpoints = protocol["checkpoints_seconds"]
         for entry, instance in instances:
             then = perf_counter()
@@ -137,6 +137,19 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                         "evaluated_utc": datetime.now(timezone.utc).isoformat()},
             "extra_data": {"summary": summary, "preprocessing": prep, "failures": failures},
             "text_feedback": feedback}
+        if comparison is not None:
+            comparisons = paired_comparisons(records, selected, comparison)
+            metrics["extra_data"]["comparisons"] = comparisons
+            metrics["private"]["comparison_profile"] = comparison
+            metrics["public"]["stage"] = "m4_fixed_baselines" if baselines_only else "m4_anytime_candidate_evaluation"
+            metrics["public"]["fixed_controls"] = len(comparison["baselines"])
+            metrics["public"]["solver_trials"] = sum(len(r["methods"]) for r in records)
+            for row in comparisons["rows"]:
+                if row["scope"] == "overall" and row["valid"]:
+                    metrics["public"]["delta_vs_" + row["baseline"] + "_pp"] = row["delta_mean_checkpoint_pp"]
+                    metrics["public"]["final_delta_vs_" + row["baseline"] + "_pp"] = row["delta_final_pp"]
+            metrics["text_feedback"] += comparison_feedback(comparisons)
+            write_json(output / "comparisons.json", comparisons)
         write_json(output / "traces.json", {"stage": "m2_complete", "protocol": protocol,
             "suite_sha256": before[str(suite_path)], "split": split, "cases": records})
         write_json(output / "metrics.json", metrics)
