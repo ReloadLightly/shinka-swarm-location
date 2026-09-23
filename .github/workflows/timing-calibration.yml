@@ -1,88 +1,101 @@
 name: Docker timing calibration
 on:
   push:
-    branches: [work/timing-calibration]
-    paths: ['.delivery/**']
+    branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      action:
+        description: Verify archived evidence, or collect a new development-only measurement
+        type: choice
+        options: [verify, measure]
+        default: verify
 permissions:
-  contents: write
+  contents: read
 jobs:
-  calibration:
+  verify:
+    if: github.event_name != 'workflow_dispatch' || inputs.action != 'measure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Current tests and preservation of previous scientific evidence
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements-certificates.txt
+          mkdir -p results/local_m5_ci
+          python -m unittest discover -s tests -v > results/local_m5_ci/tests.txt 2>&1
+          tail -5 results/local_m5_ci/tests.txt
+          python scripts/check_m4_continuity.py --output results/local_m5_ci/continuity.json
+      # Keep strict source verification without rewriting the historical manifest.
+      - uses: actions/checkout@v4
+        with:
+          ref: 402789ac41877533f64e07f78c3ae532e33c4b28
+          path: historical-timing-source
+          persist-credentials: false
+      - name: Replay every archived trial with its exact measured source
+        working-directory: historical-timing-source
+        run: |
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > "$GITHUB_WORKSPACE/results/local_m5_ci/prepare.txt"
+          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --output "$GITHUB_WORKSPACE/results/timing-calibration/study" --verify > "$GITHUB_WORKSPACE/results/local_m5_ci/replay.txt"
+          python - <<'PY'
+          import os, pathlib, json, hashlib
+          from scripts.calibrate_timing import readme_block, START, END
+          root=pathlib.Path(os.environ['GITHUB_WORKSPACE'])
+          base=root/'results/timing-calibration'
+          summary=json.loads((base/'study/summary.json').read_text())
+          text=(root/'README.md').read_text()
+          assert text.split(START)[1].split(END)[0].strip()==readme_block(summary).strip()
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          figures=json.loads((base/'figures/renderer.json').read_text())
+          assert figures['source_curves_sha256']==sha(base/'study/curves.json')
+          assert figures['source_summary_sha256']==sha(base/'study/summary.json')
+          assert figures['script_sha256']==sha(root/'scripts/render_timing.py')
+          assert {p['path'] for p in figures['plots']}=={'SiouxFalls.png','Anaheim.png','null-distributions.png'}
+          for p in figures['plots']:
+              assert sha(base/'figures'/p['path'])==p['sha256']
+          print('Archived timing table and all three diagnostic figures match their evidence.')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: timing-replay-${{ github.sha }}
+          path: results/local_m5_ci/
+          retention-days: 30
+  measure:
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'measure'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Apply exact reviewed source and freeze it before measurement
+      - name: Prepare development and resolve the explicit executor image
         run: |
           set -euo pipefail
-          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
-          test "$GITHUB_REF_NAME" = work/timing-calibration
-          test "$(git remote get-url origin)" = https://github.com/ReloadLightly/shinka-swarm-location
-          if test -d .delivery; then
-            cat .delivery/m5.*.gzpart | gzip -dc > /tmp/m5.patch
-            echo '6438b4fb1fcfa9093642715d053d04d5914cbfc5c17d37034168c8aa3b465469  /tmp/m5.patch' | sha256sum --check
-            git apply --check /tmp/m5.patch
-            git apply /tmp/m5.patch
-            rm .delivery/m5.*.gzpart
-            git diff --check
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add README.md docs/next_step.md configs/timing_m5.json docs/m5_timing.md scripts/calibrate_timing.py swarm_location/timing_calibration.py tests/test_timing_calibration.py .delivery
-            git commit -m 'Freeze M5 Docker timing calibration protocol and implementation'
-            git push origin HEAD:refs/heads/work/timing-calibration
-          fi
-      - name: Full tests and only development data
-        run: |
-          set -euo pipefail
-          mkdir -p results/timing-calibration
-          python -m pip install -r requirements-certificates.txt > results/timing-calibration/install.txt 2>&1
-          python -m unittest discover -s tests -v > results/timing-calibration/tests.txt 2>&1
-          tail -5 results/timing-calibration/tests.txt
-          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > results/timing-calibration/prepare.txt
-          python scripts/check_m4_continuity.py --output results/timing-calibration/m4-continuity.json
-      - name: Resolve the previous campaign executor digest
-        run: |
-          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4
           docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
           IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
           echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
-      - name: Execute the preregistered serial Docker study once
+      - name: New measurement only; no replacement of archived results or README
         run: |
-          set -euo pipefail
-          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/timing-calibration/study | tee results/timing-calibration/execution.txt
-      - name: Replay evidence and generate measured README section
-        run: |
-          set -euo pipefail
-          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --output results/timing-calibration/study --verify --update-readme > results/timing-calibration/replay.txt
-          python scripts/calibrate_timing.py --screen-program anytime_initial.py --calibration results/timing-calibration/study --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/timing-calibration/seed-screen-check > results/timing-calibration/screen.txt
-          python -m pip freeze > results/timing-calibration/dependencies.txt
-          git diff --check
-      - name: Publish actual evidence and README to the work branch
-        run: |
-          set -euo pipefail
-          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
-          test "$GITHUB_REF_NAME" = work/timing-calibration
-          test "$(git remote get-url origin)" = https://github.com/ReloadLightly/shinka-swarm-location
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add README.md results/timing-calibration
-          git commit -m 'Record complete Docker null calibration, repeated controls, and measured README'
-          git push origin HEAD:refs/heads/work/timing-calibration
-      - name: Preserve source and raw outcomes even after interruption
-        if: always()
-        run: |
-          git archive --format=tar HEAD > /tmp/timing-source.tar
-          tar -czf /tmp/timing-outcomes.tar.gz results/timing-calibration data/commissioning_m4 2>/dev/null || true
+          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/local_timing_measurement
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: docker-timing-${{ github.run_id }}
+          name: new-docker-timing-${{ github.run_id }}
           path: |
-            /tmp/timing-source.tar
-            /tmp/timing-outcomes.tar.gz
+            results/local_timing_measurement/
+            data/commissioning_m4/
           retention-days: 30
