@@ -1,0 +1,135 @@
+{
+  "framework_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "evo_config": {
+    "num_generations": 100,
+    "patch_types": [
+      "diff",
+      "full",
+      "cross"
+    ],
+    "patch_type_probs": [
+      0.6,
+      0.3,
+      0.1
+    ],
+    "llm_dynamic_selection": "ucb",
+    "llm_dynamic_selection_kwargs": {
+      "cost_aware_coef": 0.5
+    },
+    "llm_kwargs": {
+      "temperatures": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "max_tokens": 8192,
+      "reasoning_efforts": [
+        "low"
+      ]
+    },
+    "meta_rec_interval": 10,
+    "meta_llm_kwargs": {
+      "temperatures": [
+        0.0
+      ],
+      "max_tokens": 2048,
+      "reasoning_efforts": [
+        "low"
+      ]
+    },
+    "meta_max_recommendations": 5,
+    "max_novelty_attempts": 3,
+    "code_embed_sim_threshold": 0.99,
+    "novelty_llm_kwargs": {
+      "temperatures": [
+        0.0
+      ],
+      "max_tokens": 2048,
+      "reasoning_efforts": [
+        "low"
+      ]
+    },
+    "use_text_feedback": true,
+    "enable_controlled_oversubscription": false,
+    "task_sys_msg": "Evolve a reusable anytime algorithm for endpoint-inclusive OD-weighted group\ncoverage on fixed directed shortest routes. Change only the EVOLVE block. The API\nis solve(problem, k, random_seed, report, time_budget); return a node list or None.\nproblem.nodes, problem.instance, problem.dags, problem.score(selected), and\nproblem.marginal_gains(selected) are available. The latter computes exact-route\nmarginal gains using DAG dependencies, not sampled paths. Call report(selected)\nto submit feasible incumbents; partial deployments with <=k distinct nodes are\nvalid. The external clock includes candidate imports and all search work, after\ncommon graph preprocessing. Only complete reports received by a checkpoint count.\nThe objective is 100 plus mean checkpoint-coverage improvement in percentage\npoints over a same-budget greedy control. Numerical score and feasibility are\nindependently checked. Fixed greedy+swap is also compared, so beating greedy alone\ndoes not establish a discovery. All search construction, revision, exchange,\nrestart and compute-allocation logic may change; there is no finite catalogue of\nallowed algorithms. Never hardcode node IDs or instance answers. Do not modify\nrouting, OD demand, score, clocks, benchmark files or runtime isolation. Standard\nlibrary is available; no model calls inside a candidate. Propose explanations\nsupported by measured per-source/per-budget differences, then test those mechanisms.\nA positive development score is not held-out transfer or real-world detection.\n\nVersioned screening controls: greedy, greedy_swap, topk, early_celf_swap. Frozen validation/test controls: greedy, greedy_swap, topk, early_celf_swap, iterated, dfbnb, potential. Comparisons report each fixed method separately; there is no oracle portfolio. Beating timed greedy alone is not a discovery. Distinguish checkpoint improvements from final-coverage improvements. Assessment data never enter development feedback.\n",
+    "job_type": "local",
+    "language": "python",
+    "init_program_path": "/home/runner/work/shinka-swarm-location/shinka-swarm-location/anytime_initial.py",
+    "results_dir": "/home/runner/work/shinka-swarm-location/shinka-swarm-location/results/step4/integration/native",
+    "llm_models": [],
+    "meta_llm_models": [],
+    "novelty_llm_models": [],
+    "embedding_model": null,
+    "max_api_costs": null
+  },
+  "db_config": {
+    "num_islands": 4,
+    "archive_size": 100,
+    "num_archive_inspirations": 4,
+    "num_top_k_inspirations": 2,
+    "migration_interval": 10,
+    "migration_rate": 0.1,
+    "island_elitism": true,
+    "enforce_island_separation": true,
+    "parent_selection_strategy": "weighted",
+    "parent_selection_lambda": 10.0,
+    "archive_selection_strategy": "fitness",
+    "db_path": "/home/runner/work/shinka-swarm-location/shinka-swarm-location/results/step4/integration/native/evolution_db.sqlite"
+  },
+  "job_config": {
+    "eval_program_path": "/home/runner/work/shinka-swarm-location/shinka-swarm-location/evaluate_anytime.py",
+    "extra_cmd_args": {
+      "suite": "/home/runner/work/shinka-swarm-location/shinka-swarm-location/data/commissioning_m4/suite.json",
+      "split": "development"
+    },
+    "python_executable": "/opt/hostedtoolcache/Python/3.11.16/x64/bin/python",
+    "numeric_threads_per_job": 1,
+    "eval_verbose": true,
+    "time": "01:00:00"
+  },
+  "max_evaluation_jobs": 1,
+  "max_proposal_jobs": 1,
+  "max_db_workers": 1,
+  "suite_sha256": "b7b8460e9fcd5bda94822728bc3f0266f14d3f46f4546346f8d4dc6ec4403911",
+  "candidate_sha256": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+  "host_seed": 0,
+  "docker_image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "development_cases": 24,
+  "source_networks": 2,
+  "checkpoints_seconds": [
+    0.02,
+    0.1,
+    0.5,
+    2.0
+  ],
+  "model_calls_enabled": false,
+  "scope": "Development evaluation only. No held-out result is implied.",
+  "comparison_plan": {
+    "profile_id": "m4-staged-controls-v1",
+    "stage": "development",
+    "definition_sha256": "e49bc961fb6680ef90e37d2fbc8fa69743e2c6a0a62017cebe74f4172b531032",
+    "file_sha256": "8578acda3d513f5733f882b9a84b173bbba22937e4875500b5115a36508cc4e1",
+    "baselines": [
+      "greedy",
+      "greedy_swap",
+      "topk",
+      "early_celf_swap"
+    ],
+    "assessment_baselines": [
+      "greedy",
+      "greedy_swap",
+      "topk",
+      "early_celf_swap",
+      "iterated",
+      "dfbnb",
+      "potential"
+    ],
+    "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+    "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim",
+    "paired_cases_per_program": 24,
+    "fixed_control_trials_per_program": 96,
+    "candidate_trials_per_program": 24,
+    "total_solver_trials_per_program": 120,
+    "cost_scope": "Trial counts, not predicted runtime, model cost or completed work"
+  }
+}

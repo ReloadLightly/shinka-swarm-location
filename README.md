@@ -670,7 +670,11 @@ previous README result blocks are preserved.
 
 <!-- M4-INTEGRATION:START -->
 
-Integration execution pending; no measured result is inferred from configuration.
+**Executed integration evidence:** 146 tests passed; the pinned native scheduler evaluated the unchanged greedy seed on 24 development cases with four fixed controls (**120 Docker-isolated solver trials, zero failures**). Independent replay rescored 924 submitted deployments and checked every staged comparison against its raw trajectories.
+
+Continuity checks confirm **96 protected files** and all six historical README result blocks are byte-for-byte unchanged. Validation/test stage routing and fixed-control completeness were exercised only on explicitly labelled synthetic unit fixtures. **Model calls: 0; evolved descendants: 0; research validation/test solver trials: 0.**
+
+[Integration summary](results/step4/integration/summary.json), [paired screening comparisons](results/step4/integration/native/seed/comparisons.json), [raw trajectories](results/step4/integration/native/seed/traces.json), [continuity record](results/step4/integration/continuity.json), and [test transcript](results/step4/integration/tests.txt).
 
 <!-- M4-INTEGRATION:END -->
 

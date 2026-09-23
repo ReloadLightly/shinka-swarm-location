@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "name": "m4-staged-controls-v1-development",
+  "catalog_sha256": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+  "checkpoints_seconds": [
+    0.02,
+    0.1,
+    0.5,
+    2.0
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "extra_baselines": [
+    "topk",
+    "early_celf_swap"
+  ],
+  "datasets": [
+    {
+      "id": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "split": "development",
+      "path": "SiouxFalls.json",
+      "sha256": "01675ff8f39359c0880a7793c674054448ec2d57e21c4a25f24250eca5f84ff1",
+      "budgets": [
+        1,
+        3,
+        4,
+        6
+      ]
+    },
+    {
+      "id": "Anaheim",
+      "source_graph": "Anaheim",
+      "split": "development",
+      "path": "Anaheim.json",
+      "sha256": "bb8ef27bbc868f27d64b4797ef2d38bc7174384fd3f246b48e9c2fe89f560e3e",
+      "budgets": [
+        3,
+        6,
+        12,
+        24
+      ]
+    }
+  ],
+  "scope": "Whole source-family split; public data may have occurred in model pretraining",
+  "comparison_profile": {
+    "definition": {
+      "schema_version": 1,
+      "profile_id": "m4-staged-controls-v1",
+      "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+      "baseline_sets": {
+        "development": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap"
+        ],
+        "validation": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap",
+          "iterated",
+          "dfbnb",
+          "potential"
+        ],
+        "test": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap",
+          "iterated",
+          "dfbnb",
+          "potential"
+        ]
+      },
+      "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim"
+    },
+    "definition_sha256": "e49bc961fb6680ef90e37d2fbc8fa69743e2c6a0a62017cebe74f4172b531032",
+    "file_sha256": "8578acda3d513f5733f882b9a84b173bbba22937e4875500b5115a36508cc4e1",
+    "stage": "development"
+  }
+}

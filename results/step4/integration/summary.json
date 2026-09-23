@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "success": true,
+  "stage": "m4_comparator_integration",
+  "test_count": 146,
+  "protected_historical_files": 96,
+  "historical_readme_blocks_unchanged": [
+    "RESULTS-TABLE",
+    "M2-RESULTS",
+    "M3-RESULTS",
+    "QUALITY-CERTIFICATES",
+    "EXCHANGE-LANDSCAPE",
+    "STRONG-BASELINES"
+  ],
+  "paired_development_cases": 24,
+  "solver_trials": 120,
+  "failed_trials": 0,
+  "deployments_independently_rescored": 924,
+  "native_scheduler": "JobScheduler",
+  "framework_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "docker_image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "comparison_profile": {
+    "profile_id": "m4-staged-controls-v1",
+    "stage": "development",
+    "definition_sha256": "e49bc961fb6680ef90e37d2fbc8fa69743e2c6a0a62017cebe74f4172b531032",
+    "file_sha256": "8578acda3d513f5733f882b9a84b173bbba22937e4875500b5115a36508cc4e1",
+    "baselines": [
+      "greedy",
+      "greedy_swap",
+      "topk",
+      "early_celf_swap"
+    ],
+    "assessment_baselines": [
+      "greedy",
+      "greedy_swap",
+      "topk",
+      "early_celf_swap",
+      "iterated",
+      "dfbnb",
+      "potential"
+    ],
+    "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+    "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim"
+  },
+  "mean_checkpoint_coverage_pct": 63.919875447086824,
+  "combined_score": 100.23147429566433,
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "research_validation_solver_trials": 0,
+  "research_test_solver_trials": 0,
+  "scope": "Contained development seed and profile plumbing; synthetic stage tests are not research holdout performance; no evolutionary superiority claim",
+  "evidence_sha256": {
+    "tests.txt": "f0691fe4e1d705467e2a38a4840822ab198919a987d0ada3935736c3e12190fb",
+    "continuity.json": "33f16a7ea056b582af4c0a3d810f06e5a4149e144c5fe313be3b433d945df056",
+    "native/native_seed_check.json": "228ce0ad53c79c25d8c333a2e4cddb8091718dae260c3627351667b1c54aff4b",
+    "native/native_config_check.json": "85fc8f961b39b7641a20ef782d27d13ed7e178dbe70da41f43f32f0d925ae7c4",
+    "native/seed/metrics.json": "69764177bc9f436bc6295faddb0f0d499e6011f71db2d8b92f660b6d0a0e512c",
+    "native/seed/traces.json": "04bc7ec6535ab616d37b687cc275c5815bbf75aa5def9d41173c23a1a332d128",
+    "native/seed/comparisons.json": "358745be0e40e357e7664b430565074bc1cef7ec8f9f06da97d703e8a93517b4"
+  }
+}
