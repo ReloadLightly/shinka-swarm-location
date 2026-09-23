@@ -1,0 +1,31 @@
+name: Scientific core repair
+on:
+  push:
+    branches: [work/scientific-repair]
+    paths: [.github/workflows/scientific-repair.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare exact source and public development networks
+        run: |
+          mkdir -p export
+          git archive fc459b5cf56037005b69665f12a24b9e998e936e > export/source.tar
+          git clone --filter=blob:none --no-checkout https://github.com/bstabler/TransportationNetworks.git /tmp/tntp
+          git -C /tmp/tntp sparse-checkout set SiouxFalls Anaheim Winnipeg Chicago-Sketch chicago-regional
+          git -C /tmp/tntp checkout d1639b4ef218c17928ba573e806ddf8ba5e7ae6d
+          tar -czf export/development-networks.tar.gz -C /tmp/tntp README.md SiouxFalls Anaheim Winnipeg Chicago-Sketch chicago-regional
+          git clone https://github.com/SakanaAI/ShinkaEvolve.git /tmp/shinka
+          git -C /tmp/shinka archive 9912af12d423504b8d580f4179fd15f5f88b8c50 > export/shinka.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repair-inputs
+          path: export/
+          retention-days: 7
