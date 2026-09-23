@@ -4,6 +4,7 @@ on:
     branches: [work/mutation-feedback]
 permissions:
   contents: write
+  actions: read
 jobs:
   commission:
     if: contains(github.event.head_commit.message, 'COMMISSION_M7')
@@ -16,68 +17,52 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Apply checksum-verified reviewed source and freeze before execution
+      - name: Freeze reviewed cleanup follow-up before execution
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import base64, gzip, hashlib, json, pathlib, shutil, subprocess
-          parts=[]
-          for p in sorted(pathlib.Path('.feedback-delivery').glob('part*')):
-              raw=p.read_bytes()
-              if p.name=='part08':
-                  encoded=base64.b64encode(raw).decode()
-                  assert encoded.count('61GG00RvDh/Hh/HpiKo')==1
-                  encoded=encoded.replace('61GG00RvDh/Hh/HpiKo','61GG00RvDh/HpiKo')
-                  assert encoded.endswith('BVDbbM=')
-                  encoded=encoded[:-2]+'N'
-                  raw=base64.b64decode(encoded,validate=True)
-                  assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()=='897c1d51d9b40ae198c9a0f1aae8a0006b9c15b3'
-              parts.append(raw)
-          data=b''.join(parts)
-          assert hashlib.sha256(data).hexdigest()=='e25d4662b26e7cf3d237320fd195cdee35a1d413f6ff3f03669269e0f557a75e'
-          payload=json.loads(gzip.decompress(data))
-          assert payload['base_commit']=='fc459b5cf56037005b69665f12a24b9e998e936e'
-          subprocess.run(['git','merge-base','--is-ancestor',payload['base_commit'],'HEAD'],check=True)
-          subprocess.run(['git','apply','--check'],input=payload['patch'],text=True,check=True)
-          subprocess.run(['git','apply'],input=payload['patch'],text=True,check=True)
-          for name,text in payload['files'].items():
-              p=pathlib.Path(name)
-              assert not p.is_absolute() and '..' not in p.parts and p.parts[0]!='.github'
-              assert not p.exists(),name
-              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
-          shutil.rmtree('.feedback-delivery')
-          PY
+          git apply --check .feedback-followup.patch
+          git apply .feedback-followup.patch
+          rm .feedback-followup.patch
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'Freeze M7 task context, bounded diagnostics and native request-boundary checks'
+          git commit -m 'Preserve failed-probe records and verify Docker cleanup after malformed output'
           git push origin HEAD:work/mutation-feedback
-      - name: Install the pinned native framework and execute the full test suite
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 35857061681
+          name: m7-feedback-35857061681
+          path: /tmp/m7-prior-attempt
+      - name: Preserve the incomplete attempt without reclassifying it
+        run: |
+          mkdir -p results/feedback-integration/attempts
+          cp /tmp/m7-prior-attempt/m7-outcomes.tar.gz results/feedback-integration/attempts/35857061681.tar.gz
+      - name: Install pinned native framework and run all tests
         run: |
           set -euo pipefail
-          mkdir -p results/feedback-integration
           python -m pip install -e . -r requirements-certificates.txt -r requirements-shinka.txt > results/feedback-integration/install.txt 2>&1
           python -m unittest discover -s tests -v > results/feedback-integration/tests.txt 2>&1
           tail -5 results/feedback-integration/tests.txt
-      - name: Prepare development only and resolve the existing immutable Docker image
+      - name: Prepare development only and resolve immutable Docker image
         run: |
           set -euo pipefail
           python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m6.json --output data/commissioning_m7 > results/feedback-integration/prepare.txt
           docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
           IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
           echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
-      - name: Native seed, isolated fault probes and native mutation/meta payload verification
+      - name: Native seed, isolated fault probes and actual native request-boundary checks
         run: |
           set -euo pipefail
           python scripts/commission_feedback.py --suite data/commissioning_m7/suite.json --docker-image "$IMAGE_ID" --output results/feedback-integration --update-readme > results/feedback-integration/execution.txt 2>&1
           tail -60 results/feedback-integration/execution.txt
-      - name: Publish actual evidence and update the scientific README
+      - name: Publish actual evidence and scientific README
         run: |
           set -euo pipefail
           python -m pip freeze > results/feedback-integration/dependencies.txt
           python - <<'PY'
           from pathlib import Path
-          p=Path('README.md');text=p.read_text();lines=text.splitlines()
+          p=Path('README.md');lines=p.read_text().splitlines()
           for i,line in enumerate(lines):
               if line.startswith('**Status:'):
                   lines[i]='**Status: M7 task-aware mutation/meta feedback and bounded repair diagnostics implemented and verified. Section 5.9 reports functional integration, not improved evolutionary performance. No evolutionary campaign completed.**'
@@ -85,9 +70,9 @@ jobs:
           p.write_text('\n'.join(lines)+'\n')
           PY
           git add README.md results/feedback-integration
-          git commit -m 'Record M7 Docker repair diagnostics and actual native prompt/meta integration evidence'
+          git commit -m 'Record M7 Docker diagnostics, bounded native mutation/meta inputs and incomplete first attempt'
           git push origin HEAD:work/mutation-feedback
-      - name: Preserve exact source and outcomes even after a failed check
+      - name: Preserve source and outcomes even after failure
         if: always()
         run: |
           git archive HEAD > /tmp/m7-source.tar
