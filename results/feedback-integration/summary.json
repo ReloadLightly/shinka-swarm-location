@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "stage": "m7_feedback_integration",
+  "success": true,
+  "package_version": "0.0.7",
+  "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "test_count": 204,
+  "development_seed": {
+    "paired_cases": 24,
+    "solver_trials": 120,
+    "failed_trials": 0,
+    "deployments_rescored": 924,
+    "scalar_recomputed_exactly": true,
+    "feedback_recomputed_exactly": true
+  },
+  "fault_probes": [
+    {
+      "name": "missing_import",
+      "category": "import_failure",
+      "correct": false
+    },
+    {
+      "name": "syntax_import",
+      "category": "import_failure",
+      "correct": false
+    },
+    {
+      "name": "runtime_name",
+      "category": "runtime_exception",
+      "correct": false
+    },
+    {
+      "name": "invalid_deployment",
+      "category": "invalid_deployment",
+      "correct": false
+    },
+    {
+      "name": "protocol",
+      "category": "protocol_violation",
+      "correct": false
+    },
+    {
+      "name": "return_failure",
+      "category": "return_failure",
+      "correct": false
+    },
+    {
+      "name": "hard_exit",
+      "category": "worker_exit",
+      "correct": false
+    },
+    {
+      "name": "deadline_incumbent",
+      "category": "deadline_reached",
+      "correct": true
+    },
+    {
+      "name": "deadline_no_answer",
+      "category": "deadline_reached",
+      "correct": true
+    },
+    {
+      "name": "stderr_flood",
+      "category": "completed",
+      "correct": true
+    },
+    {
+      "name": "redaction",
+      "category": "runtime_exception",
+      "correct": false
+    },
+    {
+      "name": "spoof_success",
+      "category": "invalid_deployment",
+      "correct": false
+    }
+  ],
+  "synthetic_failed_evaluation_trials": 10,
+  "native_payload_check": {
+    "package_version": "0.0.7",
+    "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+    "success": true,
+    "mutation_formats_checked": [
+      "diff",
+      "full",
+      "cross",
+      "fix"
+    ],
+    "native_meta_stages_checked": 3,
+    "native_meta_individual_programs": 2,
+    "native_sqlite_feedback_roundtrip": true,
+    "native_meta_state_roundtrip": true,
+    "meta_context_in_all_three_requests": true,
+    "failure_feedback_in_native_fix": true,
+    "crossover_meta_recommendation_behavior": "Native omission preserved; task brief and parent feedback present",
+    "context_sha256": "5f50840d81d3976125763605367cbd0fedd2bad9cf66f81c48c565bd6b8211cf",
+    "context_characters": 5773,
+    "mutation_bandit_and_novelty_clients_untouched": true,
+    "model_calls": 0,
+    "evolved_descendants": 0,
+    "scope": "OFFLINE_TEST_FIXTURE_NO_LLM: transport responses are labelled fixtures, not model output"
+  },
+  "continuity": {
+    "base_commit": "fc459b5cf56037005b69665f12a24b9e998e936e",
+    "success": true,
+    "unchanged_file_count": 167,
+    "declared_source_changes": {
+      "campaign.py": {
+        "before_sha256": "53e80d62f7219cc7c89ec8e7d1b6b7b532fc692fff2d86560540d4d4f0e8459a",
+        "after_sha256": "d05e52e76daf8311d1bb2b93f1ea1f84a50b133f2609984db207d592d942d47b"
+      },
+      "evaluate_anytime.py": {
+        "before_sha256": "302852bc9f411a336a1ae4163e106b7b1ba4b6ebc627a5e74c1caaf08d6af72f",
+        "after_sha256": "111454638aee822115b9b278b85e09dd9adab1b61f032670f7b3328c98d0dfce"
+      },
+      "run_evo.py": {
+        "before_sha256": "dc25997b47024a0153725d192d5f867390347e5b2baf8804514b06d91fcb3e90",
+        "after_sha256": "9447e17e7bca718c7e48c183bb92565c961398cfa3961aa4f60d75153e5c12fe"
+      },
+      "swarm_location/anytime.py": {
+        "before_sha256": "21914ca9d80420031ca30f223722ed8eb668d3b10b458f5c8fe07946b054bfb7",
+        "after_sha256": "d59db862b81aaf56fc012c11bfbd7e20948fe3adc0f7b291e1acd28715d5e56b"
+      },
+      "swarm_location/anytime_worker.py": {
+        "before_sha256": "3808b163d55b10de91ca1768518c360b5015b2f6d281ef2c5845b21692f1adb4",
+        "after_sha256": "8eb396b7d43483216df691f2da5e643b7d4b2ad069a3094aa3dd4ff182f4dc3e"
+      },
+      "swarm_location/isolation.py": {
+        "before_sha256": "e31f1a5e398f79d066e816efe79411e08352071cce348c4db8f78f8a5ef8780d",
+        "after_sha256": "c11513804ad38b49b844e6a533874805c90d7bb42fd3708b6d57497846ba0cf4"
+      }
+    },
+    "historical_readme_blocks_unchanged": [
+      "RESULTS-TABLE",
+      "M2-RESULTS",
+      "M3-RESULTS",
+      "QUALITY-CERTIFICATES",
+      "EXCHANGE-LANDSCAPE",
+      "STRONG-BASELINES",
+      "M4-INTEGRATION",
+      "M5-TIMING",
+      "M5-VISUALS",
+      "M6-EARLY-CONTROLS",
+      "M6-INTERPRETATION",
+      "M6-EARLY-FIGURES"
+    ],
+    "timing_scope": "Receiver instrumentation changed; no assertion of timing equivalence or transfer of M5 guard"
+  },
+  "docker_image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "workflow_run": "35858037514",
+  "source_commit": "dc76b2a44cbfe2d1a5fdcd51d6cc551980251a7f",
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "research_validation_test_trials": 0,
+  "scope": "Functional integration, NOT a timing calibration, LLM efficacy ablation or evolutionary campaign"
+}

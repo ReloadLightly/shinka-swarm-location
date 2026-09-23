@@ -1,0 +1,4 @@
+{
+  "correct": false,
+  "error": "[{\"dataset\": \"unit-development\", \"k\": 1, \"seed\": 0, \"method\": \"candidate\", \"error\": \"worker did not finish cleanly (exit=1)\"}, {\"dataset\": \"unit-development\", \"k\": 2, \"seed\": 0, \"method\": \"candidate\", \"error\": \"worker did not finish cleanly (exit=1)\"}]"
+}

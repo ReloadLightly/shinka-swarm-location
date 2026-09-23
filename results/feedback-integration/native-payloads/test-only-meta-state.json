@@ -1,0 +1,10 @@
+{
+  "unprocessed_programs": [],
+  "meta_summary": "OFFLINE_TEST_FIXTURE_NO_LLM individual summary 0\n**Program Identifier:** Generation 0 - Patch Name unchanged-seed-probe - Correct Program: 1\n\nOFFLINE_TEST_FIXTURE_NO_LLM individual summary 1\n**Program Identifier:** Generation 0 - Patch Name synthetic-failure-probe - Correct Program: 0",
+  "meta_scratch_pad": "OFFLINE_TEST_FIXTURE_NO_LLM global scratchpad",
+  "meta_recommendations": "1. OFFLINE_TEST_FIXTURE_NO_LLM preserve observations separately from hypotheses.",
+  "meta_recommendations_history": [
+    "1. OFFLINE_TEST_FIXTURE_NO_LLM preserve observations separately from hypotheses."
+  ],
+  "total_programs_meta_processed": 2
+}

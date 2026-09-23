@@ -1,0 +1,150 @@
+{
+  "version": "m7-evidence-feedback-v1",
+  "split": "development",
+  "evaluation_valid": true,
+  "checkpoints_seconds": [
+    0.02,
+    0.1,
+    0.5,
+    2.0
+  ],
+  "numerical_observations": [
+    {
+      "dataset": "Anaheim",
+      "k": 3,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        22.221532383776022,
+        52.468326863710004,
+        52.468326863710004,
+        52.468326863710004
+      ],
+      "final_coverage_pct": 52.468326863710004,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.03823023033332144
+    },
+    {
+      "dataset": "Anaheim",
+      "k": 6,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        22.221532383776022,
+        74.49806293364306,
+        74.49806293364306,
+        74.49806293364306
+      ],
+      "final_coverage_pct": 74.49806293364306,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.0749617786666666
+    },
+    {
+      "dataset": "Anaheim",
+      "k": 12,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        22.221532383776022,
+        83.39882553412599,
+        93.1237009811413,
+        93.1237009811413
+      ],
+      "final_coverage_pct": 93.1237009811413,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.14652830133333813
+    },
+    {
+      "dataset": "Anaheim",
+      "k": 24,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        22.221532383776022,
+        83.39882553412599,
+        99.54658510865912,
+        99.54658510865912
+      ],
+      "final_coverage_pct": 99.54658510865912,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.2891658036666532
+    },
+    {
+      "dataset": "SiouxFalls",
+      "k": 1,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        34.08208541320022,
+        34.08208541320022,
+        34.08208541320022,
+        34.08208541320022
+      ],
+      "final_coverage_pct": 34.08208541320022,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.001163410666672841
+    },
+    {
+      "dataset": "SiouxFalls",
+      "k": 3,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        64.50360510260677,
+        64.50360510260677,
+        64.50360510260677,
+        64.50360510260677
+      ],
+      "final_coverage_pct": 64.50360510260677,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.0022037219999949307
+    },
+    {
+      "dataset": "SiouxFalls",
+      "k": 4,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        73.43316694398224,
+        73.43316694398224,
+        73.43316694398224,
+        73.43316694398224
+      ],
+      "final_coverage_pct": 73.43316694398224,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.0026726863333360975
+    },
+    {
+      "dataset": "SiouxFalls",
+      "k": 6,
+      "cases": 3,
+      "valid": true,
+      "failed_candidate_cases": 0,
+      "checkpoint_coverage_pct": [
+        85.8014420410427,
+        85.8014420410427,
+        85.8014420410427,
+        85.8014420410427
+      ],
+      "final_coverage_pct": 85.8014420410427,
+      "first_complete_received_cases": 3,
+      "mean_first_complete_seconds": 0.0036553779999953426
+    }
+  ],
+  "outcome_counts": {},
+  "untrusted_repair_examples": [],
+  "text_feedback": "M7 evidence feedback; split=development; evaluation_valid=True. Parent-scored measurements and untrusted repair hints are separate.\nParent outcome counts: {}\nCheckpoint seconds: [0.02, 0.1, 0.5, 2.0]. Coverage values below are percentages, deltas are pp.\nAnaheim k=3: coverage [22.221532, 52.468327, 52.468327, 52.468327]; final 52.468327%; first complete 3/3 cases; mean seconds 0.03823023033332144.\nAnaheim k=6: coverage [22.221532, 74.498063, 74.498063, 74.498063]; final 74.498063%; first complete 3/3 cases; mean seconds 0.0749617786666666.\nAnaheim k=12: coverage [22.221532, 83.398826, 93.123701, 93.123701]; final 93.123701%; first complete 3/3 cases; mean seconds 0.14652830133333813.\nAnaheim k=24: coverage [22.221532, 83.398826, 99.546585, 99.546585]; final 99.546585%; first complete 3/3 cases; mean seconds 0.2891658036666532.\nSiouxFalls k=1: coverage [34.082085, 34.082085, 34.082085, 34.082085]; final 34.082085%; first complete 3/3 cases; mean seconds 0.001163410666672841.\nSiouxFalls k=3: coverage [64.503605, 64.503605, 64.503605, 64.503605]; final 64.503605%; first complete 3/3 cases; mean seconds 0.0022037219999949307.\nSiouxFalls k=4: coverage [73.433167, 73.433167, 73.433167, 73.433167]; final 73.433167%; first complete 3/3 cases; mean seconds 0.0026726863333360975.\nSiouxFalls k=6: coverage [85.801442, 85.801442, 85.801442, 85.801442]; final 85.801442%; first complete 3/3 cases; mean seconds 0.0036553779999953426.\nAgainst greedy: checkpoint deltas [0.0, 0.971088, 0.0, 0.0]; mean +0.242772 pp; final +0.000000 pp.\nAgainst greedy_swap: checkpoint deltas [-0.603161, 0.367927, -0.603161, -0.603567]; mean -0.360491 pp; final -0.603567 pp.\nAgainst topk: checkpoint deltas [-22.133117, 3.476622, 6.710701, 6.710701]; mean -1.308773 pp; final +6.710701 pp.\nAgainst early_celf_swap: checkpoint deltas [5.764323, -3.837647, -0.603567, -0.603567]; mean +0.179885 pp; final -0.603567 pp.\nAnaheim k=3 vs greedy: mean +0.000000, final +0.000000 pp\nAnaheim k=3 vs greedy_swap: mean +0.000000, final +0.000000 pp\nAnaheim k=3 vs topk: mean -7.561699, final +0.000000 pp\nAnaheim k=3 vs early_celf_swap: mean +1.183023, final +0.000000 pp\nAnaheim k=6 vs greedy: mean +0.000000, final +0.000000 pp\nAnaheim k=6 vs greedy_swap: mean +0.000000, final +0.000000 pp\nAnaheim k=6 vs topk: mean +0.058504, final +13.127636 pp\nAnaheim k=6 vs early_celf_swap: mean +0.441181, final +0.000000 pp\nAnaheim k=12 vs greedy: mean +0.971088, final +0.000000 pp\nAnaheim k=12 vs greedy_swap: mean +0.971088, final +0.000000 pp\nAnaheim k=12 vs topk: mean -5.945686, final +14.211075 pp\nAnaheim k=12 vs early_celf_swap: mean +3.124164, final +0.000000 pp\nAnaheim k=24 vs greedy: mean +0.971088, final +0.000000 pp\nAnaheim k=24 vs greedy_swap: mean +0.970276, final -0.003248 pp\nAnaheim k=24 vs topk: mean -10.582037, final +12.786166 pp\nAnaheim k=24 vs early_celf_swap: mean +1.516008, final -0.003248 pp\nSiouxFalls k=1 vs greedy: mean +0.000000, final +0.000000 pp\nSiouxFalls k=1 vs greedy_swap: mean +0.000000, final +0.000000 pp\nSiouxFalls k=1 vs topk: mean +0.000000, final +0.000000 pp\nSiouxFalls k=1 vs early_celf_swap: mean +0.000000, final +0.000000 pp\nSiouxFalls k=3 vs greedy: mean +0.000000, final +0.000000 pp\nSiouxFalls k=3 vs greedy_swap: mean -2.412646, final -2.412646 pp\nSiouxFalls k=3 vs topk: mean +2.495840, final +2.495840 pp\nSiouxFalls k=3 vs early_celf_swap: mean -2.412646, final -2.412646 pp\nSiouxFalls k=4 vs greedy: mean +0.000000, final +0.000000 pp\nSiouxFalls k=4 vs greedy_swap: mean -1.247920, final -1.247920 pp\nSiouxFalls k=4 vs topk: mean +4.021076, final +4.021076 pp\nSiouxFalls k=4 vs early_celf_swap: mean -1.247920, final -1.247920 pp\nSiouxFalls k=6 vs greedy: mean +0.000000, final +0.000000 pp\nSiouxFalls k=6 vs greedy_swap: mean -1.164725, final -1.164725 pp\nSiouxFalls k=6 vs topk: mean +7.043816, final +7.043816 pp\nSiouxFalls k=6 vs early_celf_swap: mean -1.164725, final -1.164725 pp\nAssessment controls NOT RUN here: dfbnb, early_dfbnb, early_iterated, early_potential, iterated, potential.\nObservation: report the above metric, network/budget and comparator, retaining negative results. Hypothesis: early-only gains could reflect earlier output rather than better final optimization; the trace alone does not identify route-construction timing or prove a mechanism. Next test: inspect code, freeze it, and compare matched early-initialized fixed controls (early_iterated/early_dfbnb/early_potential) on development with the same deadline. Falsifier: an advantage disappearing under matched initialization or repeated timings weakens that mechanism claim. Do not label hypotheses as observations; no automatic discovery, holdout transfer or swarm-intelligence claim. Correctness is not a research validation score.",
+  "text_truncated": false,
+  "mechanism_inferred_from_stderr": false,
+  "scope": "Descriptions and testable hypotheses only; fitness and selection unchanged.",
+  "context_sha256": "5f50840d81d3976125763605367cbd0fedd2bad9cf66f81c48c565bd6b8211cf",
+  "suite_sha256": "c30c3be6233025947ee4d04d2769eebc8694e73e494f2d104466fd84a471a233",
+  "candidate_sha256": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285"
+}

@@ -1,0 +1,15 @@
+unit-development k=1 seed=0: greedy=100.0000%, greedy_swap=100.0000%, topk=100.0000%, early_celf_swap=100.0000%, candidate=0.0000%
+unit-development k=2 seed=0: greedy=100.0000%, greedy_swap=100.0000%, topk=100.0000%, early_celf_swap=100.0000%, candidate=0.0000%
+{
+  "combined_score": 0.0,
+  "stage": "m4_anytime_candidate_evaluation",
+  "split": "development",
+  "paired_cases": 2,
+  "source_datasets": 1,
+  "mean_checkpoint_coverage_pct": 0.0,
+  "delta_vs_greedy_pp": -100.0,
+  "delta_vs_greedy_swap_pp": -100.0,
+  "failed_cases": 2,
+  "fixed_controls": 4,
+  "solver_trials": 10
+}

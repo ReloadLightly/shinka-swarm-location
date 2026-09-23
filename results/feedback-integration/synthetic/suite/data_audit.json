@@ -1,0 +1,49 @@
+{
+  "catalog_sha256": "71e20bf1ae184fafd96406f0822c2d05df15dbe288422ecd58339325216751d0",
+  "scope": "Input structure, demand and reachability only; no deployment scoring",
+  "datasets": [
+    {
+      "id": "unit-development",
+      "source_graph": "unit-development",
+      "split": "development",
+      "nodes": 3,
+      "edges": 2,
+      "positive_od_pairs": 1,
+      "total_demand": 5.0,
+      "origins": 1,
+      "first_thru_node": 1,
+      "prepared_sha256": "7ce8892695bafefea111eab9c296381d8673af0067795c441e6d4d9ea2a72d6d",
+      "header_audit": {
+        "declared_header": "5",
+        "exact_od_sum": "5",
+        "sum_minus_header": "0",
+        "header_only_roundoff": false,
+        "tolerance": {
+          "absolute": "0.000000001",
+          "relative": "0.000000000001"
+        },
+        "od_entries_modified": 0,
+        "od_entries_dropped": 0,
+        "source_bytes_modified": false,
+        "comment_lines_ignored": 0
+      },
+      "files": {
+        "network": {
+          "path": "development/network.tntp",
+          "git_blob_sha1": "4381e54cbca65c079fcea332e952842b9beb8876",
+          "sha256": "0b6a5edbb2ed904efaceb3a72cd1ffa7d37e1e86e1a32ce6b34b37dcf94d5716"
+        },
+        "trips": {
+          "path": "development/trips.tntp",
+          "git_blob_sha1": "ecaba138daf0fb40232cd6110c25e9ae4c0abfdc",
+          "sha256": "b247a13520f35d23091ab7e725a1f0e76b91b9e2fdef1dcc2de183dd1530a03b"
+        }
+      },
+      "shortest_routes": 1,
+      "positive_demand_reachable": true,
+      "solver_evaluations": 0
+    }
+  ],
+  "excluded": [],
+  "solver_evaluations": 0
+}

@@ -1,0 +1,24 @@
+{
+  "package_version": "0.0.7",
+  "installed_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "success": true,
+  "mutation_formats_checked": [
+    "diff",
+    "full",
+    "cross",
+    "fix"
+  ],
+  "native_meta_stages_checked": 3,
+  "native_meta_individual_programs": 2,
+  "native_sqlite_feedback_roundtrip": true,
+  "native_meta_state_roundtrip": true,
+  "meta_context_in_all_three_requests": true,
+  "failure_feedback_in_native_fix": true,
+  "crossover_meta_recommendation_behavior": "Native omission preserved; task brief and parent feedback present",
+  "context_sha256": "5f50840d81d3976125763605367cbd0fedd2bad9cf66f81c48c565bd6b8211cf",
+  "context_characters": 5773,
+  "mutation_bandit_and_novelty_clients_untouched": true,
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "scope": "OFFLINE_TEST_FIXTURE_NO_LLM: transport responses are labelled fixtures, not model output"
+}

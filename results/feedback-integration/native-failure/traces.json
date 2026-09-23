@@ -1,0 +1,972 @@
+{
+  "stage": "m2_complete",
+  "protocol": {
+    "schema_version": 2,
+    "name": "m6-early-controls-v1-development",
+    "catalog_sha256": "71e20bf1ae184fafd96406f0822c2d05df15dbe288422ecd58339325216751d0",
+    "checkpoints_seconds": [
+      0.1,
+      0.3
+    ],
+    "seeds": [
+      0
+    ],
+    "extra_baselines": [
+      "topk",
+      "early_celf_swap"
+    ],
+    "datasets": [
+      {
+        "id": "unit-development",
+        "source_graph": "unit-development",
+        "split": "development",
+        "path": "unit-development.json",
+        "sha256": "7ce8892695bafefea111eab9c296381d8673af0067795c441e6d4d9ea2a72d6d",
+        "budgets": [
+          1,
+          2
+        ]
+      }
+    ],
+    "scope": "Whole source-family split; public data may have occurred in model pretraining",
+    "comparison_profile": {
+      "definition": {
+        "schema_version": 1,
+        "profile_id": "m6-early-controls-v1",
+        "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+        "baseline_sets": {
+          "development": [
+            "greedy",
+            "greedy_swap",
+            "topk",
+            "early_celf_swap"
+          ],
+          "validation": [
+            "greedy",
+            "greedy_swap",
+            "topk",
+            "early_celf_swap",
+            "iterated",
+            "dfbnb",
+            "potential",
+            "early_iterated",
+            "early_dfbnb",
+            "early_potential"
+          ],
+          "test": [
+            "greedy",
+            "greedy_swap",
+            "topk",
+            "early_celf_swap",
+            "iterated",
+            "dfbnb",
+            "potential",
+            "early_iterated",
+            "early_dfbnb",
+            "early_potential"
+          ]
+        },
+        "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim"
+      },
+      "definition_sha256": "698c0da24490d0f56c8b19932fccb7a6f6e603ae38cba99c3d127aa9872c79eb",
+      "file_sha256": "74c61442580f66cfd4f4881a0b16e47ee27fb0a0d90dee50a8d4dbbfd546b81d",
+      "stage": "development"
+    }
+  },
+  "suite_sha256": "510fcfcf09ee31d79a24f2746e626a6b75c35619f4f0d762ca3dbf0a72b9764f",
+  "split": "development",
+  "cases": [
+    {
+      "dataset": "unit-development",
+      "source_graph": "unit-development",
+      "k": 1,
+      "seed": 0,
+      "execution_order": [
+        "greedy_swap",
+        "early_celf_swap",
+        "greedy",
+        "topk",
+        "candidate"
+      ],
+      "methods": {
+        "greedy_swap": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.004963484000001017,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2617733390000012,
+          "total_wall_seconds_before_scoring": 0.3176608250000186,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.004963484000001017,
+              []
+            ],
+            [
+              0.004963484000001017,
+              [
+                1
+              ]
+            ],
+            [
+              0.005704543000007334,
+              [
+                1
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 1,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "early_celf_swap": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.00700086699998792,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "solver_diagnostics": [
+            [
+              0.007164590000002136,
+              {
+                "method": "early_celf_swap",
+                "fallback": false,
+                "route_limit": 20000,
+                "cycles": 0,
+                "accepted_worse_working_states": 0,
+                "route_preparation_seconds": 0.00010322300002485463,
+                "raw_shortest_routes": 1,
+                "unique_route_masks": 1,
+                "route_visits": 3
+              }
+            ],
+            [
+              0.007281989000006206,
+              {
+                "method": "early_celf_swap",
+                "fallback": false,
+                "route_limit": 20000,
+                "cycles": 0,
+                "accepted_worse_working_states": 0,
+                "route_preparation_seconds": 0.00010322300002485463,
+                "raw_shortest_routes": 1,
+                "unique_route_masks": 1,
+                "route_visits": 3,
+                "gain_evaluations": 3,
+                "descent_swaps": 0,
+                "solver_wall_seconds": 0.00023967500001731423,
+                "uncached_weight_evaluations": 2
+              }
+            ]
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2629137730000082,
+          "total_wall_seconds_before_scoring": 0.3217743740000003,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.00700086699998792,
+              []
+            ],
+            [
+              0.00700086699998792,
+              [
+                1
+              ]
+            ],
+            [
+              0.007281989000006206,
+              [
+                1
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 1,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "greedy": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.005580449000007093,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.26417941500000097,
+          "total_wall_seconds_before_scoring": 0.3233398559999898,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.005580449000007093,
+              []
+            ],
+            [
+              0.005580449000007093,
+              [
+                1
+              ]
+            ],
+            [
+              0.005580449000007093,
+              [
+                1
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 1,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "topk": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.005845241999992368,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2604679530000169,
+          "total_wall_seconds_before_scoring": 0.31728619000000435,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.005015140000011797,
+              []
+            ],
+            [
+              0.005845241999992368,
+              [
+                1
+              ]
+            ],
+            [
+              0.005845241999992368,
+              [
+                1
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 1,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "candidate": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            0.0,
+            0.0
+          ],
+          "mean_checkpoint_coverage": 0.0,
+          "final_coverage": 0.0,
+          "selected": [],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            }
+          ],
+          "correct": false,
+          "error": "worker did not finish cleanly (exit=1)",
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "worker_exit",
+            "category": "runtime_exception",
+            "category_basis": "worker_reported_untrusted",
+            "exit_code": 1,
+            "stderr_bytes_observed": 333,
+            "tail_truncated": false,
+            "worker_exception": {
+              "phase": "candidate_solve",
+              "exception_type": "NameError",
+              "message": "name 'missing_symbol_m7' is not defined",
+              "frames": [
+                {
+                  "file": "anytime_worker.py",
+                  "line": 65,
+                  "function": "<module>"
+                },
+                {
+                  "file": "anytime_worker.py",
+                  "line": 55,
+                  "function": "main"
+                },
+                {
+                  "file": "candidate.py",
+                  "line": 2,
+                  "function": "solve"
+                }
+              ]
+            },
+            "excerpt": "anytime_worker.py:65 in <module>\nanytime_worker.py:55 in main\ncandidate.py:2 in solve\nNameError: name 'missing_symbol_m7' is not defined",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.26299094600000217,
+          "total_wall_seconds_before_scoring": 0.318981339000004,
+          "received_deployments": 0,
+          "events": [],
+          "seed": 0,
+          "k": 1,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        }
+      }
+    },
+    {
+      "dataset": "unit-development",
+      "source_graph": "unit-development",
+      "k": 2,
+      "seed": 0,
+      "execution_order": [
+        "topk",
+        "greedy_swap",
+        "candidate",
+        "early_celf_swap",
+        "greedy"
+      ],
+      "methods": {
+        "topk": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1,
+            2
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.005042095999982621,
+              "coverage": 1.0,
+              "selected": [
+                1,
+                2
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.26231441299998437,
+          "total_wall_seconds_before_scoring": 0.3179567399999996,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.005042095999982621,
+              []
+            ],
+            [
+              0.005042095999982621,
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              0.005042095999982621,
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 2,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "greedy_swap": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.0056321259999947415,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2549195019999786,
+          "total_wall_seconds_before_scoring": 0.3116929020000043,
+          "received_deployments": 4,
+          "events": [
+            [
+              0.0056321259999947415,
+              []
+            ],
+            [
+              0.0056321259999947415,
+              [
+                1
+              ]
+            ],
+            [
+              0.005708909999981415,
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              0.005767476999977816,
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 2,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "candidate": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            0.0,
+            0.0
+          ],
+          "mean_checkpoint_coverage": 0.0,
+          "final_coverage": 0.0,
+          "selected": [],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            }
+          ],
+          "correct": false,
+          "error": "worker did not finish cleanly (exit=1)",
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "worker_exit",
+            "category": "runtime_exception",
+            "category_basis": "worker_reported_untrusted",
+            "exit_code": 1,
+            "stderr_bytes_observed": 333,
+            "tail_truncated": false,
+            "worker_exception": {
+              "phase": "candidate_solve",
+              "exception_type": "NameError",
+              "message": "name 'missing_symbol_m7' is not defined",
+              "frames": [
+                {
+                  "file": "anytime_worker.py",
+                  "line": 65,
+                  "function": "<module>"
+                },
+                {
+                  "file": "anytime_worker.py",
+                  "line": 55,
+                  "function": "main"
+                },
+                {
+                  "file": "candidate.py",
+                  "line": 2,
+                  "function": "solve"
+                }
+              ]
+            },
+            "excerpt": "anytime_worker.py:65 in <module>\nanytime_worker.py:55 in main\ncandidate.py:2 in solve\nNameError: name 'missing_symbol_m7' is not defined",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2747064899999998,
+          "total_wall_seconds_before_scoring": 0.33332716299997855,
+          "received_deployments": 0,
+          "events": [],
+          "seed": 0,
+          "k": 2,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "early_celf_swap": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1,
+            2
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.007532756000017571,
+              "coverage": 1.0,
+              "selected": [
+                1,
+                2
+              ]
+            }
+          ],
+          "solver_diagnostics": [
+            [
+              0.007677932000007104,
+              {
+                "method": "early_celf_swap",
+                "fallback": false,
+                "route_limit": 20000,
+                "cycles": 0,
+                "accepted_worse_working_states": 0,
+                "route_preparation_seconds": 9.515100001067367e-05,
+                "raw_shortest_routes": 1,
+                "unique_route_masks": 1,
+                "route_visits": 3
+              }
+            ],
+            [
+              0.007746393000019225,
+              {
+                "method": "early_celf_swap",
+                "fallback": false,
+                "route_limit": 20000,
+                "cycles": 0,
+                "accepted_worse_working_states": 0,
+                "route_preparation_seconds": 9.515100001067367e-05,
+                "raw_shortest_routes": 1,
+                "unique_route_masks": 1,
+                "route_visits": 3,
+                "gain_evaluations": 5,
+                "descent_swaps": 0,
+                "solver_wall_seconds": 0.00022546400001033362,
+                "uncached_weight_evaluations": 2
+              }
+            ]
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.2707158970000023,
+          "total_wall_seconds_before_scoring": 0.330758043000003,
+          "received_deployments": 3,
+          "events": [
+            [
+              0.007532756000017571,
+              []
+            ],
+            [
+              0.007532756000017571,
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              0.007746393000019225,
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 2,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        },
+        "greedy": {
+          "checkpoints_seconds": [
+            0.1,
+            0.3
+          ],
+          "coverage_at_checkpoints": [
+            1.0,
+            1.0
+          ],
+          "mean_checkpoint_coverage": 1.0,
+          "final_coverage": 1.0,
+          "selected": [
+            1
+          ],
+          "improvements": [
+            {
+              "received_seconds": 0.0,
+              "coverage": 0.0,
+              "selected": []
+            },
+            {
+              "received_seconds": 0.005601452000007612,
+              "coverage": 1.0,
+              "selected": [
+                1
+              ]
+            }
+          ],
+          "correct": true,
+          "error": null,
+          "diagnostic": {
+            "schema_version": 1,
+            "parent_observation": "completed",
+            "category": "completed",
+            "category_basis": "parent_observed",
+            "exit_code": 0,
+            "stderr_bytes_observed": 0,
+            "tail_truncated": false,
+            "worker_exception": null,
+            "excerpt": "",
+            "trust": "Untrusted diagnostic data only; cannot award correctness, coverage or fitness."
+          },
+          "termination": "completed",
+          "setup_wall_seconds": 0.25641559400000347,
+          "total_wall_seconds_before_scoring": 0.31641485700001226,
+          "received_deployments": 4,
+          "events": [
+            [
+              0.005601452000007612,
+              []
+            ],
+            [
+              0.005601452000007612,
+              [
+                1
+              ]
+            ],
+            [
+              0.005601452000007612,
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              0.005601452000007612,
+              [
+                1,
+                2
+              ]
+            ]
+          ],
+          "seed": 0,
+          "k": 2,
+          "instance": "unit-development-free-flow",
+          "isolation": {
+            "mode": "docker",
+            "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+            "network": "none",
+            "user": "65534:65534",
+            "read_only": true,
+            "memory_mib": 768,
+            "cpus": 1,
+            "pids_limit": 64
+          }
+        }
+      }
+    }
+  ]
+}

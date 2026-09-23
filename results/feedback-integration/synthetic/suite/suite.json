@@ -1,0 +1,73 @@
+{
+  "schema_version": 2,
+  "name": "m6-early-controls-v1-development",
+  "catalog_sha256": "71e20bf1ae184fafd96406f0822c2d05df15dbe288422ecd58339325216751d0",
+  "checkpoints_seconds": [
+    0.1,
+    0.3
+  ],
+  "seeds": [
+    0
+  ],
+  "extra_baselines": [
+    "topk",
+    "early_celf_swap"
+  ],
+  "datasets": [
+    {
+      "id": "unit-development",
+      "source_graph": "unit-development",
+      "split": "development",
+      "path": "unit-development.json",
+      "sha256": "7ce8892695bafefea111eab9c296381d8673af0067795c441e6d4d9ea2a72d6d",
+      "budgets": [
+        1,
+        2
+      ]
+    }
+  ],
+  "scope": "Whole source-family split; public data may have occurred in model pretraining",
+  "comparison_profile": {
+    "definition": {
+      "schema_version": 1,
+      "profile_id": "m6-early-controls-v1",
+      "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+      "baseline_sets": {
+        "development": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap"
+        ],
+        "validation": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap",
+          "iterated",
+          "dfbnb",
+          "potential",
+          "early_iterated",
+          "early_dfbnb",
+          "early_potential"
+        ],
+        "test": [
+          "greedy",
+          "greedy_swap",
+          "topk",
+          "early_celf_swap",
+          "iterated",
+          "dfbnb",
+          "potential",
+          "early_iterated",
+          "early_dfbnb",
+          "early_potential"
+        ]
+      },
+      "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim"
+    },
+    "definition_sha256": "698c0da24490d0f56c8b19932fccb7a6f6e603ae38cba99c3d127aa9872c79eb",
+    "file_sha256": "74c61442580f66cfd4f4881a0b16e47ee27fb0a0d90dee50a8d4dbbfd546b81d",
+    "stage": "development"
+  }
+}

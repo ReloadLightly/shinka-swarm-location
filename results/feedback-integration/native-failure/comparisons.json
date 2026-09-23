@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "profile_id": "m6-early-controls-v1",
+  "stage": "development",
+  "definition_sha256": "698c0da24490d0f56c8b19932fccb7a6f6e603ae38cba99c3d127aa9872c79eb",
+  "file_sha256": "74c61442580f66cfd4f4881a0b16e47ee27fb0a0d90dee50a8d4dbbfd546b81d",
+  "baselines": [
+    "greedy",
+    "greedy_swap",
+    "topk",
+    "early_celf_swap"
+  ],
+  "assessment_baselines": [
+    "greedy",
+    "greedy_swap",
+    "topk",
+    "early_celf_swap",
+    "iterated",
+    "dfbnb",
+    "potential",
+    "early_iterated",
+    "early_dfbnb",
+    "early_potential"
+  ],
+  "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+  "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim",
+  "selected_method": "candidate",
+  "checkpoints_seconds": [
+    0.1,
+    0.3
+  ],
+  "evaluation_valid": false,
+  "rows": [
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "greedy",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "greedy_swap",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "topk",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "early_celf_swap",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "source",
+      "dataset": "unit-development",
+      "k": null,
+      "baseline": "greedy",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "source",
+      "dataset": "unit-development",
+      "k": null,
+      "baseline": "greedy_swap",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "source",
+      "dataset": "unit-development",
+      "k": null,
+      "baseline": "topk",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "source",
+      "dataset": "unit-development",
+      "k": null,
+      "baseline": "early_celf_swap",
+      "paired_cases": 2,
+      "failed_pairs": 2,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 1,
+      "baseline": "greedy",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 1,
+      "baseline": "greedy_swap",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 1,
+      "baseline": "topk",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 1,
+      "baseline": "early_celf_swap",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 2,
+      "baseline": "greedy",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 2,
+      "baseline": "greedy_swap",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 2,
+      "baseline": "topk",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "unit-development",
+      "k": 2,
+      "baseline": "early_celf_swap",
+      "paired_cases": 1,
+      "failed_pairs": 1,
+      "valid": false
+    }
+  ],
+  "interpretation": "Paired descriptive differences, not statistical significance, an oracle portfolio, or proof of evolutionary discovery. Positive fitness versus greedy alone is insufficient."
+}

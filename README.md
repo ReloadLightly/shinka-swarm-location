@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M7 mutation/meta feedback integration is being verified; Section 5.9 separates its evidence from evolutionary results. M6's negative checkpoint result is preserved in Section 5.8. No evolutionary campaign completed.**
+**Status: M7 task-aware mutation/meta feedback and bounded repair diagnostics implemented and verified. Section 5.9 reports functional integration, not improved evolutionary performance. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -899,7 +899,13 @@ a guarantee against every prompt injection or secret encoding.
 
 <!-- M7-FEEDBACK:START -->
 
-Integration execution pending; no result is inferred from configuration.
+**Executed integration:** 204 tests passed. The pinned native scheduler evaluated the unchanged seed on 24 development cases with four fixed controls: **120 Docker trials, 0 failures**, and 924 independently rescored deployments. The scalar and generated feedback were independently recomputed.
+
+**Repair probes:** 12 deliberately constructed synthetic Docker programs returned their expected parent verdicts and diagnostic categories, including import/syntax failure, runtime exception, invalid deployment, protocol violation, hard exit, deadline stops and bounded stderr flooding. Expected broken programs are not benchmark failures. A separate native-scheduler synthetic failure evaluation returned zero fitness while preserving the sanitized missing-symbol traceback in feedback.
+
+**Native routing:** all 4 diff/full/cross/fix paths were inspected, together with all three native meta stages, the native SQLite feedback roundtrip and saved/restored meta state. These request-boundary tests use clearly labelled offline transport fixtures, **not LLM responses**. Crossover's native omission of meta recommendations is preserved; its task brief and parent feedback are present.
+
+Continuity checks preserve 167 historical files and all 12 previous README evidence blocks. The receiver and worker diagnostic code changes are explicitly recorded. **Model calls: 0; evolved descendants: 0; research validation/test trials: 0.** This establishes feedback plumbing, not a measured increase in mutation quality or evolutionary performance. No old host-session timing guard is treated as calibrated for the new receiver.
 
 <!-- M7-FEEDBACK:END -->
 
