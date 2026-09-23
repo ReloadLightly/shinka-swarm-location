@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M4 staged strong-control campaign integration implemented; native development commissioning and verification are reported in Section 5.6. No evolutionary campaign completed.**
+**Status: M5 Docker timing calibration completed; identical-code noise, repeated strong controls and a host-session screening guard are reported in Section 5.7. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -36,6 +36,8 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Coverage + verified quality certificates | Implemented separately; see Section 5.3 |
 | Exact exchange landscape | Exhaustive development diagnosis and verified escape barrier; Section 5.4 |
 | Strong fixed anytime controls | DFBnB, utility-form APTS, route greedy/CELF, refinement and iterated search; Section 5.5 |
+| Staged native campaign comparisons | Four screening and seven assessment controls; Section 5.6 |
+| Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -748,6 +750,24 @@ Means describe five complete repetitions on one host, not five independent netwo
 [Summary and full distributions](results/timing-calibration/study/summary.json), [frozen schedule and runtime](results/timing-calibration/study/manifest.json), [exact coverage curves](results/timing-calibration/study/curves.json), [losslessly compressed raw journal](results/timing-calibration/study/trials.jsonl.gz).
 
 <!-- M5-TIMING:END -->
+
+<!-- M5-VISUALS:START -->
+
+**Backend-specific finding.** On Anaheim, the early-answer hybrid averaged 3.7841% coverage at 20 ms on this Docker host, versus 19.6290% for DAG greedy and 61.9042% for singleton ranking. By 100 ms it reached 79.9092%. The method name does not guarantee an early received answer: the previous process-backend ranking is not portable. These measurements do not isolate Docker overhead from hardware, imports, transport or scheduling, and no timing boundary or algorithm was changed after seeing this result.
+
+**Fresh unchanged-seed screen.** A separate 120-trial M4 development evaluation returned +0.4629 pp against freshly timed greedy and +1.1230 pp against the early hybrid. Under the 1.97 pp guard the seed was **not promoted**. This exercises the screen, not a universal false-positive guarantee. Those 120 trials are separate from the 2,688-trial calibration; no LLM evolution or research holdout assessment occurred. [Saved promotion decision](results/timing-calibration/seed-screen-check/promotion.json).
+
+The plots show the complete mean incumbent step functions for all seven controls and the unchanged seed. The time axis is nonlinear to make the 20-millisecond region visible; each network mean pools its four budgets and three solver seeds within each of five repetition blocks. Overlapping lines are retained. These are descriptive curves, not confidence bands or an evolutionary result.
+
+![Complete-suite timing differences](results/timing-calibration/figures/null-distributions.png)
+
+The timing boxes summarize all 12 block values (including displayed outliers). The last two probes use the same greedy rule through different loading paths; they are not byte-identical nulls. No significance test is implied.
+
+![Sioux Falls Docker anytime coverage](results/timing-calibration/figures/SiouxFalls.png)
+
+![Anaheim Docker anytime coverage](results/timing-calibration/figures/Anaheim.png)
+
+<!-- M5-VISUALS:END -->
 
 Reproduce on the actual campaign host with `scripts/calibrate_timing.py`; its
 `--verify` mode replays saved evidence without rerunning solvers. The optional
