@@ -36,16 +36,20 @@ def command(work: Path, package: Path) -> tuple[list[str], str | None, dict]:
     package.chmod(0o755)
     for path in work.rglob('*.py'):
         path.chmod(0o444)
+    memory_text = os.environ.get('SWARM_WORKER_MEMORY_MIB', '768')
+    if not memory_text.isdecimal() or int(memory_text) < 1:
+        raise ValueError('SWARM_WORKER_MEMORY_MIB must be a positive integer')
+    memory_mib = int(memory_text)
     name = 'shinka-swarm-' + uuid.uuid4().hex
     argv = [docker,'run','--rm','--pull=never','--name',name,'--interactive',
         '--network=none','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges',
-        '--user=65534:65534','--pids-limit=64','--memory=768m','--memory-swap=768m',
+        '--user=65534:65534','--pids-limit=64',f'--memory={memory_mib}m',f'--memory-swap={memory_mib}m',
         '--cpus=1','--log-driver=none','--ulimit=nofile=128:128',
         '--tmpfs=/tmp:rw,nosuid,nodev,noexec,size=32m,mode=1777',
         '--mount',f'type=bind,source={work},target=/work,readonly',
         '--workdir=/work',image,'python','-I','-B','-u','/work/swarm_location/anytime_worker.py']
     return argv,name,{'mode':'docker','image_id':image,'network':'none','user':'65534:65534',
-        'read_only':True,'memory_mib':768,'cpus':1,'pids_limit':64}
+        'read_only':True,'memory_mib':memory_mib,'cpus':1,'pids_limit':64}
 
 
 def cleanup(name: str | None, env: dict) -> None:

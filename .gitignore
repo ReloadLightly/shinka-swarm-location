@@ -13,3 +13,6 @@ data/commissioning/
 source.tar
 data/raw_m3/
 data/commissioning_m3/
+data/raw_search/
+data/search/
+data/local_ci/

@@ -1,0 +1,82 @@
+name: Research checks
+on:
+  push:
+    branches: [main, work/m2-anytime-native]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Mathematical and protocol checks
+        run: |
+          python -m pip install -r requirements-certificates.txt
+          mkdir -p results/step2/ci
+          python -m unittest discover -s tests -v > results/step2/ci/tests.txt 2>&1
+          cat results/step2/ci/tests.txt
+      - name: Prepare pinned public development data
+        run: python scripts/prepare_suite.py --download
+      - name: Fixed-backend measurements
+        run: python scripts/benchmark_marginals.py --output results/step2/ci/marginals.json
+      - name: Same-budget fixed controls
+        run: python evaluate_anytime.py --baselines-only --results_dir results/step2/ci/baselines
+      - name: Install pinned native framework
+        run: python -m pip install -e . -r requirements-shinka.txt
+      - name: Native configuration and seed job (no model calls)
+        run: |
+          python run_evo.py --check-native --results-dir results/step2/ci/native
+          python run_evo.py --native-seed --results-dir results/step2/ci/native
+          python -m pip freeze > results/step2/ci/dependencies.txt
+      - name: Scientific README from evidence
+        run: |
+          python scripts/update_m2_readme.py --evidence results/step2/ci
+          python scripts/update_m2_readme.py --evidence results/step2/ci --check
+          python - <<'PY'
+          import json, os, pathlib, platform
+          p = pathlib.Path('results/step2/ci/provenance.json')
+          p.write_text(json.dumps({'source_commit':os.environ['GITHUB_SHA'],
+            'workflow_run':os.environ['GITHUB_RUN_ID'], 'python':platform.python_version(),
+            'scope':'Fixed baselines and native seed only; zero model calls'},indent=2)+'\n')
+          PY
+      - name: Preserve measured evidence on the implementation branch
+        if: github.event_name == 'push' && github.repository == 'ReloadLightly/shinka-swarm-location' && github.ref_name == 'work/m2-anytime-native'
+        run: |
+          set -eu
+          case "$(git remote get-url origin)" in
+            https://github.com/ReloadLightly/shinka-swarm-location|https://github.com/ReloadLightly/shinka-swarm-location.git) ;;
+            *) echo 'Unexpected repository; refusing publication'; exit 1 ;;
+          esac
+          git fetch origin "$GITHUB_REF_NAME"
+          if [ "$(git rev-parse FETCH_HEAD)" != "$GITHUB_SHA" ]; then
+            echo 'Branch advanced; leaving evidence in the workflow artifact instead'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- README.md
+          find results/step2/ci -type f \( -name '*.json' -o -name '*.txt' \) -print0 | xargs -0 git add --
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record M2 measured evidence and scientific README tables'
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+      - name: Archive source and evidence
+        if: always()
+        run: git archive --format=tar HEAD > source.tar
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: research-${{ github.sha }}
+          path: |
+            source.tar
+            results/step2/ci/
+            data/commissioning/
+          retention-days: 30

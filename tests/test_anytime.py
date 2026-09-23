@@ -225,9 +225,11 @@ class LauncherTests(unittest.TestCase):
             args = parser().parse_args(['--suite',str(suite)])
             p = plan(args)
             self.assertFalse(p['model_calls_enabled'])
-            self.assertEqual(p['db_config']['num_islands'],4)
+            self.assertEqual(p['db_config']['num_islands'],2)
             self.assertEqual(p['evo_config']['llm_dynamic_selection'],'ucb')
             self.assertEqual(p['evo_config']['meta_rec_interval'],10)
+            legacy_args = parser().parse_args(['--suite',str(suite), '--config',str(ROOT/'configs/evolution.json')])
+            self.assertEqual(plan(legacy_args)['db_config']['num_islands'],4)
             args.run = True
             with self.assertRaises(ValueError):
                 plan(args)

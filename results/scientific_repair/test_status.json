@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "base_commit": "fc459b5cf56037005b69665f12a24b9e998e936e",
+  "command": "python -m unittest discover -s tests -v",
+  "tests_run": 188,
+  "failures": 0,
+  "errors": 0,
+  "exit_code": 0,
+  "elapsed_seconds": 112.902,
+  "python": "3.13.5",
+  "backend": "Linux process; Docker command construction tested without starting Docker",
+  "model_calls": 0,
+  "native_framework_executed_locally": false,
+  "large_network_evolution_executed": false,
+  "test_log_sha256": "b3e416ab41a37d16be5261b1cbe503c8dc7fa1636122c0c4c0a993a8209c1468",
+  "source_sha256": {
+    "swarm_location/core.py": "cf2d304b406763b710da9e88da6a8b4ee5d0bc7ad23c2dfddde0cb55cf88d9a0",
+    "swarm_location/search.py": "859cf4449bf1d0fea6a3d9c9aad81f4528ca34392d5d04905fbd1fa720f0178f",
+    "swarm_location/dag_bounds.py": "68462b881ff4709389ab6d9b4713762c7646ff1f4a4dbbb3d375796dfd744806",
+    "swarm_location/anytime.py": "4d72eddb0d9d7b1e049974cade8a81b09b7d668d5b9e976d716dcfe936f0a99f",
+    "swarm_location/isolation.py": "98125bc3615dc3ecbf858e0cbfb06b8391321cc76849392cbac5467a1bb591c1",
+    "evaluate_search.py": "57fe74ecd8e52319bd6b6d21e4856999ceff0b82ff605af076ad186343eff08c",
+    "run_evo.py": "25927ea30f858bb5f1ca1aff59c49ca6ebd4d981ce98804325e36f8f3fa49660",
+    "tests/test_scientific_repair.py": "1347ce46f1599152c517d00c90e8d71bb0f1f815b044ed2da99f84446f68da2a"
+  },
+  "test_log_path": "results/scientific_repair/publication_regressions.log.gz",
+  "prior_working_bundle_log": "repair_regressions.log records the earlier, pre-fix test run; it is not the current test status."
+}

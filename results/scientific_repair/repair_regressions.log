@@ -1,0 +1,26 @@
+test_candidate_only_cache_and_source_balancing (test_scientific_repair.RepairTests.test_candidate_only_cache_and_source_balancing) ... references example k=2 seed=0: best feasible=1.00000000
+ok
+test_candidates_can_certify_and_false_certificate_fails (test_scientific_repair.RepairTests.test_candidates_can_certify_and_false_certificate_fails) ... ok
+test_compact_storage_preserves_counts (test_scientific_repair.RepairTests.test_compact_storage_preserves_counts) ... ok
+test_explicit_intrazonal_exclusion_mass (test_scientific_repair.RepairTests.test_explicit_intrazonal_exclusion_mass) ... ok
+test_exponentially_many_routes_need_no_enumeration (test_scientific_repair.RepairTests.test_exponentially_many_routes_need_no_enumeration) ... ok
+test_interrupted_split_retains_complete_partition (test_scientific_repair.RepairTests.test_interrupted_split_retains_complete_partition) ... ok
+test_origin_queries_partition_full_objective (test_scientific_repair.RepairTests.test_origin_queries_partition_full_objective) ... ok
+test_outward_intervals_and_partition_bounds (test_scientific_repair.RepairTests.test_outward_intervals_and_partition_bounds) ... FAIL
+test_relevant_zero_cycle_is_rejected (test_scientific_repair.RepairTests.test_relevant_zero_cycle_is_rejected) ... ok
+test_zero_centroid_connector_not_cycle (test_scientific_repair.RepairTests.test_zero_centroid_connector_not_cycle) ... ok
+test_zero_ties_and_relabel (test_scientific_repair.RepairTests.test_zero_ties_and_relabel) ... ok
+
+======================================================================
+FAIL: test_outward_intervals_and_partition_bounds (test_scientific_repair.RepairTests.test_outward_intervals_and_partition_bounds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/shinka-swarm-location/tests/test_scientific_repair.py", line 93, in test_outward_intervals_and_partition_bounds
+    self.assertGreaterEqual(Fraction(upper, SCALE), exact.score((*group, v))-value)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Fraction(48038396025285291, 288230376151711744) not greater than or equal to Fraction(3602879701896397, 21617278211378381)
+
+----------------------------------------------------------------------
+Ran 11 tests in 3.126s
+
+FAILED (failures=1)

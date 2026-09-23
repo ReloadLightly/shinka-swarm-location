@@ -23,7 +23,7 @@ from .isolation import command as worker_command, cleanup as cleanup_container
 
 
 TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py",
-           "route_search.py", "bounded_search.py", "strong_baselines.py")
+           "route_search.py", "bounded_search.py", "strong_baselines.py", "dag_bounds.py")
 
 
 def checkpoints_checked(values):
@@ -63,7 +63,7 @@ def score_trace(instance, k, checkpoints, events, oracle=None):
 
 def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                 baseline=None, seed=0, setup_timeout=120.0, oracle=None,
-                max_messages=4096, max_output_bytes=4_000_000):
+                max_messages=4096, max_output_bytes=4_000_000, allow_candidate_bounds=False):
     """Do not expose results directories, provider credentials, or scored data.
 
     This minimizes accidental leakage. Same-user subprocesses are not an OS
@@ -101,7 +101,7 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                "PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1",
                "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
         request = {"instance": instance.to_dict(), "k": k, "seed": seed,
-                   "budget": checkpoints[-1], "baseline": baseline}
+                   "budget": checkpoints[-1], "baseline": baseline, "allow_candidate_bounds": allow_candidate_bounds}
         argv, container_name, isolation = worker_command(work, package)
         with subprocess.Popen(argv,
                               cwd=directory, env=env, stdin=subprocess.PIPE,
@@ -156,12 +156,12 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                             raise ValueError("output after done message")
                         if message == {"done": True}:
                             done = True
-                        elif (baseline in BOUND_METHODS and isinstance(message, dict)
+                        elif ((baseline in BOUND_METHODS or allow_candidate_bounds) and isinstance(message, dict)
                               and set(message) == {"search_bound"}):
                             if len(bound_events) >= max_messages:
                                 raise ValueError("bound message limit exceeded")
                             bound_events.append((elapsed, message["search_bound"]))
-                        elif (baseline in METHODS and isinstance(message, dict)
+                        elif ((baseline in METHODS or allow_candidate_bounds) and isinstance(message, dict)
                               and set(message) == {"diagnostic"}):
                             if len(diagnostics) >= 16:
                                 raise ValueError("diagnostic message limit exceeded")
@@ -201,13 +201,17 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
         failure = f"invalid deployment: {exc}"
         scored = score_trace(instance, k, checkpoints, [], oracle)
     extra = {}
-    if baseline in METHODS:
+    if baseline in METHODS or allow_candidate_bounds:
         extra = {"solver_diagnostics": diagnostics}
-    if baseline in BOUND_METHODS:
+    if baseline in BOUND_METHODS or allow_candidate_bounds:
         from .baseline_proofs import verify_online_bounds
         began = perf_counter()
         try:
-            verified = verify_online_bounds(instance,k,bound_events)
+            if any(e.get("kind") == "dag_partition_v2" for _, e in bound_events) or (allow_candidate_bounds and baseline is None and not any(e.get("kind") == "online_partition_v1" for _, e in bound_events)):
+                from .dag_bounds import verify_dag_bounds
+                verified = verify_dag_bounds(instance, k, bound_events, oracle)
+            else:
+                verified = verify_online_bounds(instance,k,bound_events)
         except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
             failure = f"invalid online bound: {exc}"
             verified = []

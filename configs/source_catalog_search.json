@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "upstream_repository": "bstabler/TransportationNetworks",
+  "upstream_commit": "d1639b4ef218c17928ba573e806ddf8ba5e7ae6d",
+  "routing": "fixed directed free-flow shortest routes; endpoint inclusive; uniform over exact ties; centroid barriers",
+  "header_total_tolerance": {
+    "absolute": "0.000000001",
+    "relative": "0.000000000001"
+  },
+  "checkpoints_seconds": [
+    0.5,
+    0.772657,
+    1.193996,
+    1.845098,
+    2.851254,
+    4.40608,
+    6.808773,
+    10.521686,
+    16.259299,
+    25.125707,
+    38.827084,
+    60.0
+  ],
+  "seeds": {
+    "development": [
+      0,
+      1,
+      2
+    ],
+    "validation": [
+      100,
+      101,
+      102
+    ],
+    "test": [
+      1000,
+      1001,
+      1002
+    ]
+  },
+  "datasets": [
+    {
+      "id": "Winnipeg",
+      "source_graph": "Winnipeg",
+      "split": "development",
+      "expected_nodes": 1052,
+      "expected_edges": 2836,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "Winnipeg/Winnipeg_net.tntp",
+          "git_blob_sha1": "192e371f68a79d9b8122ef7a627062a2c052123b"
+        },
+        "trips": {
+          "path": "Winnipeg/Winnipeg_trips.tntp",
+          "git_blob_sha1": "66af602c02a8560fb57da27da91baab466a163a8"
+        }
+      }
+    },
+    {
+      "id": "Chicago-Sketch",
+      "source_graph": "Chicago",
+      "split": "development",
+      "expected_nodes": 933,
+      "expected_edges": 2950,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "Chicago-Sketch/ChicagoSketch_net.tntp",
+          "git_blob_sha1": "38422742ac82c06915d6acf056ffbb38adf8b590"
+        },
+        "trips": {
+          "path": "Chicago-Sketch/ChicagoSketch_trips.tntp",
+          "git_blob_sha1": "2524ea5826790536558e2a54dbeae542d068a797"
+        }
+      }
+    },
+    {
+      "id": "Chicago-Regional",
+      "source_graph": "Chicago",
+      "split": "development",
+      "expected_nodes": 12982,
+      "expected_edges": 39018,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "chicago-regional/ChicagoRegional_net.tntp",
+          "git_blob_sha1": "1d6ea05b34f34299db0963ddac146cc95c54400f"
+        },
+        "trips": {
+          "path": "chicago-regional/ChicagoRegional_trips.tntp",
+          "git_blob_sha1": "aa25589272b9d61a29dc051427b6629edf10dd61"
+        }
+      }
+    }
+  ],
+  "assessment_note": "Historical EMA and Barcelona splits remain unopened. This new large-scale corpus is DEVELOPMENT ONLY until additional independent assessment source families are supplied. Chicago variants are one family."
+}

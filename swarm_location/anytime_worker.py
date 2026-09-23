@@ -24,6 +24,9 @@ def main():
     def report(selected):
         emit({"selected": list(selected)})
 
+    if request.get("allow_candidate_bounds"):
+        report.bound = lambda data: emit({"search_bound": data})
+        report.diagnostic = lambda data: emit({"diagnostic": data})
     emit({"ready": True})
     if sys.stdin.readline().strip() != "go":
         raise RuntimeError("missing external start signal")

@@ -56,6 +56,8 @@ class ExactCoverage:
                      'edges': sorted((u, v, str(w)) for u, v, w in instance.edges),
                      'od': sorted((s, t, str(Fraction(q))) for s, t, q in instance.od),
                      'first_thru_node': instance.first_thru_node}
+        if instance.non_thru_nodes is not None or instance.allow_zero_weights:
+            canonical.update(non_thru_nodes=instance.non_thru_nodes, allow_zero_weights=instance.allow_zero_weights)
         self.identity = sha256(json.dumps(canonical, sort_keys=True,
                                          separators=(',', ':')).encode()).hexdigest()
         self._score_cache: dict[tuple[int, ...], Fraction] = {}
