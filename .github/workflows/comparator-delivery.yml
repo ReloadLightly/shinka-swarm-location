@@ -1,0 +1,35 @@
+name: Comparator integration delivery
+on:
+  push:
+    branches: [work/staged-comparators]
+    paths: ['.github/workflows/comparator-delivery.yml', '.delivery/**']
+permissions:
+  contents: write
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Apply reviewed delivery when supplied
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
+          test "$GITHUB_REF_NAME" = work/staged-comparators
+          if test -f .delivery/apply.py; then
+            python .delivery/apply.py
+          fi
+      - name: Export exact workspace for local testing
+        run: |
+          mkdir -p /tmp/comparator-workspace
+          git archive --format=tar HEAD > /tmp/comparator-workspace/repository.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: comparator-workspace-${{ github.sha }}
+          path: /tmp/comparator-workspace/repository.tar
+          retention-days: 7
