@@ -435,6 +435,62 @@ claim. Supply verified reference witnesses to tighten the default bound. The
 code records exact loaded floating-point demand as rationals rather than silently
 reinterpreting the source decimals; this distinction is documented in the methods.
 
+## 5.4 Exact headroom and exchange-landscape diagnosis
+
+The exact Sioux Falls optima for budgets 1–8 and the quality certificates were
+already implemented in Section 5.3. This additional development-only study
+reuses and independently verifies those reference proofs; it does not present
+another implementation of branch and bound as new progress.
+
+The new contribution is a complete exchange census around the six-monitor
+completed greedy+swap deployment, exhaustive exploration of its neutral plateau,
+and a path-plus-cut proof of the smallest temporary loss required for a sequence
+of one-for-one replacements to escape. All comparisons use exact integer mass.
+This is an exploratory diagnosis of a selected development case, not an evolved
+algorithm or the chapter's original Israeli-network experiment. The production
+evaluator, fixed controls, seeds, fitness and held-out performance remain unchanged.
+See [the definitions, proof and source distinction](docs/exchange_landscape.md).
+
+<!-- EXCHANGE-LANDSCAPE:START -->
+
+| Simultaneous replacements | Deployments checked | Worse | Equal | Better |
+|---:|---:|---:|---:|---:|
+| 1 | 108 | 107 | 1 | 0 |
+| 2 | 2,295 | 2,295 | 0 | 0 |
+| 3 | 16,320 | 16,320 | 0 | 0 |
+| 4 | 45,900 | 45,899 | 0 | 1 |
+| 5 | 51,408 | 51,406 | 0 | 2 |
+| 6 | 18,564 | 18,564 | 0 | 0 |
+
+**Executed evidence:** all 102 tests passed. The exact census covers **134,596** distinct 6-monitor deployments, including the starting deployment. Only **3** are strictly better; the smallest improving simultaneous exchange replaces **4** monitors.
+
+The exactly neutral single-exchange component contains **2** deployments. Neither member has an improving exchange of one, two or three monitors. This closes the previously unexamined neutral-plateau question for this starting deployment.
+
+For paths restricted to single-monitor replacements, the minimum temporary coverage drop needed to reach any strictly better deployment is **approximately 1.386578 percentage points**. A feasible path attains that bottleneck; an independently checked **18-state cut** proves that a smaller drop cannot suffice.
+
+The drop concerns an exploratory working solution: the algorithm can retain and report its best deployment throughout. The proof is not a requirement to deploy a worse operational solution.
+
+[Exact headroom table](results/exchange-landscape/headroom.md), [full census and path/cut witnesses](results/exchange-landscape/study.json), [independent verification](results/exchange-landscape/verification.json), and [test transcript](results/exchange-landscape/tests.txt).
+
+<!-- EXCHANGE-LANDSCAPE:END -->
+
+These results motivate testing larger exchanges or controlled temporary losses,
+while preserving the best-so-far deployment. They do not prove that any particular
+restart, evolutionary proposal, or heuristic will improve the timed campaign.
+The hypothesis is about reusable search behavior, not hardcoding these node sets.
+
+Reproduce without model calls (the two development files must be prepared):
+
+```bash
+python scripts/prepare_suite.py --download
+python scripts/exchange_study.py --output results/local_exchange_study
+python scripts/exchange_study.py --output results/local_exchange_study --verify
+```
+
+The complete census is deliberately limited to tractable small development cases;
+large requests fail explicitly rather than becoming unreported samples. No new
+algorithm is silently inserted into the frozen ShinkaEvolve campaign.
+
 ## 6. Reproduce the first milestone
 
 The local path uses only Python's standard library; it needs no API key or GPU.
