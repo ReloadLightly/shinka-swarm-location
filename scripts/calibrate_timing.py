@@ -63,7 +63,8 @@ def continuity():
     for p in protected:
         original = subprocess.check_output(['git', 'show', f'{BASE}:{p}'], cwd=ROOT)
         if (ROOT/p).read_bytes() != original:
-            if p != 'swarm_location/strong_baselines.py':
+            if p not in {'swarm_location/strong_baselines.py','swarm_location/anytime.py',
+                         'swarm_location/anytime_worker.py','evaluate_anytime.py','run_evo.py','campaign.py'}:
                 raise ValueError(f'protected scientific file changed: {p}')
             # M6 extends fixed method dispatch; do not relabel those bytes unchanged.
             # Current execution is pinned separately by implementations().
@@ -144,7 +145,9 @@ print(json.dumps({'uid':os.getuid(),'python':platform.python_version(),'affinity
     return {'isolation': mode, 'facts': facts, 'scope': 'Separate diagnostic container, not a timed solver trial'}
 
 
-def execute(output, suite_path, config_path, image):
+def execute(output, suite_path, config_path, image, feedback_profile=None):
+    from swarm_location.feedback import checked_profile
+    checked_profile(feedback_profile)
     output, suite_path = Path(output), Path(suite_path).resolve()
     if output.exists() and any(output.iterdir()):
         raise ValueError('new measurement requires an empty directory; never retry over observations')
@@ -174,6 +177,10 @@ def execute(output, suite_path, config_path, image):
             'null and control blocks interleaved by frozen schedule; startup excluded only from inner clock',
         'github_run': os.environ.get('GITHUB_RUN_ID'), 'model_calls': 0,
         'research_validation_test_trials': 0, 'created_utc': datetime.now(timezone.utc).isoformat()}
+    if feedback_profile:
+        from swarm_location.feedback import load_context
+        manifest['feedback_profile'] = feedback_profile
+        manifest['feedback_context_sha256'] = load_context()['source_sha256']
     write_json(output/'manifest.json', manifest)  # Frozen BEFORE any calibration solver runs.
     lookup = {e['id']: (instance, ShortestPathCoverage(instance)) for e,instance in instances}
     start, completed = perf_counter(), 0
@@ -186,7 +193,7 @@ def execute(output, suite_path, config_path, image):
                 tick = perf_counter()
                 result = run_anytime(instance, item['k'], config['checkpoints_seconds'],
                     baseline=item['baseline'], program_path=ROOT/'anytime_initial.py' if item['baseline'] is None else None,
-                    seed=item['seed'], oracle=oracle)
+                    seed=item['seed'], oracle=oracle, **({'feedback_profile':feedback_profile} if feedback_profile else {}))
                 record = {**item, 'wall_seconds': perf_counter()-tick, 'result': result}
                 journal.write(json.dumps(record, separators=(',', ':'), allow_nan=False)+'\n')
                 journal.flush()
@@ -255,6 +262,8 @@ def verify(output, suite_path, write=False):
         if (result['isolation'] != manifest['executor_probe']['isolation'] or result['seed'] != row['seed']
                 or result['k'] != row['k'] or result['instance'] != instance.name):
             raise ValueError('solver identity/isolation mismatch')
+        if manifest.get('feedback_profile') and result.get('diagnostics',{}).get('profile') != manifest['feedback_profile']:
+            raise ValueError('diagnostic mode differs from calibration manifest')
         if not result['correct']:
             failures.append({'index':row['index'], 'error':result['error']})
             continue
@@ -288,6 +297,11 @@ def verify(output, suite_path, write=False):
         'research_validation_test_trials':0,
         'scope':'One Docker host session; finite deterministic probes; no universal error rate or transfer claim',
         'manifest_sha256':file_sha256(output/'manifest.json'), 'journal_sha256':complete['journal_sha256']}
+    if manifest.get('feedback_profile'):
+        from swarm_location.feedback import load_context
+        if load_context()['source_sha256'] != manifest['feedback_context_sha256']:
+            raise ValueError('feedback context differs from calibration manifest')
+        summary['feedback_profile'] = manifest['feedback_profile']
     for name,data in [('summary.json',summary),('curves.json',curves)]:
         if write:
             if (output/name).exists():
@@ -335,6 +349,8 @@ def readme_block(s):
 
 
 def update_readme(summary):
+    if summary.get('feedback_profile'):
+        raise ValueError('M7 calibration must not replace the historical M5 README block')
     path=ROOT/'README.md'; text=path.read_text()
     if text.count(START)!=1 or text.count(END)!=1:
         raise ValueError('unique M5 README markers required')
@@ -362,13 +378,14 @@ def screen(calibration, suite, program, output, image):
     write_json(output/'screen_identity.json', {'candidate_sha256':file_sha256(frozen), 'environment':current,
         'calibration_summary_sha256':file_sha256(calibration/'summary.json'), 'holdout_access':False})
     os.environ['SWARM_DOCKER_IMAGE']=checked_image(image)
-    metrics = evaluate(frozen, output/'evaluation', suite, 'development')
+    metrics = evaluate(frozen, output/'evaluation', suite, 'development',
+                       **({'feedback_profile':manifest['feedback_profile']} if manifest.get('feedback_profile') else {}))
     if not read_json(output/'evaluation/correct.json')['correct']:
         raise ValueError('failed screening evaluation; cannot promote')
     deltas = {m:metrics['public'][f'delta_vs_{m}_pp'] for m in ('greedy','early_celf_swap')}
     decision = promotion_decision(deltas,saved['guard']['threshold_pp'])
     decision['confirmation_repeats']=saved['guard']['confirmation_repeats']
-    decision['next_step']='Freeze code, then five fresh development assessments against all seven controls; '
+    decision['next_step']='Freeze code, then five fresh development assessments against the full declared assessment profile; '
     decision['next_step']+='report every result; do not test until ordinary frozen selection protocol is satisfied.'
     write_json(output/'promotion.json',decision)
     return decision
@@ -380,11 +397,16 @@ if __name__ == '__main__':
     p.add_argument('--suite',type=Path,default=ROOT/'data/commissioning_m4/suite.json')
     p.add_argument('--config',type=Path,default=ROOT/'configs/timing_m5.json')
     p.add_argument('--docker-image')
+    p.add_argument('--feedback-profile',choices=['m7-evidence-v1'])
     p.add_argument('--verify',action='store_true')
     p.add_argument('--update-readme',action='store_true')
     p.add_argument('--screen-program',type=Path)
     p.add_argument('--calibration',type=Path)
     a=p.parse_args()
+    if a.feedback_profile and (a.verify or a.screen_program):
+        target=a.calibration if a.screen_program else a.output
+        if read_json(target/'manifest.json').get('feedback_profile') != a.feedback_profile:
+            p.error('feedback profile must match the saved calibration')
     if a.screen_program:
         if not a.calibration or not a.docker_image or a.verify or a.update_readme:
             p.error('screen requires calibration and Docker image; no verify/update flags')
@@ -392,7 +414,7 @@ if __name__ == '__main__':
     else:
         if not a.verify and not a.docker_image:
             p.error('execution requires an explicit immutable Docker image ID')
-        result=verify(a.output,a.suite) if a.verify else execute(a.output,a.suite,a.config,a.docker_image)
+        result=verify(a.output,a.suite) if a.verify else execute(a.output,a.suite,a.config,a.docker_image,a.feedback_profile)
         if a.update_readme:
             update_readme(result)
     print(json.dumps({k:v for k,v in result.items() if k not in ('null_analysis','control_analysis')},indent=2))

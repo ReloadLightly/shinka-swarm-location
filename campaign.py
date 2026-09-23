@@ -5,6 +5,7 @@ A missing model route is written as BLOCKED before any inference or test scoring
 """
 from __future__ import annotations
 import argparse
+from functools import partial
 from dataclasses import asdict
 from datetime import datetime,timezone
 import json
@@ -33,6 +34,7 @@ def checked_request(path: Path) -> dict:
         raise ValueError('a comparison profile requires a new schema-2 campaign request')
     if request['schema_version'] == 2:
         comparison_profile_path(request)
+    evolution_config_path(request)
     if type(request['generations']) is not int or request['generations'] < 1 or type(request['seed']) is not int:
         raise ValueError('positive integer generations and integer seed required')
     cap=request['max_api_cost_usd']
@@ -46,6 +48,21 @@ def checked_request(path: Path) -> dict:
     if any(not isinstance(m,str) or not m.strip() for m in roles['mutation']+[roles['meta'],roles['novelty'],roles['embedding']]):
         raise ValueError('all model roles must be explicit')
     return request
+
+
+def evolution_config_path(request: dict) -> Path:
+    relative = request.get('evolution_config', 'configs/evolution_m3.json')
+    if not isinstance(relative, str) or not relative:
+        raise ValueError('evolution_config must be a repository-relative path')
+    path = (ROOT/relative).resolve()
+    if Path(relative).is_absolute() or not path.is_relative_to(ROOT.resolve()):
+        raise ValueError('evolution_config must be a repository-relative path')
+    config = json.loads(path.read_text())
+    from swarm_location.feedback import checked_profile
+    checked_profile(config.get('feedback_profile'))
+    if config['framework_commit'] != request['framework_commit']:
+        raise ValueError('request and evolution configuration framework pins differ')
+    return path
 
 
 def comparison_profile_path(request: dict) -> Path | None:
@@ -74,7 +91,14 @@ def prepare_stage(catalog: Path, output: Path, split: str, download: bool,
 def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,download:bool):
     request_path,output=(Path(request_path).resolve(),Path(output).resolve());output.mkdir(parents=True,exist_ok=True)
     request=checked_request(request_path)
-    catalog=ROOT/'configs/source_catalog_m3.json'; config=ROOT/'configs/evolution_m3.json'
+    catalog=ROOT/'configs/source_catalog_m3.json'; config=evolution_config_path(request)
+    evolution_definition = json.loads(config.read_text())
+    feedback_profile = evolution_definition.get('feedback_profile')
+    feedback_context = None
+    if feedback_profile:
+        from swarm_location.feedback import load_context
+        feedback_context = load_context()
+    evaluation = partial(evaluate, feedback_profile=feedback_profile) if feedback_profile else evaluate
     source_catalog = catalog_checked(catalog)
     profile_path = comparison_profile_path(request)
     profile = load_profile(profile_path) if profile_path is not None else None
@@ -88,6 +112,9 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         for split in ('development', 'validation', 'test'):
             cases = sum(len(e['budgets']) for e in source_catalog['datasets'] if e['split'] == split) * len(source_catalog['seeds'][split])
             state['comparison_trial_plan'][split] = comparison_plan(bind_profile({}, profile, split), split, cases)
+    if feedback_context:
+        state['feedback_context'] = feedback_context
+        state['evolution_config_sha256'] = file_sha256(config)
     state_path=output/'campaign_status.json'
     if state_path.exists():
         previous = json.loads(state_path.read_text())
@@ -96,7 +123,9 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         if (profile is not None or previous.get('comparison_profile') is not None) and (
                 previous.get('request_sha256') != state['request_sha256']
                 or previous.get('catalog_sha256') != state['catalog_sha256']
-                or previous.get('comparison_profile') != profile):
+                or previous.get('comparison_profile') != profile
+                or previous.get('feedback_context') != feedback_context
+                or (feedback_context and previous.get('evolution_config_sha256') != file_sha256(config))):
             raise ValueError('versioned campaign preflight identity changed; use a new output directory')
     write_json(state_path,state)
     try:
@@ -133,6 +162,8 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
             'source_sha256':{str(p.relative_to(ROOT)):file_sha256(p) for p in
                 [ROOT/'anytime_initial.py',ROOT/'run_evo.py',ROOT/'campaign.py',ROOT/'evaluate_anytime.py',
                  ROOT/'scripts/prepare_research.py',*sorted((ROOT/'swarm_location').glob('*.py'))]}}
+        if feedback_context:
+            identity['feedback_context'] = feedback_context
         if profile is not None:
             identity['comparison_profile'] = profile
             identity['comparison_profile_path'] = request['comparison_profile']
@@ -149,6 +180,8 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         state['status']='native_returned';write_json(state_path,state)
         if any(file_sha256(ROOT/path) != value for path,value in identity['source_sha256'].items()):
             raise RuntimeError('research implementation changed during evolution')
+        if feedback_context and load_context() != feedback_context:
+            raise RuntimeError('feedback context changed during evolution')
         frozen=output/'selection'
         shortlist=snapshot_population(output/'native/evolution_db.sqlite',frozen,ROOT/'anytime_initial.py',request['shortlist_size'])
         state['valid_evolved_descendants']=shortlist['valid_unique_nonseed_descendants']
@@ -158,7 +191,7 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         prepare_stage(catalog, output, 'validation', download, profile_path, profile)
         state.update(status='selecting_on_validation',validation_solver_evaluations=None)
         write_json(state_path,state)
-        champion=freeze_champion(frozen,output/'validation-data/suite.json',evaluate,docker_image)
+        champion=freeze_champion(frozen,output/'validation-data/suite.json',evaluation,docker_image)
         state['validation_solver_evaluations']=sum(
             sum(len(c['methods']) for c in json.loads((frozen/'validation'/row['sha256']/'traces.json').read_text())['cases'])
             for row in champion['validation_results'])
@@ -168,7 +201,7 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         prepare_stage(catalog, output, 'test', download, profile_path, profile)
         state.update(status='testing_frozen_program',test_solver_evaluations=None)
         write_json(state_path,state)
-        metrics=evaluate_frozen_test(frozen,output/'test-data/suite.json',evaluate,docker_image)
+        metrics=evaluate_frozen_test(frozen,output/'test-data/suite.json',evaluation,docker_image)
         state['test_solver_evaluations']=sum(len(c['methods']) for c in json.loads((frozen/'test/traces.json').read_text())['cases'])
         state.update(status='completed',test_metrics=str(frozen/'test/metrics.json'),
                      test_correct=json.loads((frozen/'test/correct.json').read_text())['correct'])

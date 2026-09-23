@@ -63,12 +63,18 @@ def score_trace(instance, k, checkpoints, events, oracle=None):
 
 def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                 baseline=None, seed=0, setup_timeout=120.0, oracle=None,
-                max_messages=4096, max_output_bytes=4_000_000):
+                max_messages=4096, max_output_bytes=4_000_000, feedback_profile=None):
     """Do not expose results directories, provider credentials, or scored data.
 
     This minimizes accidental leakage. Same-user subprocesses are not an OS
     security boundary. Use a container/VM for untrusted generated programs.
     """
+    if feedback_profile not in (None, "m7-evidence-v1"):
+        raise ValueError("unknown diagnostic feedback profile")
+    capture = feedback_profile is not None
+    if capture:
+        from .diagnostics import StderrTail, sanitize, host_category, repair_hint
+        stderr_tail = StderrTail()
     if os.name != "posix":
         raise RuntimeError("the external timing backend requires Linux/WSL")
     checkpoints = checkpoints_checked(checkpoints)
@@ -93,23 +99,30 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
         package.mkdir()
         for name in TRUSTED:
             shutil.copyfile(Path(__file__).parent / name, package / name)
+        if capture:
+            shutil.copyfile(Path(__file__).parent / "diagnostics.py", package / "diagnostics.py")
         if program_path is not None:
             shutil.copyfile(Path(program_path).resolve(), work / "candidate.py")
-        # Keep logs bounded by discarding them; candidate exceptions are reflected
-        # by the nonzero exit status. No provider environment is passed through.
+        # M7 drains a separate bounded stderr suffix; it is never a scoring input.
+        # Legacy evaluations retain DEVNULL. No provider environment is passed through.
         env = {"PATH": os.defpath, "HOME": directory, "TMPDIR": directory,
                "PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1",
                "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
         request = {"instance": instance.to_dict(), "k": k, "seed": seed,
                    "budget": checkpoints[-1], "baseline": baseline}
+        if capture:
+            request["feedback_profile"] = feedback_profile
         argv, container_name, isolation = worker_command(work, package)
         with subprocess.Popen(argv,
                               cwd=directory, env=env, stdin=subprocess.PIPE,
-                              stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE if capture else subprocess.DEVNULL,
                               start_new_session=True) as proc:
             selector = selectors.DefaultSelector()
             selector.register(proc.stdout, selectors.EVENT_READ)
             os.set_blocking(proc.stdout.fileno(), False)
+            if capture:
+                selector.register(proc.stderr, selectors.EVENT_READ)
+                os.set_blocking(proc.stderr.fileno(), False)
             buffer, total, done = b"", 0, False
             try:
                 proc.stdin.write((json.dumps(request) + "\n").encode())
@@ -125,6 +138,11 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                         break
                     readable = selector.select(timeout=min(0.05, deadline - now))
                     if not readable:
+                        continue
+                    # Prioritize incumbent receipt when both streams are ready.
+                    if capture and not any(key.fileobj is proc.stdout for key, _ in readable):
+                        if not stderr_tail.read_ready(proc.stderr):
+                            selector.unregister(proc.stderr)
                         continue
                     chunk = os.read(proc.stdout.fileno(), 65536)
                     received = perf_counter()
@@ -194,6 +212,8 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                     pass
                 proc.wait()
                 cleanup_container(container_name, env)
+                if capture:
+                    stderr_tail.drain(proc.stderr)
     elapsed_total = perf_counter() - setup_started
     try:
         scored = score_trace(instance, k, checkpoints, events, oracle)
@@ -213,6 +233,12 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
             verified = []
         extra.update(search_bound_events=bound_events, verified_search_bounds=verified,
                      bound_verification_seconds=perf_counter()-began)
+    if capture:
+        diagnostic = stderr_tail.describe()
+        diagnostic["host_category"] = host_category(failure, reason)
+        diagnostic["repair_category"] = repair_hint(diagnostic, failure is None)
+        extra["diagnostics"] = diagnostic
+        failure = sanitize(failure, 640) if failure is not None else None
     return {**scored, **extra, "correct": failure is None, "error": failure,
             "termination": reason, "setup_wall_seconds": setup_seconds,
             "total_wall_seconds_before_scoring": elapsed_total,

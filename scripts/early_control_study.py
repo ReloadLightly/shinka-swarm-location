@@ -44,7 +44,9 @@ def sources():
 
 def continuity():
     names=git('ls-tree','-r','--name-only',BASE).decode().splitlines()
-    changed={'swarm_location/strong_baselines.py','scripts/check_m4_continuity.py','scripts/calibrate_timing.py'}
+    changed={'swarm_location/strong_baselines.py','scripts/check_m4_continuity.py','scripts/calibrate_timing.py',
+             'swarm_location/anytime.py','swarm_location/anytime_worker.py',
+             'evaluate_anytime.py','run_evo.py','campaign.py'}
     protected=[p for p in names if p.startswith(('configs/','results/','data/','swarm_location/'))
                or p in ('evaluate.py','evaluate_anytime.py','anytime_initial.py','initial.py','run_evo.py','campaign.py')]
     unchanged={}

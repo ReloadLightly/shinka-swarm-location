@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "profile_id": "m7-evidence-v1",
+  "task_context": {
+    "path": "docs/m7_task_context.md",
+    "sha256": "38bfcd435b8d9db0252f02d6b4232d4c44782bfe61739831163433599507b3d8"
+  },
+  "meta_context": {
+    "path": "docs/m7_meta_context.md",
+    "sha256": "7a4957c0ba1623776b49f7fa50ee04bdc63177d98df06071a3989490f9c64c78"
+  },
+  "development_evidence": [
+    {
+      "path": "results/timing-calibration/study/summary.json",
+      "sha256": "2ba62953f30f9f819bc183e0c88ddcede2665cdf68056709ecfc47fd26355dbb",
+      "split": "development"
+    },
+    {
+      "path": "results/early-controls/study/summary.json",
+      "sha256": "572a5c8b017d78f2d3296ff5cdd973696e9f248bb9eca435613e2431ca8841fb",
+      "split": "development"
+    }
+  ]
+}

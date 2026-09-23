@@ -81,6 +81,12 @@ def plan(args):
     comparisons = comparison_plan(suite, 'development',
         sum(len(e['budgets']) for e, _ in instances) * len(suite['seeds']))
     task = TASK
+    feedback_context = None
+    if config.get("feedback_profile") is not None:
+        from swarm_location.feedback import checked_profile, load_context
+        checked_profile(config["feedback_profile"])
+        feedback_context = load_context()
+        task += "\n" + feedback_context["task_context"]
     if comparisons is not None:
         task += ("\nVersioned screening controls: " + ', '.join(comparisons['baselines'])
             + ". Frozen validation/test controls: " + ', '.join(comparisons['assessment_baselines'])
@@ -97,6 +103,8 @@ def plan(args):
            'extra_cmd_args': {'suite': str(args.suite.resolve()), 'split': 'development'},
            'python_executable': sys.executable, 'numeric_threads_per_job': 1,
            'eval_verbose': True, 'time': '01:00:00'}
+    if feedback_context:
+        job['extra_cmd_args']['feedback_profile'] = feedback_context['profile_id']
     db = dict(config['db_config'], db_path=str(output/'evolution_db.sqlite'))
     resolved = {'framework_commit': config['framework_commit'], 'evo_config': evo,
         'db_config': db, 'job_config': job,
@@ -109,6 +117,8 @@ def plan(args):
         'source_networks': len(instances), 'checkpoints_seconds': suite['checkpoints_seconds'],
         'model_calls_enabled': args.run,
         'scope': 'Development evaluation only. No held-out result is implied.'}
+    if feedback_context:
+        resolved['feedback_context'] = feedback_context
     if comparisons is not None:
         resolved['comparison_plan'] = comparisons
     return resolved
@@ -143,6 +153,8 @@ def main(argv=None):
     db = DatabaseConfig(**resolved['db_config'])
     job = LocalJobConfig(**resolved['job_config'])
     output.mkdir(parents=True, exist_ok=True)
+    if resolved.get('feedback_context'):
+        write_json(output/'feedback_context.json', resolved['feedback_context'])
     if args.check_native:
         write_json(output/'native_config_check.json', {**version, 'configuration_constructed': True,
             'model_calls': 0, 'islands': db.num_islands, 'mutation_bandit': evo.llm_dynamic_selection,
@@ -181,6 +193,9 @@ def main(argv=None):
         max_evaluation_jobs=resolved['max_evaluation_jobs'],
         max_proposal_jobs=resolved['max_proposal_jobs'], max_db_workers=resolved['max_db_workers'],
         verbose=True, debug=False)
+    if resolved.get('feedback_context'):
+        from swarm_location.feedback import attach_meta_context
+        attach_meta_context(runner, resolved['feedback_context'], output)
     runner.run()
 
 

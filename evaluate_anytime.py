@@ -53,7 +53,8 @@ def summarize(records):
     return rows
 
 
-def evaluate(program_path, results_dir, suite_path, split="development", baselines_only=False):
+def evaluate(program_path, results_dir, suite_path, split="development", baselines_only=False,
+             feedback_profile=None):
     output = Path(results_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
     # Mark incomplete before work, including interrupted or failed reruns.
@@ -61,13 +62,20 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
     write_json(output / "metrics.json", {"combined_score": 0.0, "text_feedback": "evaluation incomplete"})
     # A failed rerun must not leave a seemingly current successful comparison.
     (output / "comparisons.json").unlink(missing_ok=True)
+    for name in ("feedback.json", "diagnostics.json"):
+        (output / name).unlink(missing_ok=True)
     records, prep = [], []
     started = perf_counter()
     suite_path = Path(suite_path).resolve()
     candidate = None if baselines_only else Path(program_path).resolve()
     try:
+        from swarm_location.feedback import checked_profile, load_context, evidence_packet, text_feedback
+        checked_profile(feedback_profile)
+        context = load_context() if feedback_profile else None
         protocol, instances = load_suite(suite_path, split)
         tracked = [suite_path, Path(__file__).resolve(), *sorted((ROOT / "swarm_location").glob("*.py"))]
+        if context:
+            tracked.extend(ROOT / name for name in context["source_sha256"])
         if candidate is not None:
             tracked.append(candidate)
         before = {str(p): file_sha256(p) for p in tracked}
@@ -91,7 +99,8 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                     for method in order:
                         observed[method] = run_anytime(instance, k, checkpoints, seed=seed, oracle=oracle,
                             program_path=candidate if method == "candidate" else None,
-                            baseline=None if method == "candidate" else method)
+                            baseline=None if method == "candidate" else method,
+                            **({"feedback_profile": feedback_profile} if feedback_profile else {}))
                     records.append({"dataset": entry["id"], "source_graph": entry["source_graph"],
                                     "k": k, "seed": seed, "execution_order": order, "methods": observed})
                     write_json(output / "traces.json", {"stage": "m2_in_progress", "cases": records})
@@ -137,6 +146,7 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                         "evaluated_utc": datetime.now(timezone.utc).isoformat()},
             "extra_data": {"summary": summary, "preprocessing": prep, "failures": failures},
             "text_feedback": feedback}
+        comparisons = None
         if comparison is not None:
             comparisons = paired_comparisons(records, selected, comparison)
             metrics["extra_data"]["comparisons"] = comparisons
@@ -150,6 +160,19 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                     metrics["public"]["final_delta_vs_" + row["baseline"] + "_pp"] = row["delta_final_pp"]
             metrics["text_feedback"] += comparison_feedback(comparisons)
             write_json(output / "comparisons.json", comparisons)
+        if feedback_profile:
+            packet = evidence_packet(records, comparisons, split, selected)
+            metrics["text_feedback"] = text_feedback(packet)
+            metrics["extra_data"]["feedback"] = packet
+            metrics["private"]["feedback_context"] = {
+                "profile_id": feedback_profile, "source_sha256": context["source_sha256"]}
+            # These diagnostics do not enter scalar/public numerical reward fields.
+            write_json(output / "feedback.json", packet)
+            write_json(output / "diagnostics.json", {"schema_version": 1,
+                "profile_id": feedback_profile, "scoring_input": False,
+                "trials": [{"dataset": row["dataset"], "k": row["k"], "seed": row["seed"],
+                    "method": method, "diagnostics": trial.get("diagnostics")}
+                    for row in records for method, trial in row["methods"].items()]})
         write_json(output / "traces.json", {"stage": "m2_complete", "protocol": protocol,
             "suite_sha256": before[str(suite_path)], "split": split, "cases": records})
         write_json(output / "metrics.json", metrics)
@@ -170,8 +193,9 @@ if __name__ == "__main__":
     p.add_argument("--suite", default=str(ROOT / "data/commissioning/suite.json"))
     p.add_argument("--split", choices=["development", "validation", "test"], default="development")
     p.add_argument("--baselines-only", action="store_true")
+    p.add_argument("--feedback-profile", "--feedback_profile", dest="feedback_profile", choices=["m7-evidence-v1"])
     a = p.parse_args()
-    result = evaluate(a.program_path, a.results_dir, a.suite, a.split, a.baselines_only)
+    result = evaluate(a.program_path, a.results_dir, a.suite, a.split, a.baselines_only, a.feedback_profile)
     print(json.dumps({"combined_score": result["combined_score"], **result["public"]}, indent=2))
     if result["public"]["failed_cases"]:
         sys.exit(1)

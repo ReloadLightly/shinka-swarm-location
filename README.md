@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M6 early-incumbent controls implemented and measured on Docker; first complete deployments arrive sooner, but the declared checkpoint objective does not improve. Section 5.8 preserves the negative result. No evolutionary campaign completed.**
+**Status: M7 evidence-grounded feedback implemented; native/Docker commissioning pending. M6 fixed-control results remain preserved. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -40,6 +40,7 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
 | Early-incumbent control ablation | 1,296 Docker trials; three paired variants; no checkpoint-score improvement; Section 5.8 |
 | Opt-in M6 assessment profile | Four screening and ten assessment controls; no research holdout evaluation |
+| Evidence-grounded mutation/meta feedback | M7 opt-in implementation; commissioning evidence in Section 5.9 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -862,6 +863,45 @@ The figures show all eight fixed-control mean incumbent curves. Dashed lines are
 ![Anaheim paired early-control coverage](results/early-controls/figures/Anaheim.png)
 
 <!-- M6-EARLY-FIGURES:END -->
+
+### 5.9 M7 — Evidence-grounded mutation and meta feedback
+
+The [M7 implementation note](docs/m7_feedback.md) connects a compact helper/cost
+reference and curated M5/M6 development findings to the actual native prompts.
+It documents external node IDs versus internal route indices, normalized coverage
+versus integer mass, charged route construction and the distinctions among early
+receipt, final quality and certificates. No instance-specific deployments or
+research holdout outcomes are put into that context.
+
+The opt-in [`evolution_m7.json`](configs/evolution_m7.json) preserves the native
+islands, bandit, inspirations, crossover and meta cadence. The task is supplied to
+mutation prompts; a narrow client adapter also supplies it to all three native
+meta stages, which otherwise use separate prompts. The meta model remains
+separate from mutation UCB. The native summarizer still owns the scratchpad and
+recommendation lifecycle; no generated interpretation can alter numeric fitness.
+
+Each evaluator result now has a bounded, solution-free `feedback.json` projection
+and native `text_feedback`: checkpoint/final differences against executed controls,
+per-budget evidence, unexecuted controls explicitly identified, and repair hints.
+Parent-observed failures are distinguished from untrusted worker exception phases.
+A valid anytime deadline is not relabeled a crash. Exception hints contain bounded
+basename/line stacks without locals or source lines; stderr cannot grade itself.
+Arbitrary free stderr stays out of the mutation/meta text. Sanitization is best
+effort, not a secrecy or prompt-injection guarantee.
+
+<!-- M7-FEEDBACK:START -->
+
+Commissioning pending; no numerical or native-transport result inferred from configuration.
+
+<!-- M7-FEEDBACK:END -->
+
+[`m7_launch_request.json`](configs/m7_launch_request.json) explicitly combines the
+M7 feedback profile with M6's four screening and ten assessment controls. Older
+requests/configurations and every previous result block remain intact. Diagnostic
+collection may affect timings: a future host calibration must specify
+`--feedback-profile m7-evidence-v1`; the previous M5 guard is not silently reused.
+The [commands and limitations](docs/m7_feedback.md#commands) distinguish planning,
+commissioning, host calibration and the still-unexecuted paid evolutionary campaign.
 
 ## 6. Reproduce the first milestone
 
