@@ -1,0 +1,16 @@
+{
+  "source_curves_sha256": "ba246db9b1d2cc2c2fa1f49c4a5123e1d718a4174e1d2ef625c03e167c6b3f02",
+  "script_sha256": "a373651dfaf9869cde413897d6e60f060502f978145c027f7e16919603dd73ca",
+  "matplotlib_version": "3.11.2",
+  "plots": [
+    {
+      "path": "SiouxFalls.png",
+      "sha256": "2edfe40f17c2d349fbc02effcb9a1fb87eb1df3031456733a16909cbe63acc8f"
+    },
+    {
+      "path": "Anaheim.png",
+      "sha256": "cb5b3be74ebf8c9f79499c5e9be1b417960db998703e3da56388b6cf77dd5c78"
+    }
+  ],
+  "scope": "Exact descriptive mean step functions; no smoothing, resampling or confidence bands"
+}

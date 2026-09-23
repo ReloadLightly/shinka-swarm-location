@@ -53,3 +53,8 @@ all previous algorithms, clocks and fitness unchanged. Calibrate on the actual
 future campaign host/session; no universal threshold transfers from an Actions
 VM to WSL. The empirical guard only screens for fresh development confirmation;
 it is not significance, an automatic discovery claim or permission to open test.
+
+
+## M6: early-incumbent controls completed
+
+The paired Docker study is recorded in results/early-controls/ and README Section 5.8. 1296 development solver trials; 0 failures. The separately named early_iterated, early_dfbnb and early_potential variants retain the original inner deadline and exact scorer. The opt-in comparisons_m6.json profile keeps four screening controls and includes all ten fixed controls in assessment; M4/M5 records are not replaced. No paid evolution or research holdout assessment was executed. Do not transfer the former M5 host-session noise threshold to another run.

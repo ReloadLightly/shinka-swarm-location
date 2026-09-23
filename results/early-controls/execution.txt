@@ -1,0 +1,74 @@
+{"status": "running", "completed_trials": 24, "expected_trials": 1296}
+{"status": "running", "completed_trials": 48, "expected_trials": 1296}
+{"status": "running", "completed_trials": 72, "expected_trials": 1296}
+{"status": "running", "completed_trials": 96, "expected_trials": 1296}
+{"status": "running", "completed_trials": 120, "expected_trials": 1296}
+{"status": "running", "completed_trials": 144, "expected_trials": 1296}
+{"status": "running", "completed_trials": 168, "expected_trials": 1296}
+{"status": "running", "completed_trials": 192, "expected_trials": 1296}
+{"status": "running", "completed_trials": 216, "expected_trials": 1296}
+{"status": "running", "completed_trials": 240, "expected_trials": 1296}
+{"status": "running", "completed_trials": 264, "expected_trials": 1296}
+{"status": "running", "completed_trials": 288, "expected_trials": 1296}
+{"status": "running", "completed_trials": 312, "expected_trials": 1296}
+{"status": "running", "completed_trials": 336, "expected_trials": 1296}
+{"status": "running", "completed_trials": 360, "expected_trials": 1296}
+{"status": "running", "completed_trials": 384, "expected_trials": 1296}
+{"status": "running", "completed_trials": 408, "expected_trials": 1296}
+{"status": "running", "completed_trials": 432, "expected_trials": 1296}
+{"status": "running", "completed_trials": 456, "expected_trials": 1296}
+{"status": "running", "completed_trials": 480, "expected_trials": 1296}
+{"status": "running", "completed_trials": 504, "expected_trials": 1296}
+{"status": "running", "completed_trials": 528, "expected_trials": 1296}
+{"status": "running", "completed_trials": 552, "expected_trials": 1296}
+{"status": "running", "completed_trials": 576, "expected_trials": 1296}
+{"status": "running", "completed_trials": 600, "expected_trials": 1296}
+{"status": "running", "completed_trials": 624, "expected_trials": 1296}
+{"status": "running", "completed_trials": 648, "expected_trials": 1296}
+{"status": "running", "completed_trials": 672, "expected_trials": 1296}
+{"status": "running", "completed_trials": 696, "expected_trials": 1296}
+{"status": "running", "completed_trials": 720, "expected_trials": 1296}
+{"status": "running", "completed_trials": 744, "expected_trials": 1296}
+{"status": "running", "completed_trials": 768, "expected_trials": 1296}
+{"status": "running", "completed_trials": 792, "expected_trials": 1296}
+{"status": "running", "completed_trials": 816, "expected_trials": 1296}
+{"status": "running", "completed_trials": 840, "expected_trials": 1296}
+{"status": "running", "completed_trials": 864, "expected_trials": 1296}
+{"status": "running", "completed_trials": 888, "expected_trials": 1296}
+{"status": "running", "completed_trials": 912, "expected_trials": 1296}
+{"status": "running", "completed_trials": 936, "expected_trials": 1296}
+{"status": "running", "completed_trials": 960, "expected_trials": 1296}
+{"status": "running", "completed_trials": 984, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1008, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1032, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1056, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1080, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1104, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1128, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1152, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1176, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1200, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1224, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1248, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1272, "expected_trials": 1296}
+{"status": "running", "completed_trials": 1296, "expected_trials": 1296}
+{
+  "schema_version": 1,
+  "study_id": "m6-early-incumbents-v1",
+  "complete": true,
+  "solver_trials": 1296,
+  "failed_trials": 0,
+  "failures": [],
+  "repeats": 6,
+  "cases_per_block": 24,
+  "independently_rescored_deployments": 9408,
+  "verified_bound_snapshots": 3427,
+  "max_exact_vs_DAG_difference": 1.1102230246251565e-16,
+  "wall_seconds": 1876.666430791,
+  "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "session_key": "391206a30832f1d35c3e9a85dddc8d13d18fec347fa116c9af48918700927765",
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "research_validation_test_trials": 0,
+  "scope": "Descriptive paired host-session ablation; no universal noise guard or held-out superiority claim"
+}

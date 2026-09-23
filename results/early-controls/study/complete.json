@@ -1,0 +1,44 @@
+{
+  "completed_trials": 1296,
+  "wall_seconds": 1876.666430791,
+  "manifest_sha256": "5877378a05f6aa470c5d8fff80073f9853c3fb496ed534be19e5778f4cfe8081",
+  "journal_sha256": "9e39eb89e9aba9a18d27828f467c2263e9650ab137d2c6d82dd869c98836baf3",
+  "environment_after": {
+    "identity": {
+      "image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+      "host_python": "3.11.16",
+      "kernel": "6.17.0-1022-azure",
+      "machine": "x86_64",
+      "cpu_models": [
+        "AMD EPYC 7763 64-Core Processor"
+      ],
+      "logical_cpus": 4,
+      "parent_affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "docker_version": "28.0.4",
+      "docker_api": "1.48",
+      "host_cpu_max": null,
+      "host_memory_max": null
+    },
+    "hardware_runtime_key": "fe2df802633e5d787f4dfe297aa2db89c18d775fdeddddbccbe3d8e9560f254f",
+    "session_key": "391206a30832f1d35c3e9a85dddc8d13d18fec347fa116c9af48918700927765",
+    "clock": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "load_average": [
+      1.30859375,
+      1.21240234375,
+      1.06396484375
+    ],
+    "mem_available_kib": 15307732,
+    "governor_cpu0": null,
+    "captured_utc": "2026-09-23T10:24:00.905978+00:00"
+  }
+}
