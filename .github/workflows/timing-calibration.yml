@@ -2,22 +2,87 @@ name: Docker timing calibration
 on:
   push:
     branches: [work/timing-calibration]
+    paths: ['.delivery/**']
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   calibration:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
-      - name: Export exact source workspace
-        run: git archive --format=tar HEAD > /tmp/timing-source.tar
-      - uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: timing-source-${{ github.sha }}
-          path: /tmp/timing-source.tar
-          retention-days: 7
+          python-version: '3.11'
+      - name: Apply exact reviewed source and freeze it before measurement
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
+          test "$GITHUB_REF_NAME" = work/timing-calibration
+          test "$(git remote get-url origin)" = https://github.com/ReloadLightly/shinka-swarm-location
+          if test -d .delivery; then
+            cat .delivery/m5.*.gzpart | gzip -dc > /tmp/m5.patch
+            echo '6438b4fb1fcfa9093642715d053d04d5914cbfc5c17d37034168c8aa3b465469  /tmp/m5.patch' | sha256sum --check
+            git apply --check /tmp/m5.patch
+            git apply /tmp/m5.patch
+            rm .delivery/m5.*.gzpart
+            git diff --check
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add README.md docs/next_step.md configs/timing_m5.json docs/m5_timing.md scripts/calibrate_timing.py swarm_location/timing_calibration.py tests/test_timing_calibration.py .delivery
+            git commit -m 'Freeze M5 Docker timing calibration protocol and implementation'
+            git push origin HEAD:refs/heads/work/timing-calibration
+          fi
+      - name: Full tests and only development data
+        run: |
+          set -euo pipefail
+          mkdir -p results/timing-calibration
+          python -m pip install -r requirements-certificates.txt > results/timing-calibration/install.txt 2>&1
+          python -m unittest discover -s tests -v > results/timing-calibration/tests.txt 2>&1
+          tail -5 results/timing-calibration/tests.txt
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > results/timing-calibration/prepare.txt
+          python scripts/check_m4_continuity.py --output results/timing-calibration/m4-continuity.json
+      - name: Resolve the previous campaign executor digest
+        run: |
+          set -euo pipefail
+          docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
+          IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
+          echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: Execute the preregistered serial Docker study once
+        run: |
+          set -euo pipefail
+          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/timing-calibration/study | tee results/timing-calibration/execution.txt
+      - name: Replay evidence and generate measured README section
+        run: |
+          set -euo pipefail
+          python scripts/calibrate_timing.py --suite data/commissioning_m4/suite.json --output results/timing-calibration/study --verify --update-readme > results/timing-calibration/replay.txt
+          python scripts/calibrate_timing.py --screen-program anytime_initial.py --calibration results/timing-calibration/study --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/timing-calibration/seed-screen-check > results/timing-calibration/screen.txt
+          python -m pip freeze > results/timing-calibration/dependencies.txt
+          git diff --check
+      - name: Publish actual evidence and README to the work branch
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
+          test "$GITHUB_REF_NAME" = work/timing-calibration
+          test "$(git remote get-url origin)" = https://github.com/ReloadLightly/shinka-swarm-location
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md results/timing-calibration
+          git commit -m 'Record complete Docker null calibration, repeated controls, and measured README'
+          git push origin HEAD:refs/heads/work/timing-calibration
+      - name: Preserve source and raw outcomes even after interruption
+        if: always()
+        run: |
+          git archive --format=tar HEAD > /tmp/timing-source.tar
+          tar -czf /tmp/timing-outcomes.tar.gz results/timing-calibration data/commissioning_m4 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-timing-${{ github.run_id }}
+          path: |
+            /tmp/timing-source.tar
+            /tmp/timing-outcomes.tar.gz
+          retention-days: 30
