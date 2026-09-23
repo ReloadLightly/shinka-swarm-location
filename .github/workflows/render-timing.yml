@@ -1,0 +1,41 @@
+name: Render frozen timing evidence
+on:
+  push:
+    branches: [work/timing-calibration]
+    paths: ['scripts/render_timing.py']
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Render only frozen measurements and publish the scientific README
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = ReloadLightly/shinka-swarm-location
+          test "$GITHUB_REF_NAME" = work/timing-calibration
+          test "$(git remote get-url origin)" = https://github.com/ReloadLightly/shinka-swarm-location
+          python -m pip install matplotlib
+          python scripts/render_timing.py --update-readme
+          cp README.md /tmp/readme-first.md
+          python scripts/render_timing.py --update-readme
+          cmp README.md /tmp/readme-first.md
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/render_timing.py README.md results/timing-calibration/figures
+          git commit -m 'Plot frozen Docker timing evidence and interpret backend-specific results'
+          git push origin HEAD:refs/heads/work/timing-calibration
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: timing-figures-${{ github.run_id }}
+          path: results/timing-calibration/figures/
+          retention-days: 30
