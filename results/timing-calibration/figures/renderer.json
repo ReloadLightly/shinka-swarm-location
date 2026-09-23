@@ -1,0 +1,26 @@
+{
+  "source_curves_sha256": "2fa0cbe7ae342db900927d6d201b280f20b26719fb69897c3c8b6a346e338bfa",
+  "source_summary_sha256": "2ba62953f30f9f819bc183e0c88ddcede2665cdf68056709ecfc47fd26355dbb",
+  "script_sha256": "8babce43a95492dd48c364f4f250880fa5c434db8c658b7b7c984d1ccd7550c0",
+  "python": "3.11.16",
+  "matplotlib": "3.11.2",
+  "numpy": "2.4.6",
+  "plots": [
+    {
+      "network": "SiouxFalls",
+      "path": "SiouxFalls.png",
+      "sha256": "3135f5e3afcff6fe6df7da871096da2c9e582accc871055635f80d0a256b94db"
+    },
+    {
+      "network": "Anaheim",
+      "path": "Anaheim.png",
+      "sha256": "f9f1ad997ce79ba28bdf79f052a2e4bb2ec03720f55f2cff870098dbb4cc496a"
+    },
+    {
+      "scope": "overall-null",
+      "path": "null-distributions.png",
+      "sha256": "107feb4c3c7068300153b2100683f059d4cb7b0e52e79edec2929bea6cb10928"
+    }
+  ],
+  "scope": "Exact mean step functions; no interpolation, solver calls or new measurements"
+}

@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M4 staged strong-control campaign integration implemented; native development commissioning and verification are reported in Section 5.6. No evolutionary campaign completed.**
+**Status: M5 Docker timing calibration completed; identical-code noise, repeated strong controls and a host-session screening guard are reported in Section 5.7. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -36,6 +36,8 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Coverage + verified quality certificates | Implemented separately; see Section 5.3 |
 | Exact exchange landscape | Exhaustive development diagnosis and verified escape barrier; Section 5.4 |
 | Strong fixed anytime controls | DFBnB, utility-form APTS, route greedy/CELF, refinement and iterated search; Section 5.5 |
+| Staged native campaign comparisons | Four screening and seven assessment controls; Section 5.6 |
+| Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -699,6 +701,80 @@ Use a newly named output directory and an immutable image ID. The inherited
 sufficient search effort. No paid run is started by these integration checks.
 Timing calibration on the intended host, repeated evolutionary runs and broader
 network generalization remain separate research tasks.
+
+## 5.7 M5: Docker timing calibration before evolutionary confirmation
+
+The [predeclared timing protocol](docs/m5_timing.md) measures identical-code
+variation and repeats all seven strong assessment controls on the **unchanged
+campaign Docker backend**. It retains the existing four checkpoints and fitness.
+The [configuration](configs/timing_m5.json) separates a finite, host-session
+screening guard from proof of algorithmic improvement. Whole-suite repetitions,
+not individual seeds or checkpoints, are the statistical reporting unit.
+
+<!-- M5-TIMING:START -->
+
+**Executed:** 12 complete null blocks and 5 complete strong-control blocks, 24 development cases per block; **2,688 Docker solver trials**, 0 failed trials. Independent replay rescored 22,835 deployments and 1,427 online bound snapshots.
+
+| Suite-level timing probe (percentage points) | Mean | SD across blocks | Range |
+|---|---:|---:|---:|
+| identical_candidate | +0.0164 | 0.1069 | -0.2719 to +0.1792 |
+| identical_fixed_greedy | +0.0429 | 0.4094 | -0.7989 to +0.6944 |
+| identical_early_hybrid | +0.1754 | 0.6238 | -0.5465 to +1.9151 |
+| refreshed_fitness_difference | -0.0265 | 0.4625 | -0.6944 to +0.9782 |
+| candidate_minus_fixed_greedy_a | +0.2667 | 0.3065 | +0.0000 to +0.9782 |
+| candidate_minus_fixed_greedy_b | +0.2932 | 0.2976 | -0.1045 to +0.7467 |
+
+**Host-session promotion guard: strictly greater than 1.97 pp** over both freshly measured greedy and the early hybrid. The observed six-probe envelope was 1.9151 pp. This is a conservative **screening heuristic**, not statistical significance or proof of superiority. It does not alter Shinka fitness or automatically open holdouts.
+
+| Network / method | 20 ms (%) | 100 ms (%) | 500 ms (%) | 2 s (%) | Mean checkpoints (%) |
+|---|---:|---:|---:|---:|---:|
+| Anaheim / greedy | 19.6290 | 71.3316 | 79.9092 | 79.9092 | 62.6947 |
+| Anaheim / greedy_swap | 20.3697 | 71.0808 | 79.9092 | 79.9100 | 62.8174 |
+| Anaheim / topk | 61.9042 | 69.8779 | 69.8779 | 69.8779 | 67.8845 |
+| Anaheim / early_celf_swap | 3.7841 | 79.9092 | 79.9100 | 79.9100 | 60.8783 |
+| Anaheim / iterated | 0.0000 | 79.9100 | 79.9123 | 79.9146 | 59.9342 |
+| Anaheim / dfbnb | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 59.9325 |
+| Anaheim / potential | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 59.9325 |
+| SiouxFalls / greedy | 64.4551 | 64.4551 | 64.4551 | 64.4551 | 64.4551 |
+| SiouxFalls / greedy_swap | 65.6614 | 65.6614 | 65.6614 | 65.6614 | 65.6614 |
+| SiouxFalls / topk | 61.0649 | 61.0649 | 61.0649 | 61.0649 | 61.0649 |
+| SiouxFalls / early_celf_swap | 65.6614 | 65.6614 | 65.6614 | 65.6614 | 65.6614 |
+| SiouxFalls / iterated | 65.6947 | 65.9664 | 65.9664 | 65.9664 | 65.8985 |
+| SiouxFalls / dfbnb | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 65.8902 |
+| SiouxFalls / potential | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 65.8902 |
+
+Means describe five complete repetitions on one host, not five independent networks. The exact mean step-function curves, all per-network/budget/checkpoint null distributions, final-coverage ranges, and all raw trials are retained. CPU quota is not a dedicated core. **Recalibrate on the actual future campaign host/session**; these thresholds are not portable to another Actions VM or WSL.
+
+**Model calls: 0; evolved descendants: 0; research validation/test trials: 0.** No longer-budget result was substituted for the unchanged two-second protocol.
+
+[Summary and full distributions](results/timing-calibration/study/summary.json), [frozen schedule and runtime](results/timing-calibration/study/manifest.json), [exact coverage curves](results/timing-calibration/study/curves.json), [losslessly compressed raw journal](results/timing-calibration/study/trials.jsonl.gz).
+
+<!-- M5-TIMING:END -->
+
+<!-- M5-VISUALS:START -->
+
+**Backend-specific finding.** On Anaheim, the early-answer hybrid averaged 3.7841% coverage at 20 ms on this Docker host, versus 19.6290% for DAG greedy and 61.9042% for singleton ranking. By 100 ms it reached 79.9092%. The method name does not guarantee an early received answer: the previous process-backend ranking is not portable. These measurements do not isolate Docker overhead from hardware, imports, transport or scheduling, and no timing boundary or algorithm was changed after seeing this result.
+
+**Fresh unchanged-seed screen.** A separate 120-trial M4 development evaluation returned +0.4629 pp against freshly timed greedy and +1.1230 pp against the early hybrid. Under the 1.97 pp guard the seed was **not promoted**. This exercises the screen, not a universal false-positive guarantee. Those 120 trials are separate from the 2,688-trial calibration; no LLM evolution or research holdout assessment occurred. [Saved promotion decision](results/timing-calibration/seed-screen-check/promotion.json).
+
+The plots show the complete mean incumbent step functions for all seven controls and the unchanged seed. The time axis is nonlinear to make the 20-millisecond region visible; each network mean pools its four budgets and three solver seeds within each of five repetition blocks. Overlapping lines are retained. These are descriptive curves, not confidence bands or an evolutionary result.
+
+![Complete-suite timing differences](results/timing-calibration/figures/null-distributions.png)
+
+The timing boxes summarize all 12 block values (including displayed outliers). The last two probes use the same greedy rule through different loading paths; they are not byte-identical nulls. No significance test is implied.
+
+![Sioux Falls Docker anytime coverage](results/timing-calibration/figures/SiouxFalls.png)
+
+![Anaheim Docker anytime coverage](results/timing-calibration/figures/Anaheim.png)
+
+<!-- M5-VISUALS:END -->
+
+Reproduce on the actual campaign host with `scripts/calibrate_timing.py`; its
+`--verify` mode replays saved evidence without rerunning solvers. The optional
+`--screen-program` mode freezes a candidate and requests confirmation only after
+a fresh same-session M4 evaluation exceeds the measured guard. It does not change
+the native scalar score, candidate population, comparator profile or holdout rules.
+See the protocol for commands, assumptions and the five-repeat confirmation plan.
 
 ## 6. Reproduce the first milestone
 
