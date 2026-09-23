@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M5 Docker timing calibration completed; identical-code noise, repeated strong controls and a host-session screening guard are reported in Section 5.7. No evolutionary campaign completed.**
+**Status: M6 early-incumbent controls implemented and measured on Docker; first complete deployments arrive sooner, but the declared checkpoint objective does not improve. Section 5.8 preserves the negative result. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -38,6 +38,8 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Strong fixed anytime controls | DFBnB, utility-form APTS, route greedy/CELF, refinement and iterated search; Section 5.5 |
 | Staged native campaign comparisons | Four screening and seven assessment controls; Section 5.6 |
 | Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
+| Early-incumbent control ablation | 1,296 Docker trials; three paired variants; no checkpoint-score improvement; Section 5.8 |
+| Opt-in M6 assessment profile | Four screening and ten assessment controls; no research holdout evaluation |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -821,6 +823,22 @@ All six block values, per-source/per-budget paired differences, exact mean incum
 **Model calls: 0; evolved descendants: 0; research validation/test trials: 0.** The objective, four checkpoint deadlines and scalar fitness are unchanged.
 
 <!-- M6-EARLY-CONTROLS:END -->
+
+<!-- M6-INTERPRETATION:START -->
+
+**Finding: faster first complete deployments, but no improvement in the declared checkpoint objective.** All three mean paired checkpoint differences are slightly negative on this host. Final two-second coverage is exactly equal in every one of the 432 early-versus-parent case pairs. This is a negative result for checkpoint-score improvement, not a failure to execute the prefix.
+
+| Anaheim: mean first complete deployment | Original (ms) | Early variant (ms) |
+|---|---:|---:|
+| early_iterated / iterated | 63.126 | 21.423 |
+| early_dfbnb / dfbnb | 63.297 | 21.294 |
+| early_potential / potential | 63.645 | 21.298 |
+
+On Anaheim, the complete singleton-ranked answer arrives at roughly 21 ms rather than 63 ms, but all 72 trials of each new variant miss the 20 ms checkpoint. The full curves show the earlier availability between checkpoints; it is not rewarded by the four-point objective. The prefix also delays the small local-search gain visible at 100 ms. On Sioux Falls, both versions already supply a complete deployment by 20 ms. **First-complete latency is not time to equal coverage:** the initial singleton-ranked deployment can be weaker than the parent's first complete solution.
+
+The identical-control pair has zero *checkpoint-score* difference in all six blocks, while its receipt timestamps vary. This does not establish zero timing noise. No checkpoint was moved, no budget extended, and no variant selected after seeing the measurements to obtain a favorable result. The three early controls remain separately named and included in the predeclared optional assessment set, so evolution receives no novelty credit merely for assembling this existing initialization pattern.
+
+<!-- M6-INTERPRETATION:END -->
 
 [Summary and full block distributions](results/early-controls/study/summary.json),
 [frozen source, schedule and runtime](results/early-controls/study/manifest.json),
