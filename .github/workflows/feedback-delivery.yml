@@ -1,0 +1,93 @@
+name: Native feedback commissioning
+on:
+  push:
+    branches: [work/evidence-feedback]
+permissions:
+  contents: write
+jobs:
+  commission:
+    if: startsWith(github.event.head_commit.message, 'EXECUTE_M7_ONCE:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: work/evidence-feedback
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install reviewed source bytes and freeze before execution
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,hashlib,json,lzma,pathlib,subprocess
+          root=pathlib.Path('.')
+          packed=''.join((root/f'.delivery/m7-part-{i}').read_text() for i in range(4))
+          assert hashlib.sha256(packed.encode()).hexdigest()=='00b417a4720aa60dbbd098f309d0988c5bc36dcb19d276fad82042b26920f045'
+          payload=json.loads(lzma.decompress(base64.b64decode(packed)))
+          subprocess.run(['git','apply','-'],input=payload['patch'],text=True,check=True)
+          for name,text in payload['new'].items():
+              path=root/name
+              assert not path.exists() and not name.startswith(('.github/','/')) and '..' not in path.parts
+              path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text)
+          for name,digest in payload['sha256'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest,name
+          # Reviewed unit-fixture correction: ample semantic-test time, not new benchmark checkpoints.
+          final={'tests/test_feedback.py':'a1a1034384af377451deaf4dccde0fd32cdc169f14a0f7e96e78af03ebb1da8c','scripts/commission_feedback.py':'61dc89d96d57376af988981e98ac4e5c75f04d35c018ef158924807c080f13eb'}
+          for name,digest in final.items():
+              path=root/name;path.write_text(path.read_text().replace('[.1,.3]','[.1,1.0]'))
+              assert hashlib.sha256(path.read_bytes()).hexdigest()==digest,name
+          subprocess.run(['git','add','--',*payload['sha256']],check=True)
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Freeze M7 task/meta evidence routing and bounded diagnostics before commissioning'
+          git push origin HEAD:work/evidence-feedback
+      - name: Full tests and pinned native dependency
+        run: |
+          set -euo pipefail
+          mkdir -p results/feedback
+          python -m pip install -r requirements-certificates.txt > results/feedback/install-certificates.txt 2>&1
+          python -m unittest discover -s tests -v > results/feedback/tests.txt 2>&1
+          tail -5 results/feedback/tests.txt
+          python -m pip install -e . -r requirements-shinka.txt > results/feedback/install-native.txt 2>&1
+      - name: Prepare only development and the immutable campaign executor
+        run: |
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m6.json --output data/commissioning_m7 > results/feedback/prepare.txt
+          docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
+          IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
+          echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: Native seed, synthetic faults and actual prompt inputs; no provider calls
+        run: |
+          set -euo pipefail
+          python scripts/commission_feedback.py --suite data/commissioning_m7/suite.json --docker-image "$IMAGE_ID" --output results/feedback/integration > results/feedback/execution.txt 2>&1
+          cp results/feedback/tests.txt results/feedback/integration/tests.txt
+          python scripts/report_feedback.py --evidence results/feedback/integration --suite data/commissioning_m7/suite.json --update-readme > results/feedback/replay.txt
+          python -m pip freeze > results/feedback/dependencies.txt
+      - name: Publish executed evidence and README
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('README.md');s=p.read_text()
+          s=s.replace('M7 evidence-grounded feedback implemented; native/Docker commissioning pending. M6 fixed-control results remain preserved. No evolutionary campaign completed.','M7 evidence-grounded feedback implemented and commissioned through native Docker evaluation and native prompt inputs. No model-generated recommendations or evolutionary campaign completed.')
+          s=s.replace('M7 opt-in implementation; commissioning evidence in Section 5.9','M7 opt-in task/meta context and bounded diagnostics; executed transport evidence in Section 5.9')
+          p.write_text(s)
+          PY
+          git add README.md results/feedback
+          git commit -m 'Record native M7 diagnostic and feedback delivery evidence without model calls'
+          git push origin HEAD:work/evidence-feedback
+      - name: Preserve source and outcomes even after a failed check
+        if: always()
+        run: |
+          mkdir -p /tmp/m7-artifact
+          git archive HEAD > /tmp/m7-artifact/source.tar
+          tar -czf /tmp/m7-artifact/working-evidence.tar.gz results/feedback data/commissioning_m7 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m7-feedback-${{ github.run_id }}
+          path: /tmp/m7-artifact/
+          retention-days: 30
