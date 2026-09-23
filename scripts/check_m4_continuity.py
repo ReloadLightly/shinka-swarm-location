@@ -29,17 +29,24 @@ PROTECTED = [
 ]
 
 
-def check(base: str = BASE) -> dict:
+def check(base: str = BASE, allow_source_changes=()) -> dict:
+    allowed = set(allow_source_changes)
+    if not allowed <= {'swarm_location/strong_baselines.py'}:
+        raise ValueError('only the declared M6 fixed-method extension may be excepted')
     def git(*args):
         return subprocess.check_output(['git', *args], cwd=ROOT)
     paths = git('ls-tree', '-r', '--name-only', base, '--', *PROTECTED).decode().splitlines()
     if not paths:
         raise ValueError('historical base not available')
-    hashes = {}
+    hashes, source_changes = {}, {}
     for path in paths:
         original = git('show', base+':'+path)
         if not (ROOT/path).is_file() or (ROOT/path).read_bytes() != original:
-            raise ValueError('protected historical bytes changed: '+path)
+            if path not in allowed or not (ROOT/path).is_file():
+                raise ValueError('protected historical bytes changed: '+path)
+            source_changes[path] = {'historical_sha256': hashlib.sha256(original).hexdigest(),
+                                    'current_sha256': hashlib.sha256((ROOT/path).read_bytes()).hexdigest()}
+            continue
         hashes[path] = hashlib.sha256(original).hexdigest()
     old = git('show', base+':README.md').decode()
     new = (ROOT/'README.md').read_text()
@@ -50,8 +57,8 @@ def check(base: str = BASE) -> dict:
             raise ValueError('missing/duplicate historical README block: '+name)
         if old.split(start)[1].split(end)[0] != new.split(start)[1].split(end)[0]:
             raise ValueError('historical README result block changed: '+name)
-    return {'success': True, 'base_commit': base, 'protected_file_count': len(paths),
-            'protected_file_sha256': hashes, 'historical_readme_blocks_unchanged': blocks,
+    return {'success': True, 'base_commit': base, 'protected_file_count': len(hashes),
+            'protected_file_sha256': hashes, 'declared_source_changes': source_changes, 'historical_readme_blocks_unchanged': blocks,
             'scope': 'Byte preservation, not a new timing run or numerical reproduction'}
 
 
@@ -59,6 +66,7 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--base', default=BASE)
     p.add_argument('--output', type=Path)
-    a = p.parse_args(); result = check(a.base)
+    p.add_argument('--allow-source-change', action='append', default=[])
+    a = p.parse_args(); result = check(a.base, a.allow_source_change)
     if a.output: write_json(a.output, result)
     print(json.dumps({k:v for k,v in result.items() if k != 'protected_file_sha256'}, indent=2))

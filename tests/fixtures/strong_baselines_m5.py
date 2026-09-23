@@ -11,10 +11,8 @@ from time import perf_counter
 
 from .route_search import RouteSearch, RouteLimit, SearchDeadline, check_time
 
-# M6 adds an early incumbent to existing search modes; legacy names stay intact.
-EARLY_PARENTS={'early_iterated':'iterated','early_dfbnb':'dfbnb','early_potential':'potential'}
-METHODS=('route_greedy','celf','route_swap','early_celf_swap','iterated','dfbnb','potential',*EARLY_PARENTS)
-BOUND_METHODS=('dfbnb','potential','early_dfbnb','early_potential')
+METHODS=('route_greedy','celf','route_swap','early_celf_swap','iterated','dfbnb','potential')
+BOUND_METHODS=('dfbnb','potential')
 
 
 def greedy(p,k,deadline,report,*,lazy=False):
@@ -69,7 +67,6 @@ def solve(problem,k,random_seed,report,time_budget,method,*,route_limit=20_000,m
     if max_cycles is not None and (type(max_cycles) is not int or max_cycles<0):
         raise ValueError('invalid cycle limit')
     started=perf_counter();deadline=started+time_budget
-    search_method=EARLY_PARENTS.get(method,method)
     best_ids=[];best_mass=-1
     bound_report=getattr(report,'bound',lambda _:None)
     diagnostic=getattr(report,'diagnostic',lambda _:None)
@@ -79,7 +76,7 @@ def solve(problem,k,random_seed,report,time_budget,method,*,route_limit=20_000,m
         bound_report({'kind':'universal_v1','selected':[],'upper':'1' if k else '0'})
     if k==0:return []
     try:
-        if method=='early_celf_swap' or method in EARLY_PARENTS:
+        if method=='early_celf_swap':
             check_time(deadline)
             gains=problem.marginal_gains([])
             best_ids=sorted(gains,key=lambda v:(-gains[v],v))[:k]
@@ -102,7 +99,7 @@ def solve(problem,k,random_seed,report,time_budget,method,*,route_limit=20_000,m
         if method in ('route_swap','early_celf_swap'):return best_ids
         if method in BOUND_METHODS:
             from .bounded_search import PartitionSearch
-            tree=PartitionSearch(p,k,p.indices(best_ids),search_method)
+            tree=PartitionSearch(p,k,p.indices(best_ids),method)
             tree.run(report,bound_report,deadline)
             best_ids=p.ids(tree.best_group)
             stats.update(splits=tree.splits,expanded=tree.expanded,peak_open=tree.peak_open,
