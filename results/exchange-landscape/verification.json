@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "study_sha256": "036ad0412d7825cb476406dfe1ae7b086263c369df926bc3cbf448d24a5cbc52",
+  "full_census_deployments_recomputed": 134596,
+  "neutral_component_recomputed": true,
+  "escape_barrier_proof_verified": true,
+  "independent_exact_dag_witnesses_checked": 24,
+  "prior_certificates_reverified": 48,
+  "prior_bound_witnesses_reverified": 24,
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "validation_test_evaluations": 0
+}

@@ -1,0 +1,661 @@
+{
+  "science": {
+    "schema_version": 1,
+    "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+    "dataset": "SiouxFalls",
+    "source_graph": "SiouxFalls",
+    "split": "development",
+    "dataset_sha256": "74c3469f21dd1b0370691f7a7e4a16ffc21fb283bdd7abfe5bfa9c7a0d63c84c",
+    "suite_sha256": "dd1aec44c64da895347e4bd7d286ac0192f8c5b5f194e85f4d2a2e0fa5977ecb",
+    "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+    "k": 6,
+    "prior_study_sha256": "ad99e878f15c52ffca55331d027c570916dd352783b1e31d07f17a5a60df000b",
+    "headroom_source": "independently reverified existing reference study; not new BnB runs",
+    "prior_reference_verification": {
+      "verified_certificates": 48,
+      "verified_bound_witnesses": 24,
+      "development_cases": 12,
+      "max_abs_difference_from_production_scorer": 1.1102230246251565e-16,
+      "validation_test_evaluations": 0,
+      "model_calls": 0
+    },
+    "headroom": [
+      {
+        "k": 1,
+        "greedy_exact": "1229/3606",
+        "greedy_swap_exact": "1229/3606",
+        "optimum_exact": "1229/3606",
+        "swap_gap_exact": "0",
+        "in_campaign_budget_list": true,
+        "reference_file": "references/SiouxFalls-k1.json",
+        "reference_sha256": "dde6291c93b24297d7393d4e6f7943a5bbd074bf90a2388a5face7565b328304"
+      },
+      {
+        "k": 2,
+        "greedy_exact": "306/601",
+        "greedy_swap_exact": "306/601",
+        "optimum_exact": "306/601",
+        "swap_gap_exact": "0",
+        "in_campaign_budget_list": false,
+        "reference_file": "references/SiouxFalls-k2.json",
+        "reference_sha256": "a4093c08880146721df6ccd546f8ee5078868240e8e8c6af435701e59043bcd7"
+      },
+      {
+        "k": 3,
+        "greedy_exact": "1163/1803",
+        "greedy_swap_exact": "2413/3606",
+        "optimum_exact": "2413/3606",
+        "swap_gap_exact": "0",
+        "in_campaign_budget_list": true,
+        "reference_file": "references/SiouxFalls-k3.json",
+        "reference_sha256": "e23dafd70e880af4368929000b7bb3dcbf20d911a510a1a3e5b5cea0c68d612c"
+      },
+      {
+        "k": 4,
+        "greedy_exact": "1324/1803",
+        "greedy_swap_exact": "2693/3606",
+        "optimum_exact": "2693/3606",
+        "swap_gap_exact": "0",
+        "in_campaign_budget_list": true,
+        "reference_file": "references/SiouxFalls-k4.json",
+        "reference_sha256": "3875aa604d41b52c780ef843ac82d4af3d4167005b6a44ad81eb579f955dfaa2"
+      },
+      {
+        "k": 5,
+        "greedy_exact": "1447/1803",
+        "greedy_swap_exact": "1468/1803",
+        "optimum_exact": "983/1202",
+        "swap_gap_exact": "13/3606",
+        "in_campaign_budget_list": false,
+        "reference_file": "references/SiouxFalls-k5.json",
+        "reference_sha256": "8dada549f7082ac0372b9b9c991f38a5643021de8afdfd11f7bc7b7cdf1fd7ae"
+      },
+      {
+        "k": 6,
+        "greedy_exact": "1547/1803",
+        "greedy_swap_exact": "1568/1803",
+        "optimum_exact": "530/601",
+        "swap_gap_exact": "22/1803",
+        "in_campaign_budget_list": true,
+        "reference_file": "references/SiouxFalls-k6.json",
+        "reference_sha256": "b16b8d67782f24e6bf76a4b19e424f769375bd0017db22d270e3c9a3f1f43373"
+      },
+      {
+        "k": 7,
+        "greedy_exact": "1642/1803",
+        "greedy_swap_exact": "1642/1803",
+        "optimum_exact": "1654/1803",
+        "swap_gap_exact": "4/601",
+        "in_campaign_budget_list": false,
+        "reference_file": "references/SiouxFalls-k7.json",
+        "reference_sha256": "f2d5b4005a68a714091d2dba33dff681dde3e0672ddafd76bb38c2c76efce30c"
+      },
+      {
+        "k": 8,
+        "greedy_exact": "1693/1803",
+        "greedy_swap_exact": "1699/1803",
+        "optimum_exact": "3413/3606",
+        "swap_gap_exact": "5/1202",
+        "in_campaign_budget_list": false,
+        "reference_file": "references/SiouxFalls-k8.json",
+        "reference_sha256": "716b05879689f84a3afd023594546906295bc721d4dd695f47a520f80e43c0dd"
+      }
+    ],
+    "fresh_completed_baseline_matches_saved_reference": true,
+    "census": {
+      "complete": true,
+      "k": 6,
+      "nodes": 24,
+      "initial": [
+        8,
+        10,
+        11,
+        13,
+        17,
+        22
+      ],
+      "scale": 10818,
+      "initial_units": 9408,
+      "total_deployments": 134596,
+      "enumeration_sha256": "e43c9381d263e582e32d9382306eec32794fc35d8295fd13448a0ddfb9f620b5",
+      "sample_limit": 16,
+      "spheres": [
+        {
+          "radius": 1,
+          "evaluated": 108,
+          "worse": 107,
+          "equal": 1,
+          "better": 0,
+          "best_selected": [
+            8,
+            10,
+            11,
+            17,
+            22,
+            24
+          ],
+          "best_units": 9408,
+          "worst_units": 8055,
+          "examples": {
+            "equal": [
+              [
+                8,
+                10,
+                11,
+                17,
+                22,
+                24
+              ]
+            ],
+            "better": []
+          }
+        },
+        {
+          "radius": 2,
+          "evaluated": 2295,
+          "worse": 2295,
+          "equal": 0,
+          "better": 0,
+          "best_selected": [
+            8,
+            10,
+            11,
+            19,
+            22,
+            24
+          ],
+          "best_units": 9378,
+          "worst_units": 6411,
+          "examples": {
+            "equal": [],
+            "better": []
+          }
+        },
+        {
+          "radius": 3,
+          "evaluated": 16320,
+          "worse": 16320,
+          "equal": 0,
+          "better": 0,
+          "best_selected": [
+            5,
+            11,
+            13,
+            15,
+            16,
+            22
+          ],
+          "best_units": 9324,
+          "worst_units": 5088,
+          "examples": {
+            "equal": [],
+            "better": []
+          }
+        },
+        {
+          "radius": 4,
+          "evaluated": 45900,
+          "worse": 45899,
+          "equal": 0,
+          "better": 1,
+          "best_selected": [
+            5,
+            11,
+            13,
+            15,
+            16,
+            20
+          ],
+          "best_units": 9480,
+          "worst_units": 3462,
+          "examples": {
+            "equal": [],
+            "better": [
+              [
+                5,
+                11,
+                13,
+                15,
+                16,
+                20
+              ]
+            ]
+          }
+        },
+        {
+          "radius": 5,
+          "evaluated": 51408,
+          "worse": 51406,
+          "equal": 0,
+          "better": 2,
+          "best_selected": [
+            5,
+            11,
+            15,
+            16,
+            20,
+            24
+          ],
+          "best_units": 9540,
+          "worst_units": 2874,
+          "examples": {
+            "equal": [],
+            "better": [
+              [
+                4,
+                11,
+                15,
+                16,
+                20,
+                24
+              ],
+              [
+                5,
+                11,
+                15,
+                16,
+                20,
+                24
+              ]
+            ]
+          }
+        },
+        {
+          "radius": 6,
+          "evaluated": 18564,
+          "worse": 18564,
+          "equal": 0,
+          "better": 0,
+          "best_selected": [
+            5,
+            12,
+            14,
+            15,
+            16,
+            20
+          ],
+          "best_units": 9057,
+          "worst_units": 2373,
+          "examples": {
+            "equal": [],
+            "better": []
+          }
+        }
+      ],
+      "smallest_improving_radius": 4,
+      "strict_improving_deployments": 3,
+      "global_optimum_units": 9540,
+      "global_optimum_count": 1,
+      "global_optimum_examples": [
+        [
+          5,
+          11,
+          15,
+          16,
+          20,
+          24
+        ]
+      ]
+    },
+    "neutral_component": {
+      "complete": true,
+      "initial": [
+        8,
+        10,
+        11,
+        13,
+        17,
+        22
+      ],
+      "level_units": 9408,
+      "members": [
+        [
+          8,
+          10,
+          11,
+          13,
+          17,
+          22
+        ],
+        [
+          8,
+          10,
+          11,
+          17,
+          22,
+          24
+        ]
+      ],
+      "neighbor_checks": 216,
+      "strict_exit_transitions": 0,
+      "escape_path": null,
+      "no_neutral_then_strict_single_exchange_escape_proved": true
+    },
+    "neutral_member_radius_checks": [
+      {
+        "selected": [
+          8,
+          10,
+          11,
+          13,
+          17,
+          22
+        ],
+        "spheres": [
+          {
+            "radius": 1,
+            "evaluated": 108,
+            "strictly_better_than_initial": 0,
+            "best_units": 9408
+          },
+          {
+            "radius": 2,
+            "evaluated": 2295,
+            "strictly_better_than_initial": 0,
+            "best_units": 9378
+          },
+          {
+            "radius": 3,
+            "evaluated": 16320,
+            "strictly_better_than_initial": 0,
+            "best_units": 9324
+          }
+        ]
+      },
+      {
+        "selected": [
+          8,
+          10,
+          11,
+          17,
+          22,
+          24
+        ],
+        "spheres": [
+          {
+            "radius": 1,
+            "evaluated": 108,
+            "strictly_better_than_initial": 0,
+            "best_units": 9408
+          },
+          {
+            "radius": 2,
+            "evaluated": 2295,
+            "strictly_better_than_initial": 0,
+            "best_units": 9378
+          },
+          {
+            "radius": 3,
+            "evaluated": 16320,
+            "strictly_better_than_initial": 0,
+            "best_units": 9366
+          }
+        ]
+      }
+    ],
+    "minimum_loss_escape": {
+      "status": "proved",
+      "expanded_states": 21,
+      "discovered_states": 1497,
+      "proof": {
+        "kind": "single_exchange_escape_barrier",
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 6,
+        "initial": [
+          8,
+          10,
+          11,
+          13,
+          17,
+          22
+        ],
+        "scale": 10818,
+        "bottleneck_units": 9258,
+        "path": [
+          [
+            8,
+            10,
+            11,
+            13,
+            17,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            13,
+            16,
+            22
+          ],
+          [
+            8,
+            11,
+            13,
+            15,
+            16,
+            22
+          ],
+          [
+            5,
+            11,
+            13,
+            15,
+            16,
+            22
+          ],
+          [
+            5,
+            11,
+            13,
+            15,
+            16,
+            20
+          ]
+        ],
+        "strict_superlevel_cut": [
+          [
+            4,
+            8,
+            10,
+            14,
+            17,
+            22
+          ],
+          [
+            4,
+            10,
+            14,
+            16,
+            20,
+            22
+          ],
+          [
+            6,
+            10,
+            13,
+            14,
+            16,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            12,
+            17,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            13,
+            16,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            13,
+            17,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            13,
+            19,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            16,
+            22,
+            24
+          ],
+          [
+            8,
+            10,
+            11,
+            17,
+            20,
+            22
+          ],
+          [
+            8,
+            10,
+            11,
+            17,
+            22,
+            24
+          ],
+          [
+            8,
+            10,
+            11,
+            19,
+            22,
+            24
+          ],
+          [
+            8,
+            10,
+            12,
+            14,
+            16,
+            22
+          ],
+          [
+            8,
+            10,
+            12,
+            14,
+            17,
+            22
+          ],
+          [
+            8,
+            10,
+            12,
+            14,
+            19,
+            22
+          ],
+          [
+            8,
+            10,
+            13,
+            14,
+            16,
+            22
+          ],
+          [
+            8,
+            10,
+            13,
+            14,
+            17,
+            22
+          ],
+          [
+            8,
+            10,
+            13,
+            14,
+            19,
+            22
+          ],
+          [
+            10,
+            12,
+            14,
+            16,
+            20,
+            22
+          ]
+        ]
+      },
+      "verification": {
+        "minimal_loss_proved": true,
+        "minimum_loss_coverage_exact": "25/1803",
+        "minimum_loss_pp": 1.3865779256794233,
+        "path_coverages_exact": [
+          "1568/1803",
+          "1547/1803",
+          "1543/1803",
+          "518/601",
+          "1580/1803"
+        ],
+        "path_steps": 4,
+        "cut_states": 18,
+        "cut_neighbor_checks": 1944
+      }
+    },
+    "witnesses_checked_against_independent_exact_dag": 24,
+    "max_abs_difference_from_production_scorer": 0.0,
+    "model_calls": 0,
+    "evolved_descendants": 0,
+    "validation_test_evaluations": 0,
+    "evaluator_or_fitness_modified": false,
+    "scope": "Exact offline development-case landscape; no anytime speedup or evolutionary claim"
+  },
+  "execution": {
+    "created_utc": "2026-09-23T02:51:12.891256+00:00",
+    "python": "3.13.5",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "source_sha256": {
+      "scripts/exchange_study.py": "1bd4e50361844a9f5c8a8f3414a4aaaa5bec84f663d6856c450214490683f8a6",
+      "swarm_location/exchange_landscape.py": "6d5c22ac31535e8a728554d803cd8385ca87cf970492c3c8be7e9492a83b8b97",
+      "swarm_location/certificates.py": "ee58f00fa5db572bd268c5394a601405f80e7109f1ca5c8f30b0f8a664379ec4",
+      "swarm_location/certificate_references.py": "e3e4add23553cb9279c8f1c7685019a8fd3a0f393d3ee401a635dac956eddc59",
+      "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+      "swarm_location/search.py": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+      "swarm_location/anytime_baselines.py": "6f633ecc38f8ba5b8324f238b08623fa9fc0e4b15fc29280b6f3f1f0840115ce",
+      "swarm_location/suite.py": "e48480609fcb8676a2eb16db993efb8b02f4b51673063f000f25cdfffb8fbf26"
+    },
+    "frozen_inputs_sha256": {
+      "anytime_initial.py": "a8c52aa15a97428ebd3b7d129ed129c04fe67eabda3719322f5b1172e0886285",
+      "initial.py": "abd985936be26c6d85998b0a04ccf595c9b72b2c3b29e26ba2bc01f5da84f299",
+      "evaluate_anytime.py": "e202f3478979adabc601e7693cf72fbde247fe612649f234c2c71fda13343fad",
+      "evaluate.py": "02c181d7b9ef91de0904587dcf619c62b5298a0b2c267d761919171f0827a153",
+      "run_evo.py": "533ede784ec4e515c88244a06f919a8c5bd844e7d98c47ad996b86ebdc446461",
+      "campaign.py": "a9f0668c9f900b77f4560d4feda90868539ce19a3f8589c463fa7ec3306c3cf4",
+      "configs/evolution.json": "8c29999b0d6979467aa2c211afcf3ae8e246cc1651c8d08ac12933e6b41ccb63",
+      "configs/evolution_m3.json": "10b5eb100ef6c4fbabaef6509c6d32250226c002d545a2ab580211af8c20da15",
+      "configs/m3_launch_request.json": "3906e4c17d77d281d8026192da07c724e4fc9b52ae99dafd440b303dd4b79662",
+      "configs/source_catalog_m3.json": "c7b0b4c0ffbe8679553165001a54dcc6a404c17706da3a505b4a4288aa0b1ca8",
+      "swarm_location/anytime.py": "612779612b31927025d4ad576ae80b7fc62eb1b1aa848a594f149b489c1b883d",
+      "swarm_location/anytime_worker.py": "f5eb73978cc9254f4b8d967465091d8eedd870aaa164593da365070a60b61143",
+      "swarm_location/isolation.py": "e31f1a5e398f79d066e816efe79411e08352071cce348c4db8f78f8a5ef8780d",
+      "swarm_location/selection.py": "bc9b1fafdbe010a47233229fa421e27925826b912e8734835e357c81803a0908"
+    },
+    "wall_seconds_including_reference_verification_and_preparation": 7.909030489999964,
+    "timing_scope": "entire offline diagnostic, NOT a campaign quality-runtime comparison"
+  }
+}
