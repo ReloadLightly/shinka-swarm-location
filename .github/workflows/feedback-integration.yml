@@ -1,0 +1,28 @@
+name: Mutation feedback integration
+on:
+  push:
+    branches: [work/mutation-feedback]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: git archive fc459b5cf56037005b69665f12a24b9e998e936e > /tmp/m7-base.tar
+      - uses: actions/checkout@v4
+        with:
+          repository: SakanaAI/ShinkaEvolve
+          ref: 9912af12d423504b8d580f4179fd15f5f88b8c50
+          path: native-source
+          persist-credentials: false
+      - run: git -C native-source archive HEAD > /tmp/m7-native.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: feedback-reviewed-sources
+          path: /tmp/m7-*.tar
+          retention-days: 7
