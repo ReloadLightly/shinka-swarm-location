@@ -28,6 +28,8 @@ jobs:
                   encoded=base64.b64encode(raw).decode()
                   assert encoded.count('61GG00RvDh/Hh/HpiKo')==1
                   encoded=encoded.replace('61GG00RvDh/Hh/HpiKo','61GG00RvDh/HpiKo')
+                  assert encoded.endswith('BVDbbM=')
+                  encoded=encoded[:-2]+'N'
                   raw=base64.b64decode(encoded,validate=True)
                   assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()=='897c1d51d9b40ae198c9a0f1aae8a0006b9c15b3'
               parts.append(raw)
