@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from evaluate_anytime import write_json
 BASE='fc459b5cf56037005b69665f12a24b9e998e936e'
 DECLARED={'evaluate_anytime.py','run_evo.py','campaign.py',
-          'swarm_location/anytime.py','swarm_location/anytime_worker.py'}
+          'swarm_location/anytime.py','swarm_location/anytime_worker.py','swarm_location/isolation.py'}
 
 
 def check():

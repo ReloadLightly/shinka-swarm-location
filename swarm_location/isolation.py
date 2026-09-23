@@ -53,7 +53,27 @@ def cleanup(name: str | None, env: dict) -> None:
         return
     if not re.fullmatch(r'shinka-swarm-[a-f0-9]{32}', name):
         raise ValueError('refusing cleanup of an unrelated container')
-    result = subprocess.run(['docker','rm','--force',name],env=env,
-                            capture_output=True,timeout=30)
-    if result.returncode and b'No such container' not in result.stderr:
-        raise RuntimeError('Docker trial cleanup failed; inspect the named container')
+    # The --rm removal may overlap this explicit forced removal after an early
+    # protocol stop. Only a confirmed absence or successful rm counts as cleanup.
+    # Never ignore daemon/permission errors, or touch unrelated container names.
+    from time import sleep
+    from .diagnostics import sanitize
+    detail = ""
+    for attempt in range(4):
+        result = subprocess.run(['docker','rm','--force',name],env=env,
+                                capture_output=True,timeout=5)
+        detail = result.stderr.decode('utf-8', errors='replace')
+        if result.returncode == 0 or b'No such container' in result.stderr:
+            return
+        probe = subprocess.run(['docker','container','inspect',name],env=env,
+                               capture_output=True,timeout=5)
+        if probe.returncode and (b'No such container' in probe.stderr or
+                                 b'No such object' in probe.stderr):
+            return
+        # A remaining container or unclassified daemon error is not success.
+        if 'removal' not in detail.lower() or 'progress' not in detail.lower():
+            break
+        if attempt < 3:
+            sleep(0.1)
+    raise RuntimeError('Docker trial cleanup failed for ' + name + ': ' +
+                       sanitize(detail, 512))

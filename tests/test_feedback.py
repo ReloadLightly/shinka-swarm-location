@@ -260,3 +260,37 @@ class MetaBindingTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(attach_meta_context(runner,task_context()))
         self.assertIs(runner.meta_summarizer.async_llm_client.client,raw)
         self.assertFalse(attach_meta_context(SimpleNamespace(meta_summarizer=None),task_context()))
+
+
+class CleanupTests(unittest.TestCase):
+    def call(self, results):
+        from subprocess import CompletedProcess
+        from swarm_location.isolation import cleanup
+        items=[CompletedProcess([], code, b'', text.encode()) for code,text in results]
+        with patch('swarm_location.isolation.subprocess.run', side_effect=items) as run:
+            with patch('time.sleep'):
+                cleanup('shinka-swarm-'+'a'*32, {})
+        return run.call_count
+
+    def test_auto_removal_race_requires_confirmed_absence(self):
+        self.assertEqual(self.call([(1,'removal of container is already in progress'),
+                                   (1,'No such object: name')]),2)
+
+    def test_removal_in_progress_is_bounded_and_retried(self):
+        self.assertEqual(self.call([(1,'removal already in progress'),(0,''),(0,'')]),3)
+        with self.assertRaisesRegex(RuntimeError,'cleanup failed'):
+            self.call([(1,'removal already in progress'),(0,'')]*4)
+
+    def test_daemon_error_never_counts_as_absent(self):
+        with self.assertRaisesRegex(RuntimeError,'cleanup failed'):
+            self.call([(1,'Cannot connect to daemon'),(1,'Cannot connect to daemon')])
+
+    def test_success_and_already_absent(self):
+        self.assertEqual(self.call([(0,'')]),1)
+        self.assertEqual(self.call([(1,'No such container: name')]),1)
+
+    def test_unrelated_names_are_never_touched(self):
+        from swarm_location.isolation import cleanup
+        with patch('swarm_location.isolation.subprocess.run') as run:
+            with self.assertRaisesRegex(ValueError,'unrelated'):cleanup('unrelated-container',{})
+            run.assert_not_called()

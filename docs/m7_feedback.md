@@ -180,3 +180,19 @@ python campaign.py --request configs/m7_launch_request.json --execute --download
 
 The adapter, size limits and feedback layout are project implementation choices,
 not prescribed by the book or claimed to be upstream Shinka features.
+
+### Integration interruption and cleanup follow-up
+
+The first native/Docker attempt (Actions run 35857061681) completed its
+120-trial development seed evaluation, then stopped in the synthetic malformed
+stdout probe because the old forced-removal helper raised a generic cleanup
+error. That attempt is retained separately; it was not a complete pass. The
+old error omitted the daemon response, so the exact cause is not established.
+The cleanup helper now verifies absence following a failed remove, retries only
+a reported removal-in-progress condition a bounded number of times, and otherwise
+fails with a sanitized daemon diagnostic. It does not treat arbitrary daemon
+errors as success. The timed Docker command, inner deadline, and scorer are
+unchanged by this cleanup follow-up. Synthetic probe records are now checkpointed
+after every returned result, with explicit interruption records. A fresh complete
+functional integration checks the final source; no favorable timing sample is
+selected from the incomplete attempt.

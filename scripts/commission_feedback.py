@@ -100,7 +100,14 @@ def main():
     faults=[];sources=a.output/'synthetic-fault-sources';sources.mkdir(exist_ok=True)
     for name,(source,expected,correct) in FAULTS.items():
         code=sources/(name+'.py');code.write_text(source)
-        result=run_anytime(diamond(),2,[.1,.4],program_path=code)
+        write_json(a.output/'fault-progress.json',{'next_probe':name,'completed_probes':len(faults)})
+        try:
+            result=run_anytime(diamond(),2,[.1,.4],program_path=code)
+        except Exception as exc:
+            from swarm_location.diagnostics import sanitize
+            write_json(a.output/'fault-interruption.json',{'probe':name,'error':sanitize(str(exc)),
+                'completed_probes':len(faults),'success':False})
+            raise
         assert result['correct']==correct,(name,result)
         assert result['diagnostic']['category']==expected,(name,result)
         assert len(result['diagnostic']['excerpt'])<=2048
@@ -109,6 +116,7 @@ def main():
             for secret in ('EXAMPLE_SECRET','sk-exampletoken123456','/home/private'):
                 assert secret not in json.dumps(result['diagnostic'])
         faults.append({'name':name,'expected_category':expected,'expected_correct':correct,'result':result})
+        write_json(a.output/'fault-probes.json',faults)
     write_json(a.output/'fault-probes.json',faults)
     # A real native failed-evaluation path, on a synthetic fixture only.
     catalog,raw=synthetic_catalog(a.output/'synthetic')
