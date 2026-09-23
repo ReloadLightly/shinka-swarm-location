@@ -32,7 +32,7 @@ jobs:
           mkdir -p results/local_m5_ci
           python -m unittest discover -s tests -v > results/local_m5_ci/tests.txt 2>&1
           tail -5 results/local_m5_ci/tests.txt
-          python scripts/check_m4_continuity.py --output results/local_m5_ci/continuity.json
+          python scripts/check_m4_continuity.py --allow-source-change swarm_location/strong_baselines.py --output results/local_m5_ci/continuity.json
       # Keep strict source verification without rewriting the historical manifest.
       - uses: actions/checkout@v4
         with:

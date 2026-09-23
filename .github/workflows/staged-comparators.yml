@@ -25,8 +25,8 @@ jobs:
           python -m pip install -r requirements-certificates.txt
           mkdir -p results/local_m4_integration
           python -m unittest discover -s tests -v 2>&1 | tee results/local_m4_integration/tests.txt
-      - name: Preserve all historical results and solver bytes
-        run: python scripts/check_m4_continuity.py --output results/local_m4_integration/continuity.json
+      - name: Preserve historical evidence and record the declared method extension
+        run: python scripts/check_m4_continuity.py --allow-source-change swarm_location/strong_baselines.py --output results/local_m4_integration/continuity.json
       - name: Prepare only the two development source networks
         run: |
           python scripts/prepare_research.py --split development --download \

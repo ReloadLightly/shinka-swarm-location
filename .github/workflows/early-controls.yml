@@ -1,102 +1,102 @@
 name: Paired early-incumbent controls
 on:
   push:
-    branches: [work/early-controls]
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Replay archived evidence, or measure a new development-only study
+        type: choice
+        options: [verify, measure]
+        default: verify
 permissions:
   contents: read
 jobs:
-  measure:
-    if: contains(github.event.head_commit.message, 'EXECUTE_M6_ONCE')
+  verify:
+    if: github.event_name != 'workflow_dispatch' || inputs.action != 'measure'
     runs-on: ubuntu-latest
-    timeout-minutes: 75
-    permissions:
-      contents: write
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Apply reviewed source and publish the frozen protocol before measurement
+      - name: Current tests, legacy search trajectories and historical evidence
         run: |
           set -euo pipefail
-          test "$(git remote get-url origin)" = "https://github.com/ReloadLightly/shinka-swarm-location"
+          python -m pip install -r requirements-certificates.txt
+          mkdir -p results/local_m6_ci
+          python -m unittest discover -s tests -v > results/local_m6_ci/tests.txt 2>&1
+          tail -5 results/local_m6_ci/tests.txt
+          python scripts/check_m4_continuity.py --allow-source-change swarm_location/strong_baselines.py --output results/local_m6_ci/historical.json
           python - <<'PY'
-          from pathlib import Path
-          import base64, hashlib, json, subprocess, zlib
-          encoded=''.join(p.read_text() for p in sorted(Path('.m6-delivery').glob('*.txt')))
-          raw=base64.b64decode(encoded,validate=True)
-          assert hashlib.sha256(raw).hexdigest()=='cc18b58238dabab1f18009ee8c4ebf2b1f0497a335089c0725efb463777a477f'
-          payload=json.loads(zlib.decompress(raw))
-          patch=Path('/tmp/m6-source.patch');patch.write_text(payload['patch'])
-          subprocess.run(['git','apply','--check',str(patch)],check=True)
-          subprocess.run(['git','apply',str(patch)],check=True)
-          for name,text in payload['files'].items():
-              p=Path(name)
-              assert not p.is_absolute() and '..' not in p.parts and p.parts[0] in {'scripts','configs','docs','tests'} and not p.exists()
-              p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
-          fixture=Path('tests/fixtures/strong_baselines_m5.py');fixture.parent.mkdir(exist_ok=True)
-          fixture.write_bytes(subprocess.check_output(['git','show','deabcf2cc2dfacb1455a337dc0912124331ae38b:swarm_location/strong_baselines.py']))
-          p=Path('scripts/check_m4_continuity.py')
-          text=p.read_text();assert "'protected_file_count': len(paths)" in text
-          p.write_text(text.replace("'protected_file_count': len(paths)","'protected_file_count': len(hashes)"))
-          PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git rm -r .m6-delivery
-          git add swarm_location/strong_baselines.py scripts/check_m4_continuity.py scripts/calibrate_timing.py scripts/early_control_study.py scripts/render_early_controls.py configs/comparisons_m6.json configs/m6_launch_request.json configs/early_controls_m6.json docs/m6_early_controls.md tests/test_early_controls.py tests/fixtures/strong_baselines_m5.py
-          git commit -m 'Freeze M6 early-incumbent variants and paired Docker protocol before execution'
-          git push origin HEAD:work/early-controls
-      - name: Full tests and development data only
-        run: |
-          set -euo pipefail
-          mkdir -p results/early-controls
-          python -m pip install -r requirements-certificates.txt > results/early-controls/install.txt
-          python -m unittest discover -s tests -v > results/early-controls/tests.txt 2>&1
-          tail -5 results/early-controls/tests.txt
-          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > results/early-controls/prepare.txt
-          python scripts/check_m4_continuity.py --allow-source-change swarm_location/strong_baselines.py --output results/early-controls/historical-continuity.json
-      - name: Resolve the unchanged campaign executor image
-        run: |
-          set -euo pipefail
-          docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
-          IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
-          echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
-      - name: Execute the frozen paired study and independently replay every trial
-        run: |
-          set -euo pipefail
-          python scripts/early_control_study.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/early-controls/study --update-readme | tee results/early-controls/execution.txt
-      - name: Render saved curves and publish actual evidence
-        run: |
-          set -euo pipefail
-          python -m pip install matplotlib > results/early-controls/plot-install.txt
-          python scripts/render_early_controls.py --output results/early-controls
-          python -m pip freeze > results/early-controls/dependencies.txt
-          python - <<'PY'
-          from pathlib import Path
-          import json
           from scripts.early_control_study import continuity
           from evaluate_anytime import write_json
-          write_json('results/early-controls/continuity.json',continuity())
-          summary=json.loads(Path('results/early-controls/study/summary.json').read_text())
-          p=Path('docs/next_step.md')
-          p.write_text(p.read_text()+'\n\n## M6: early-incumbent controls completed\n\nThe paired Docker study is recorded in results/early-controls/ and README Section 5.8. '+str(summary['solver_trials'])+' development solver trials; '+str(summary['failed_trials'])+' failures. The separately named early_iterated, early_dfbnb and early_potential variants retain the original inner deadline and exact scorer. The opt-in comparisons_m6.json profile keeps four screening controls and includes all ten fixed controls in assessment; M4/M5 records are not replaced. No paid evolution or research holdout assessment was executed. Do not transfer the former M5 host-session noise threshold to another run.\n')
+          write_json('results/local_m6_ci/continuity.json',continuity())
           PY
-          test "$(git remote get-url origin)" = "https://github.com/ReloadLightly/shinka-swarm-location"
-          git add README.md docs/next_step.md results/early-controls
-          git commit -m 'Record paired Docker early-control measurements, exact replay and scientific README'
-          git push origin HEAD:work/early-controls
-      - name: Preserve source and raw outcomes even after interruption
-        if: always()
+      - uses: actions/checkout@v4
+        with:
+          ref: 2ac4a1fd18d566db124fa6628d3259bc0570f3e0
+          path: measured-early-source
+          persist-credentials: false
+      - name: Strict replay of all archived deployments, bounds and paired differences
+        working-directory: measured-early-source
         run: |
-          git archive HEAD > m6-source.tar
-          tar -czf m6-outcomes.tar.gz results/early-controls data/commissioning_m4 2>/dev/null || true
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > "$GITHUB_WORKSPACE/results/local_m6_ci/prepare.txt"
+          python scripts/early_control_study.py --suite data/commissioning_m4/suite.json --output "$GITHUB_WORKSPACE/results/early-controls/study" --verify > "$GITHUB_WORKSPACE/results/local_m6_ci/replay.txt"
+          cat "$GITHUB_WORKSPACE/results/local_m6_ci/replay.txt"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from scripts.early_control_study import readme_block,START,END
+          root=Path(os.environ['GITHUB_WORKSPACE']);base=root/'results/early-controls'
+          summary=json.loads((base/'study/summary.json').read_text())
+          assert (root/'README.md').read_text().split(START)[1].split(END)[0].strip()==readme_block(summary).strip()
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          renderer=json.loads((base/'figures/renderer.json').read_text())
+          assert renderer['source_curves_sha256']==sha(base/'study/curves.json')
+          assert renderer['script_sha256']==sha(root/'scripts/render_early_controls.py')
+          assert {p['path'] for p in renderer['plots']}=={'SiouxFalls.png','Anaheim.png'}
+          for p in renderer['plots']:assert sha(base/'figures'/p['path'])==p['sha256']
+          print('Archived early-control tables and both full-curve figures match their evidence.')
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: m6-early-controls-${{ github.run_id }}
+          name: early-control-replay-${{ github.sha }}
+          path: results/local_m6_ci/
+          retention-days: 30
+  measure:
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'measure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare only development and resolve the immutable campaign executor
+        run: |
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4
+          docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
+          IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
+          echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: New paired study, never a replacement of recorded evidence
+        run: python scripts/early_control_study.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/local_early_measurement
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: new-early-control-measurement-${{ github.run_id }}
           path: |
-            m6-source.tar
-            m6-outcomes.tar.gz
+            results/local_early_measurement/
+            data/commissioning_m4/
           retention-days: 30
