@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M3 holdout/campaign pipeline implemented; actual campaign state: `blocked_model_access`. See Section 5.2.**
+**Status: M3 campaign remains `blocked_model_access`; quality certificates implemented and locally verified. See Sections 5.2–5.3.**
 
 ### Abstract
 
@@ -33,6 +33,7 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Native `run_shinka_eval` adapter | Subsequently executed in M2 commissioning; no model calls |
 | Independent anytime worker / fast DAG gains | Implemented; M2 checks and measured results below |
 | Native scheduler and full-run configuration | Seed path checked separately from unexecuted paid evolution |
+| Coverage + verified quality certificates | Implemented separately; see Section 5.3 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -343,6 +344,96 @@ or repository Actions secrets, never in source files or the chat. The GitHub
 check reruns do not automatically spend a provider budget. A started/interrupted
 campaign is preserved, not silently overwritten; continuation must retain its
 original native manifest and separately document any interrupted holdout assessment.
+
+## 5.3 Coverage plus independently verified quality certificates
+
+The certificate perspective from Chapter 4, printed p. 200 and Figure 4.11, is now
+implemented as a separate, tested reporting path. For **any** feasible deployment
+with coverage L and a verified upper bound U on the optimum, L/U is a guaranteed
+lower bound on its fraction of optimal coverage. Coverage and certified quality
+are reported separately, alongside an interval for remaining possible improvement.
+
+The general method computes exact-rational submodular upper bounds on the original
+shortest-path DAGs, without enumerating routes. Optional small-instance DFBnB
+partition proofs and exactly checked LP-dual witnesses supply stronger reference
+bounds. None relies on an LLM judgment or accepts a candidate's claimed score.
+See [the mathematical derivation and source mapping](docs/quality_certificates.md).
+
+This adds **posthoc certificates**, not a new fitness. The production scorer,
+checkpoints, mutable seed, campaign configuration and historical M1/M2/M3 evidence
+remain unchanged. A certificate attached to a past checkpoint uses an offline
+bound; it is not a claim that the solver had that bound available at that time.
+No validation/test performance was evaluated and no evolutionary run was started.
+
+<!-- QUALITY-CERTIFICATES:START -->
+
+| Development network | Monitors | Completed swap coverage (%) | Verified optimum upper bound (%) | Quality guarantee (%) | Remaining gain at most (pp) |
+|---|---:|---:|---:|---:|---:|
+| SiouxFalls | 1 | 34.082085 | 34.082086 | 100.000000 | 0.000000 |
+| SiouxFalls | 2 | 50.915141 | 50.915142 | 100.000000 | 0.000000 |
+| SiouxFalls | 3 | 66.916251 | 66.916251 | 100.000000 | 0.000000 |
+| SiouxFalls | 4 | 74.681087 | 74.681088 | 100.000000 | 0.000000 |
+| SiouxFalls | 5 | 81.419856 | 81.780367 | 99.559172 | 0.360511 |
+| SiouxFalls | 6 | 86.966167 | 88.186357 | 98.616352 | 1.220189 |
+| SiouxFalls | 7 | 91.070438 | 91.735996 | 99.274486 | 0.665558 |
+| SiouxFalls | 8 | 94.231836 | 94.647810 | 99.560503 | 0.415974 |
+| Anaheim | 3 | 52.468327 | 52.468327 | 99.999999 | 0.000001 |
+| Anaheim | 6 | 74.498063 | 75.054206 | 99.259012 | 0.556143 |
+| Anaheim | 12 | 93.123701 | 94.166702 | 98.892388 | 1.043001 |
+| Anaheim | 24 | 99.549833 | 100.000000 | 99.549832 | 0.450168 |
+
+**Executed evidence:** 86 tests passed locally; 48 standalone certificates and 24 bound witnesses independently recomputed. 96 existing baseline trials received 384 checkpoint and 96 final certificates without running candidates or changing their recorded timing. All eight Sioux Falls reference optima were proved. Anaheim LP bounds are not automatically exact optima.
+
+[Reference study and source hashes](results/quality-certificates/reference-study/study.json), [proof artifacts](results/quality-certificates/reference-study/references/), [posthoc M2 certificates](results/quality-certificates/m2-baseline-certificates.json), [verification](results/quality-certificates/verification.json), and [test transcript](results/quality-certificates/tests.txt).
+
+<!-- QUALITY-CERTIFICATES:END -->
+
+The table describes **completed fixed greedy+swap** on development cases, not a
+new matched-runtime comparison. Sioux Falls k=2,5,7,8 are supplementary reference
+budgets, not additions to the frozen campaign. Upper bounds are rounded up and
+quality guarantees down; exact proof flags use rational equality, never displayed
+rounding. An upper bound can be loose: its gap is not a promise of achievable gain.
+
+For example, at six monitors in Sioux Falls, fixed swap covers about 86.9662% of
+demand and is certified to reach at least 98.6163% of the optimum. The proved
+optimum covers about 88.1864%. That leaves an actual gap of about 1.2202 percentage
+points. This is a baseline/reference finding, **not an evolved discovery**.
+
+Reproduce this first certificate study (no API keys or model calls):
+
+```bash
+python scripts/prepare_suite.py --download
+python -m pip install -r requirements-certificates.txt   # Optional LP proposals.
+python scripts/quality_study.py --suite data/commissioning/suite.json \
+  --output results/local_quality --exact-small --extended-small --lp
+python scripts/quality_study.py --suite data/commissioning/suite.json \
+  --output results/local_quality --verify
+python certify.py --suite data/commissioning/suite.json \
+  --traces results/step2/ci/baselines/traces.json \
+  --reference-dir results/local_quality/references \
+  --output results/local_quality/m2-sidecar.json
+```
+
+Omit `--lp` to use only standard-library bounds and small-instance proof search.
+Omit `--reference-dir` for generic DAG bounds without precomputed references.
+`certify.py` requires a completed trace with exactly matching suite/data hashes;
+its new output must not already exist. It never executes the candidate program.
+
+For a deployment already available in Python:
+
+```python
+from swarm_location.core import Instance
+from swarm_location.certificates import ExactCoverage, certificate
+
+problem = ExactCoverage(Instance.load("data/sioux_falls.json"))
+report = certificate(problem, selected=[3, 7, 12], k=3)
+print(report["coverage_pct"], report["quality_lower_bound_pct"])
+```
+
+Those IDs are an arbitrary feasible example, not the champion or an optimality
+claim. Supply verified reference witnesses to tighten the default bound. The
+code records exact loaded floating-point demand as rationals rather than silently
+reinterpreting the source decimals; this distinction is documented in the methods.
 
 ## 6. Reproduce the first milestone
 

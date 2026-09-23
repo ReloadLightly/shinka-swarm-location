@@ -1,0 +1,2 @@
+# Optional LP bound proposals only. Core certificates/proof checking use stdlib.
+scipy==1.17.0

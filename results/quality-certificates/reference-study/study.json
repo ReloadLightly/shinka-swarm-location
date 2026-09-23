@@ -1,0 +1,2074 @@
+{
+  "schema_version": 1,
+  "scope": "Development-only completed fixed-baseline and offline bound study",
+  "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+  "suite_sha256": "dd1aec44c64da895347e4bd7d286ac0192f8c5b5f194e85f4d2a2e0fa5977ecb",
+  "created_utc": "2026-09-22T23:26:56.928830+00:00",
+  "python": "3.13.5",
+  "options": {
+    "exact_small": true,
+    "lp": true,
+    "extended_small": true
+  },
+  "model_calls": 0,
+  "evolved_descendants": 0,
+  "validation_test_evaluations": 0,
+  "evaluator_or_fitness_modified": false,
+  "source_sha256": {
+    "scripts/quality_study.py": "3f9f584c55ad8f96bd136c16d68730c2e5339770abfc7e32ab32c41b706cda07",
+    "swarm_location/certificates.py": "ee58f00fa5db572bd268c5394a601405f80e7109f1ca5c8f30b0f8a664379ec4",
+    "swarm_location/certificate_references.py": "e3e4add23553cb9279c8f1c7685019a8fd3a0f393d3ee401a635dac956eddc59",
+    "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+    "swarm_location/search.py": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+    "swarm_location/anytime_baselines.py": "6f633ecc38f8ba5b8324f238b08623fa9fc0e4b15fc29280b6f3f1f0840115ce"
+  },
+  "cases": [
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 1,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k1.json",
+      "reference_sha256": "dde6291c93b24297d7393d4e6f7943a5bbd074bf90a2388a5face7565b328304",
+      "methods": {
+        "topk": {
+          "selected": [
+            10
+          ],
+          "wall_seconds": 0.0007138849999819286,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 1,
+            "selected": [
+              10
+            ],
+            "coverage_exact": "1229/3606",
+            "coverage_pct": 34.082085413200225,
+            "optimum_lower_bound_exact": "1229/3606",
+            "optimum_upper_bound_exact": "1229/3606",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10
+          ],
+          "wall_seconds": 0.0005928770000309669,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 1,
+            "selected": [
+              10
+            ],
+            "coverage_exact": "1229/3606",
+            "coverage_pct": 34.082085413200225,
+            "optimum_lower_bound_exact": "1229/3606",
+            "optimum_upper_bound_exact": "1229/3606",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            10
+          ],
+          "wall_seconds": 0.001747206000004553,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 1,
+            "selected": [
+              10
+            ],
+            "coverage_exact": "1229/3606",
+            "coverage_pct": 34.082085413200225,
+            "optimum_lower_bound_exact": "1229/3606",
+            "optimum_upper_bound_exact": "1229/3606",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 1,
+        "selected": [
+          10
+        ],
+        "coverage_exact": "1229/3606",
+        "coverage_pct": 34.082085413200225,
+        "optimum_lower_bound_exact": "1229/3606",
+        "optimum_upper_bound_exact": "1229/3606",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "submodular",
+          "submodular",
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 2,
+      "in_campaign_budget_list": false,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k2.json",
+      "reference_sha256": "a4093c08880146721df6ccd546f8ee5078868240e8e8c6af435701e59043bcd7",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16
+          ],
+          "wall_seconds": 0.0006354260000307477,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 2,
+            "selected": [
+              10,
+              16
+            ],
+            "coverage_exact": "1771/3606",
+            "coverage_pct": 49.11259012756517,
+            "optimum_lower_bound_exact": "306/601",
+            "optimum_upper_bound_exact": "306/601",
+            "quality_lower_bound_exact": "1771/1836",
+            "quality_lower_bound_pct": "96.459694",
+            "remaining_gain_lower_pp": "1.802551",
+            "remaining_gain_upper_pp": "1.802552",
+            "relative_gap_upper_exact": "65/1836",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22
+          ],
+          "wall_seconds": 0.0011229750000438798,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 2,
+            "selected": [
+              10,
+              22
+            ],
+            "coverage_exact": "306/601",
+            "coverage_pct": 50.91514143094842,
+            "optimum_lower_bound_exact": "306/601",
+            "optimum_upper_bound_exact": "306/601",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            10,
+            22
+          ],
+          "wall_seconds": 0.0030857749999313455,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 2,
+            "selected": [
+              10,
+              22
+            ],
+            "coverage_exact": "306/601",
+            "coverage_pct": 50.91514143094842,
+            "optimum_lower_bound_exact": "306/601",
+            "optimum_upper_bound_exact": "306/601",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 2,
+        "selected": [
+          10,
+          22
+        ],
+        "coverage_exact": "306/601",
+        "coverage_pct": 50.91514143094842,
+        "optimum_lower_bound_exact": "306/601",
+        "optimum_upper_bound_exact": "306/601",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 3,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k3.json",
+      "reference_sha256": "e23dafd70e880af4368929000b7bb3dcbf20d911a510a1a3e5b5cea0c68d612c",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15
+          ],
+          "wall_seconds": 0.0006465939999316106,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 3,
+            "selected": [
+              10,
+              15,
+              16
+            ],
+            "coverage_exact": "1118/1803",
+            "coverage_pct": 62.00776483638381,
+            "optimum_lower_bound_exact": "2413/3606",
+            "optimum_upper_bound_exact": "2413/3606",
+            "quality_lower_bound_exact": "2236/2413",
+            "quality_lower_bound_pct": "92.664732",
+            "remaining_gain_lower_pp": "4.908485",
+            "remaining_gain_upper_pp": "4.908486",
+            "relative_gap_upper_exact": "177/2413",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16
+          ],
+          "wall_seconds": 0.0016431279999551407,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 3,
+            "selected": [
+              10,
+              16,
+              22
+            ],
+            "coverage_exact": "1163/1803",
+            "coverage_pct": 64.50360510260677,
+            "optimum_lower_bound_exact": "2413/3606",
+            "optimum_upper_bound_exact": "2413/3606",
+            "quality_lower_bound_exact": "2326/2413",
+            "quality_lower_bound_pct": "96.394529",
+            "remaining_gain_lower_pp": "2.412645",
+            "remaining_gain_upper_pp": "2.412646",
+            "relative_gap_upper_exact": "87/2413",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            11,
+            16,
+            22
+          ],
+          "wall_seconds": 0.007474645000002056,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 3,
+            "selected": [
+              11,
+              16,
+              22
+            ],
+            "coverage_exact": "2413/3606",
+            "coverage_pct": 66.91625069328896,
+            "optimum_lower_bound_exact": "2413/3606",
+            "optimum_upper_bound_exact": "2413/3606",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 3,
+        "selected": [
+          11,
+          16,
+          22
+        ],
+        "coverage_exact": "2413/3606",
+        "coverage_pct": 66.91625069328896,
+        "optimum_lower_bound_exact": "2413/3606",
+        "optimum_upper_bound_exact": "2413/3606",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 4,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k4.json",
+      "reference_sha256": "3875aa604d41b52c780ef843ac82d4af3d4167005b6a44ad81eb579f955dfaa2",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15,
+            11
+          ],
+          "wall_seconds": 0.0006456720000187488,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 4,
+            "selected": [
+              10,
+              11,
+              15,
+              16
+            ],
+            "coverage_exact": "2503/3606",
+            "coverage_pct": 69.41209095951193,
+            "optimum_lower_bound_exact": "2693/3606",
+            "optimum_upper_bound_exact": "2693/3606",
+            "quality_lower_bound_exact": "2503/2693",
+            "quality_lower_bound_pct": "92.944671",
+            "remaining_gain_lower_pp": "5.268996",
+            "remaining_gain_upper_pp": "5.268997",
+            "relative_gap_upper_exact": "190/2693",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16,
+            11
+          ],
+          "wall_seconds": 0.002116790999934892,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 4,
+            "selected": [
+              10,
+              11,
+              16,
+              22
+            ],
+            "coverage_exact": "1324/1803",
+            "coverage_pct": 73.43316694398226,
+            "optimum_lower_bound_exact": "2693/3606",
+            "optimum_upper_bound_exact": "2693/3606",
+            "quality_lower_bound_exact": "2648/2693",
+            "quality_lower_bound_pct": "98.329001",
+            "remaining_gain_lower_pp": "1.247920",
+            "remaining_gain_upper_pp": "1.247921",
+            "relative_gap_upper_exact": "45/2693",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            5,
+            11,
+            16,
+            22
+          ],
+          "wall_seconds": 0.009029224000073555,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 4,
+            "selected": [
+              5,
+              11,
+              16,
+              22
+            ],
+            "coverage_exact": "2693/3606",
+            "coverage_pct": 74.68108707709374,
+            "optimum_lower_bound_exact": "2693/3606",
+            "optimum_upper_bound_exact": "2693/3606",
+            "quality_lower_bound_exact": "1",
+            "quality_lower_bound_pct": "100.000000",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000000",
+            "relative_gap_upper_exact": "0",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": true,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 4,
+        "selected": [
+          5,
+          11,
+          16,
+          22
+        ],
+        "coverage_exact": "2693/3606",
+        "coverage_pct": 74.68108707709374,
+        "optimum_lower_bound_exact": "2693/3606",
+        "optimum_upper_bound_exact": "2693/3606",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 5,
+      "in_campaign_budget_list": false,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k5.json",
+      "reference_sha256": "8dada549f7082ac0372b9b9c991f38a5643021de8afdfd11f7bc7b7cdf1fd7ae",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15,
+            11,
+            22
+          ],
+          "wall_seconds": 0.0006858909999891694,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 5,
+            "selected": [
+              10,
+              11,
+              15,
+              16,
+              22
+            ],
+            "coverage_exact": "462/601",
+            "coverage_pct": 76.87188019966722,
+            "optimum_lower_bound_exact": "983/1202",
+            "optimum_upper_bound_exact": "983/1202",
+            "quality_lower_bound_exact": "924/983",
+            "quality_lower_bound_pct": "93.997965",
+            "remaining_gain_lower_pp": "4.908485",
+            "remaining_gain_upper_pp": "4.908486",
+            "relative_gap_upper_exact": "59/983",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16,
+            11,
+            8
+          ],
+          "wall_seconds": 0.002648979000014151,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 5,
+            "selected": [
+              8,
+              10,
+              11,
+              16,
+              22
+            ],
+            "coverage_exact": "1447/1803",
+            "coverage_pct": 80.25513033832502,
+            "optimum_lower_bound_exact": "983/1202",
+            "optimum_upper_bound_exact": "983/1202",
+            "quality_lower_bound_exact": "2894/2949",
+            "quality_lower_bound_pct": "98.134961",
+            "remaining_gain_lower_pp": "1.525235",
+            "remaining_gain_upper_pp": "1.525236",
+            "relative_gap_upper_exact": "55/2949",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            8,
+            10,
+            11,
+            17,
+            22
+          ],
+          "wall_seconds": 0.011333464000017557,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 5,
+            "selected": [
+              8,
+              10,
+              11,
+              17,
+              22
+            ],
+            "coverage_exact": "1468/1803",
+            "coverage_pct": 81.41985579589573,
+            "optimum_lower_bound_exact": "983/1202",
+            "optimum_upper_bound_exact": "983/1202",
+            "quality_lower_bound_exact": "2936/2949",
+            "quality_lower_bound_pct": "99.559172",
+            "remaining_gain_lower_pp": "0.360510",
+            "remaining_gain_upper_pp": "0.360511",
+            "relative_gap_upper_exact": "13/2949",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 5,
+        "selected": [
+          5,
+          11,
+          15,
+          16,
+          20
+        ],
+        "coverage_exact": "983/1202",
+        "coverage_pct": 81.78036605657238,
+        "optimum_lower_bound_exact": "983/1202",
+        "optimum_upper_bound_exact": "983/1202",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 6,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k6.json",
+      "reference_sha256": "b16b8d67782f24e6bf76a4b19e424f769375bd0017db22d270e3c9a3f1f43373",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15,
+            11,
+            22,
+            17
+          ],
+          "wall_seconds": 0.0007428940000409057,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 6,
+            "selected": [
+              10,
+              11,
+              15,
+              16,
+              17,
+              22
+            ],
+            "coverage_exact": "1420/1803",
+            "coverage_pct": 78.75762617859124,
+            "optimum_lower_bound_exact": "530/601",
+            "optimum_upper_bound_exact": "530/601",
+            "quality_lower_bound_exact": "142/159",
+            "quality_lower_bound_pct": "89.308176",
+            "remaining_gain_lower_pp": "9.428729",
+            "remaining_gain_upper_pp": "9.428730",
+            "relative_gap_upper_exact": "17/159",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16,
+            11,
+            8,
+            13
+          ],
+          "wall_seconds": 0.0031019499999729305,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 6,
+            "selected": [
+              8,
+              10,
+              11,
+              13,
+              16,
+              22
+            ],
+            "coverage_exact": "1547/1803",
+            "coverage_pct": 85.8014420410427,
+            "optimum_lower_bound_exact": "530/601",
+            "optimum_upper_bound_exact": "530/601",
+            "quality_lower_bound_exact": "1547/1590",
+            "quality_lower_bound_pct": "97.295597",
+            "remaining_gain_lower_pp": "2.384914",
+            "remaining_gain_upper_pp": "2.384915",
+            "relative_gap_upper_exact": "43/1590",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            8,
+            10,
+            11,
+            13,
+            17,
+            22
+          ],
+          "wall_seconds": 0.012689937999994072,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 6,
+            "selected": [
+              8,
+              10,
+              11,
+              13,
+              17,
+              22
+            ],
+            "coverage_exact": "1568/1803",
+            "coverage_pct": 86.96616749861342,
+            "optimum_lower_bound_exact": "530/601",
+            "optimum_upper_bound_exact": "530/601",
+            "quality_lower_bound_exact": "784/795",
+            "quality_lower_bound_pct": "98.616352",
+            "remaining_gain_lower_pp": "1.220188",
+            "remaining_gain_upper_pp": "1.220189",
+            "relative_gap_upper_exact": "11/795",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 6,
+        "selected": [
+          5,
+          11,
+          15,
+          16,
+          20,
+          24
+        ],
+        "coverage_exact": "530/601",
+        "coverage_pct": 88.18635607321131,
+        "optimum_lower_bound_exact": "530/601",
+        "optimum_upper_bound_exact": "530/601",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 7,
+      "in_campaign_budget_list": false,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k7.json",
+      "reference_sha256": "f2d5b4005a68a714091d2dba33dff681dde3e0672ddafd76bb38c2c76efce30c",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15,
+            11,
+            22,
+            17,
+            19
+          ],
+          "wall_seconds": 0.0007165409999743133,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 7,
+            "selected": [
+              10,
+              11,
+              15,
+              16,
+              17,
+              19,
+              22
+            ],
+            "coverage_exact": "1432/1803",
+            "coverage_pct": 79.42318358291736,
+            "optimum_lower_bound_exact": "1654/1803",
+            "optimum_upper_bound_exact": "1654/1803",
+            "quality_lower_bound_exact": "716/827",
+            "quality_lower_bound_pct": "86.577992",
+            "remaining_gain_lower_pp": "12.312811",
+            "remaining_gain_upper_pp": "12.312812",
+            "relative_gap_upper_exact": "111/827",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16,
+            11,
+            8,
+            13,
+            19
+          ],
+          "wall_seconds": 0.0036249209999823506,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 7,
+            "selected": [
+              8,
+              10,
+              11,
+              13,
+              16,
+              19,
+              22
+            ],
+            "coverage_exact": "1642/1803",
+            "coverage_pct": 91.07043815862451,
+            "optimum_lower_bound_exact": "1654/1803",
+            "optimum_upper_bound_exact": "1654/1803",
+            "quality_lower_bound_exact": "821/827",
+            "quality_lower_bound_pct": "99.274486",
+            "remaining_gain_lower_pp": "0.665557",
+            "remaining_gain_upper_pp": "0.665558",
+            "relative_gap_upper_exact": "6/827",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            10,
+            22,
+            16,
+            11,
+            8,
+            13,
+            19
+          ],
+          "wall_seconds": 0.008975675999977284,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 7,
+            "selected": [
+              8,
+              10,
+              11,
+              13,
+              16,
+              19,
+              22
+            ],
+            "coverage_exact": "1642/1803",
+            "coverage_pct": 91.07043815862451,
+            "optimum_lower_bound_exact": "1654/1803",
+            "optimum_upper_bound_exact": "1654/1803",
+            "quality_lower_bound_exact": "821/827",
+            "quality_lower_bound_pct": "99.274486",
+            "remaining_gain_lower_pp": "0.665557",
+            "remaining_gain_upper_pp": "0.665558",
+            "relative_gap_upper_exact": "6/827",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 7,
+        "selected": [
+          6,
+          9,
+          11,
+          15,
+          16,
+          20,
+          24
+        ],
+        "coverage_exact": "1654/1803",
+        "coverage_pct": 91.73599556295063,
+        "optimum_lower_bound_exact": "1654/1803",
+        "optimum_upper_bound_exact": "1654/1803",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "SiouxFalls",
+      "source_graph": "SiouxFalls",
+      "k": 8,
+      "in_campaign_budget_list": false,
+      "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+      "reference_file": "references/SiouxFalls-k8.json",
+      "reference_sha256": "716b05879689f84a3afd023594546906295bc721d4dd695f47a520f80e43c0dd",
+      "methods": {
+        "topk": {
+          "selected": [
+            10,
+            16,
+            15,
+            11,
+            22,
+            17,
+            19,
+            8
+          ],
+          "wall_seconds": 0.0007870370000091498,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 8,
+            "selected": [
+              8,
+              10,
+              11,
+              15,
+              16,
+              17,
+              19,
+              22
+            ],
+            "coverage_exact": "1555/1803",
+            "coverage_pct": 86.24514697726012,
+            "optimum_lower_bound_exact": "3413/3606",
+            "optimum_upper_bound_exact": "3413/3606",
+            "quality_lower_bound_exact": "3110/3413",
+            "quality_lower_bound_pct": "91.122179",
+            "remaining_gain_lower_pp": "8.402662",
+            "remaining_gain_upper_pp": "8.402663",
+            "relative_gap_upper_exact": "303/3413",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            10,
+            22,
+            16,
+            11,
+            8,
+            13,
+            19,
+            5
+          ],
+          "wall_seconds": 0.0038756640000201514,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 8,
+            "selected": [
+              5,
+              8,
+              10,
+              11,
+              13,
+              16,
+              19,
+              22
+            ],
+            "coverage_exact": "1693/1803",
+            "coverage_pct": 93.89905712701054,
+            "optimum_lower_bound_exact": "3413/3606",
+            "optimum_upper_bound_exact": "3413/3606",
+            "quality_lower_bound_exact": "3386/3413",
+            "quality_lower_bound_pct": "99.208907",
+            "remaining_gain_lower_pp": "0.748752",
+            "remaining_gain_upper_pp": "0.748753",
+            "relative_gap_upper_exact": "27/3413",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            4,
+            8,
+            10,
+            11,
+            16,
+            19,
+            22,
+            24
+          ],
+          "wall_seconds": 0.02199737500006904,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+            "k": 8,
+            "selected": [
+              4,
+              8,
+              10,
+              11,
+              16,
+              19,
+              22,
+              24
+            ],
+            "coverage_exact": "1699/1803",
+            "coverage_pct": 94.2318358291736,
+            "optimum_lower_bound_exact": "3413/3606",
+            "optimum_upper_bound_exact": "3413/3606",
+            "quality_lower_bound_exact": "3398/3413",
+            "quality_lower_bound_pct": "99.560503",
+            "remaining_gain_lower_pp": "0.415973",
+            "remaining_gain_upper_pp": "0.415974",
+            "relative_gap_upper_exact": "15/3413",
+            "optimum_value_proved": true,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "branch_partition"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "87c0905b1f11bfe185d07cc6d37f09be97faf1de1ecfe745e2113b48a5c2d458",
+        "k": 8,
+        "selected": [
+          4,
+          8,
+          10,
+          12,
+          14,
+          17,
+          20,
+          22
+        ],
+        "coverage_exact": "3413/3606",
+        "coverage_pct": 94.64780920687743,
+        "optimum_lower_bound_exact": "3413/3606",
+        "optimum_upper_bound_exact": "3413/3606",
+        "quality_lower_bound_exact": "1",
+        "quality_lower_bound_pct": "100.000000",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000000",
+        "relative_gap_upper_exact": "0",
+        "optimum_value_proved": true,
+        "deployment_optimality_proved": true,
+        "bound_methods": [
+          "branch_partition"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "Anaheim",
+      "source_graph": "Anaheim",
+      "k": 3,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+      "reference_file": "references/Anaheim-k3.json",
+      "reference_sha256": "f96678330a4fe0dc908be1f39f37f5348aa76ce82f699bd36952759a1cae814d",
+      "methods": {
+        "topk": {
+          "selected": [
+            2,
+            4,
+            25
+          ],
+          "wall_seconds": 0.020927570000026208,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 3,
+            "selected": [
+              2,
+              4,
+              25
+            ],
+            "coverage_exact": "247389032570939665464/471501660827777657069",
+            "coverage_pct": 52.46832686371,
+            "optimum_lower_bound_exact": "247389032570939665464/471501660827777657069",
+            "optimum_upper_bound_exact": "4388713146687371596297724447709191819709496490132622187723078483865833/8364499897409247133280932095203013458276366966277980033876363378385696",
+            "quality_lower_bound_exact": "4388713146687371245392544250096342807246137137225831030640659633605376/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "quality_lower_bound_pct": "99.999999",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000001",
+            "relative_gap_upper_exact": "350905180197612849012463359352906791157082418850260457/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            2,
+            4,
+            25
+          ],
+          "wall_seconds": 0.06020014499995341,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 3,
+            "selected": [
+              2,
+              4,
+              25
+            ],
+            "coverage_exact": "247389032570939665464/471501660827777657069",
+            "coverage_pct": 52.46832686371,
+            "optimum_lower_bound_exact": "247389032570939665464/471501660827777657069",
+            "optimum_upper_bound_exact": "4388713146687371596297724447709191819709496490132622187723078483865833/8364499897409247133280932095203013458276366966277980033876363378385696",
+            "quality_lower_bound_exact": "4388713146687371245392544250096342807246137137225831030640659633605376/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "quality_lower_bound_pct": "99.999999",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000001",
+            "relative_gap_upper_exact": "350905180197612849012463359352906791157082418850260457/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            2,
+            4,
+            25
+          ],
+          "wall_seconds": 0.14417384399996536,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 3,
+            "selected": [
+              2,
+              4,
+              25
+            ],
+            "coverage_exact": "247389032570939665464/471501660827777657069",
+            "coverage_pct": 52.46832686371,
+            "optimum_lower_bound_exact": "247389032570939665464/471501660827777657069",
+            "optimum_upper_bound_exact": "4388713146687371596297724447709191819709496490132622187723078483865833/8364499897409247133280932095203013458276366966277980033876363378385696",
+            "quality_lower_bound_exact": "4388713146687371245392544250096342807246137137225831030640659633605376/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "quality_lower_bound_pct": "99.999999",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.000001",
+            "relative_gap_upper_exact": "350905180197612849012463359352906791157082418850260457/4388713146687371596297724447709191819709496490132622187723078483865833",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+        "k": 3,
+        "selected": [
+          2,
+          4,
+          25
+        ],
+        "coverage_exact": "247389032570939665464/471501660827777657069",
+        "coverage_pct": 52.46832686371,
+        "optimum_lower_bound_exact": "247389032570939665464/471501660827777657069",
+        "optimum_upper_bound_exact": "4388713146687371596297724447709191819709496490132622187723078483865833/8364499897409247133280932095203013458276366966277980033876363378385696",
+        "quality_lower_bound_exact": "4388713146687371245392544250096342807246137137225831030640659633605376/4388713146687371596297724447709191819709496490132622187723078483865833",
+        "quality_lower_bound_pct": "99.999999",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.000001",
+        "relative_gap_upper_exact": "350905180197612849012463359352906791157082418850260457/4388713146687371596297724447709191819709496490132622187723078483865833",
+        "optimum_value_proved": false,
+        "deployment_optimality_proved": false,
+        "bound_methods": [
+          "route_dual"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "Anaheim",
+      "source_graph": "Anaheim",
+      "k": 6,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+      "reference_file": "references/Anaheim-k6.json",
+      "reference_sha256": "ee68b138123d584d6c2a38b2c0ac11c96573f006f793bd3f706f4ef5f56d6e8d",
+      "methods": {
+        "topk": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            62,
+            63
+          ],
+          "wall_seconds": 0.017537546000085058,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 6,
+            "selected": [
+              1,
+              2,
+              4,
+              25,
+              62,
+              63
+            ],
+            "coverage_exact": "289362581098032687696/471501660827777657069",
+            "coverage_pct": 61.370426689488646,
+            "optimum_lower_bound_exact": "351259604016650046891/471501660827777657069",
+            "optimum_upper_bound_exact": "358195856546637277914357725688972695553745202776373296417369/477249548804159185259092686689831045861394749101632194286320",
+            "quality_lower_bound_exact": "292890084474771845866110272451204400181566914925198670042880/358195856546637277914357725688972695553745202776373296417369",
+            "quality_lower_bound_pct": "81.768138",
+            "remaining_gain_lower_pp": "13.127636",
+            "remaining_gain_upper_pp": "13.683779",
+            "relative_gap_upper_exact": "65305772071865432048247453237768295372178287851174626374489/358195856546637277914357725688972695553745202776373296417369",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            400,
+            6
+          ],
+          "wall_seconds": 0.10129497299999457,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 6,
+            "selected": [
+              1,
+              2,
+              4,
+              6,
+              25,
+              400
+            ],
+            "coverage_exact": "351259604016650046891/471501660827777657069",
+            "coverage_pct": 74.49806293364306,
+            "optimum_lower_bound_exact": "351259604016650046891/471501660827777657069",
+            "optimum_upper_bound_exact": "358195856546637277914357725688972695553745202776373296417369/477249548804159185259092686689831045861394749101632194286320",
+            "quality_lower_bound_exact": "355541669218650060314005755845345592619630630306360518702480/358195856546637277914357725688972695553745202776373296417369",
+            "quality_lower_bound_pct": "99.259012",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.556143",
+            "relative_gap_upper_exact": "2654187327987217600351969843627102934114572470012777714889/358195856546637277914357725688972695553745202776373296417369",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            400,
+            6
+          ],
+          "wall_seconds": 0.25808309100000315,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 6,
+            "selected": [
+              1,
+              2,
+              4,
+              6,
+              25,
+              400
+            ],
+            "coverage_exact": "351259604016650046891/471501660827777657069",
+            "coverage_pct": 74.49806293364306,
+            "optimum_lower_bound_exact": "351259604016650046891/471501660827777657069",
+            "optimum_upper_bound_exact": "358195856546637277914357725688972695553745202776373296417369/477249548804159185259092686689831045861394749101632194286320",
+            "quality_lower_bound_exact": "355541669218650060314005755845345592619630630306360518702480/358195856546637277914357725688972695553745202776373296417369",
+            "quality_lower_bound_pct": "99.259012",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.556143",
+            "relative_gap_upper_exact": "2654187327987217600351969843627102934114572470012777714889/358195856546637277914357725688972695553745202776373296417369",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+        "k": 6,
+        "selected": [
+          1,
+          2,
+          4,
+          6,
+          25,
+          400
+        ],
+        "coverage_exact": "351259604016650046891/471501660827777657069",
+        "coverage_pct": 74.49806293364306,
+        "optimum_lower_bound_exact": "351259604016650046891/471501660827777657069",
+        "optimum_upper_bound_exact": "358195856546637277914357725688972695553745202776373296417369/477249548804159185259092686689831045861394749101632194286320",
+        "quality_lower_bound_exact": "355541669218650060314005755845345592619630630306360518702480/358195856546637277914357725688972695553745202776373296417369",
+        "quality_lower_bound_pct": "99.259012",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.556143",
+        "relative_gap_upper_exact": "2654187327987217600351969843627102934114572470012777714889/358195856546637277914357725688972695553745202776373296417369",
+        "optimum_value_proved": false,
+        "deployment_optimality_proved": false,
+        "bound_methods": [
+          "route_dual"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "Anaheim",
+      "source_graph": "Anaheim",
+      "k": 12,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+      "reference_file": "references/Anaheim-k12.json",
+      "reference_sha256": "4c23f9011f964a02f0adea692f120c53e0dd065bdc7472345d4c0f8fb118ea99",
+      "methods": {
+        "topk": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            62,
+            63,
+            3,
+            6,
+            232,
+            233,
+            7,
+            196
+          ],
+          "wall_seconds": 0.01740059899998414,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 12,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              25,
+              62,
+              63,
+              196,
+              232,
+              233
+            ],
+            "coverage_exact": "372074340774431005689/471501660827777657069",
+            "coverage_pct": 78.9126256991778,
+            "optimum_lower_bound_exact": "439079796750374719274/471501660827777657069",
+            "optimum_upper_bound_exact": "46619744133353918996311/49507674386916653992245",
+            "quality_lower_bound_exact": "39067805781315255597345/46619744133353918996311",
+            "quality_lower_bound_pct": "83.800987",
+            "remaining_gain_lower_pp": "14.211075",
+            "remaining_gain_upper_pp": "15.254077",
+            "relative_gap_upper_exact": "7551938352038663398966/46619744133353918996311",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            400,
+            6,
+            3,
+            31,
+            7,
+            34,
+            30,
+            407
+          ],
+          "wall_seconds": 0.19927697599996463,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 12,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              25,
+              30,
+              31,
+              34,
+              400,
+              407
+            ],
+            "coverage_exact": "439079796750374719274/471501660827777657069",
+            "coverage_pct": 93.1237009811413,
+            "optimum_lower_bound_exact": "439079796750374719274/471501660827777657069",
+            "optimum_upper_bound_exact": "46619744133353918996311/49507674386916653992245",
+            "quality_lower_bound_exact": "46103378658789345523770/46619744133353918996311",
+            "quality_lower_bound_pct": "98.892388",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "1.043001",
+            "relative_gap_upper_exact": "516365474564573472541/46619744133353918996311",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            400,
+            6,
+            3,
+            31,
+            7,
+            34,
+            30,
+            407
+          ],
+          "wall_seconds": 0.5323810030000686,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 12,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              25,
+              30,
+              31,
+              34,
+              400,
+              407
+            ],
+            "coverage_exact": "439079796750374719274/471501660827777657069",
+            "coverage_pct": 93.1237009811413,
+            "optimum_lower_bound_exact": "439079796750374719274/471501660827777657069",
+            "optimum_upper_bound_exact": "46619744133353918996311/49507674386916653992245",
+            "quality_lower_bound_exact": "46103378658789345523770/46619744133353918996311",
+            "quality_lower_bound_pct": "98.892388",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "1.043001",
+            "relative_gap_upper_exact": "516365474564573472541/46619744133353918996311",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+        "k": 12,
+        "selected": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          25,
+          30,
+          31,
+          34,
+          400,
+          407
+        ],
+        "coverage_exact": "439079796750374719274/471501660827777657069",
+        "coverage_pct": 93.1237009811413,
+        "optimum_lower_bound_exact": "439079796750374719274/471501660827777657069",
+        "optimum_upper_bound_exact": "46619744133353918996311/49507674386916653992245",
+        "quality_lower_bound_exact": "46103378658789345523770/46619744133353918996311",
+        "quality_lower_bound_pct": "98.892388",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "1.043001",
+        "relative_gap_upper_exact": "516365474564573472541/46619744133353918996311",
+        "optimum_value_proved": false,
+        "deployment_optimality_proved": false,
+        "bound_methods": [
+          "route_dual"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    },
+    {
+      "dataset": "Anaheim",
+      "source_graph": "Anaheim",
+      "k": 24,
+      "in_campaign_budget_list": true,
+      "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+      "reference_file": "references/Anaheim-k24.json",
+      "reference_sha256": "4de02c1f43d997dd73666ab0acf29626959d2c34afa6ed44ada497a1e1e33370",
+      "methods": {
+        "topk": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            62,
+            63,
+            3,
+            6,
+            232,
+            233,
+            7,
+            196,
+            197,
+            198,
+            199,
+            200,
+            144,
+            145,
+            400,
+            203,
+            204,
+            135,
+            136,
+            234
+          ],
+          "wall_seconds": 0.017717635000053633,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 24,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              25,
+              62,
+              63,
+              135,
+              136,
+              144,
+              145,
+              196,
+              197,
+              198,
+              199,
+              200,
+              203,
+              204,
+              232,
+              233,
+              234,
+              400
+            ],
+            "coverage_exact": "409076816032832474752/471501660827777657069",
+            "coverage_pct": 86.7604188953755,
+            "optimum_lower_bound_exact": "469379114323397942314/471501660827777657069",
+            "optimum_upper_bound_exact": "1",
+            "quality_lower_bound_exact": "409076816032832474752/471501660827777657069",
+            "quality_lower_bound_pct": "86.760418",
+            "remaining_gain_lower_pp": "12.789413",
+            "remaining_gain_upper_pp": "13.239582",
+            "relative_gap_upper_exact": "62424844794945182317/471501660827777657069",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy": {
+          "selected": [
+            2,
+            4,
+            25,
+            1,
+            400,
+            6,
+            3,
+            31,
+            7,
+            34,
+            30,
+            407,
+            5,
+            389,
+            18,
+            28,
+            32,
+            337,
+            26,
+            361,
+            15,
+            404,
+            308,
+            17
+          ],
+          "wall_seconds": 0.4126396059999706,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 24,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              15,
+              17,
+              18,
+              25,
+              26,
+              28,
+              30,
+              31,
+              32,
+              34,
+              308,
+              337,
+              361,
+              389,
+              400,
+              404,
+              407
+            ],
+            "coverage_exact": "469363802084664882625/471501660827777657069",
+            "coverage_pct": 99.5465851086591,
+            "optimum_lower_bound_exact": "469379114323397942314/471501660827777657069",
+            "optimum_upper_bound_exact": "1",
+            "quality_lower_bound_exact": "469363802084664882625/471501660827777657069",
+            "quality_lower_bound_pct": "99.546585",
+            "remaining_gain_lower_pp": "0.003247",
+            "remaining_gain_upper_pp": "0.453415",
+            "relative_gap_upper_exact": "2137858743112774444/471501660827777657069",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        },
+        "greedy_swap": {
+          "selected": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            17,
+            18,
+            25,
+            26,
+            28,
+            30,
+            31,
+            32,
+            34,
+            144,
+            308,
+            337,
+            361,
+            389,
+            400,
+            404,
+            407
+          ],
+          "wall_seconds": 1.658289947999947,
+          "timing_scope": "completed fixed baseline; not a matched-time campaign trial",
+          "certificate": {
+            "schema_version": 1,
+            "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+            "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+            "k": 24,
+            "selected": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              17,
+              18,
+              25,
+              26,
+              28,
+              30,
+              31,
+              32,
+              34,
+              144,
+              308,
+              337,
+              361,
+              389,
+              400,
+              404,
+              407
+            ],
+            "coverage_exact": "469379114323397942314/471501660827777657069",
+            "coverage_pct": 99.54983265580584,
+            "optimum_lower_bound_exact": "469379114323397942314/471501660827777657069",
+            "optimum_upper_bound_exact": "1",
+            "quality_lower_bound_exact": "469379114323397942314/471501660827777657069",
+            "quality_lower_bound_pct": "99.549832",
+            "remaining_gain_lower_pp": "0.000000",
+            "remaining_gain_upper_pp": "0.450168",
+            "relative_gap_upper_exact": "2122546504379714755/471501660827777657069",
+            "optimum_value_proved": false,
+            "deployment_optimality_proved": false,
+            "bound_methods": [
+              "submodular",
+              "submodular",
+              "route_dual"
+            ],
+            "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+          }
+        }
+      },
+      "reference_best": {
+        "schema_version": 1,
+        "model": "fixed-directed-shortest-routes/endpoints/loaded-demand-rationals/v1",
+        "instance_sha256": "27a06b1897427008481ce41045169f1cfa8221b83e89b45cae11dc2c9956722e",
+        "k": 24,
+        "selected": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          17,
+          18,
+          25,
+          26,
+          28,
+          30,
+          31,
+          32,
+          34,
+          144,
+          308,
+          337,
+          361,
+          389,
+          400,
+          404,
+          407
+        ],
+        "coverage_exact": "469379114323397942314/471501660827777657069",
+        "coverage_pct": 99.54983265580584,
+        "optimum_lower_bound_exact": "469379114323397942314/471501660827777657069",
+        "optimum_upper_bound_exact": "1",
+        "quality_lower_bound_exact": "469379114323397942314/471501660827777657069",
+        "quality_lower_bound_pct": "99.549832",
+        "remaining_gain_lower_pp": "0.000000",
+        "remaining_gain_upper_pp": "0.450168",
+        "relative_gap_upper_exact": "2122546504379714755/471501660827777657069",
+        "optimum_value_proved": false,
+        "deployment_optimality_proved": false,
+        "bound_methods": [
+          "submodular",
+          "submodular",
+          "route_dual"
+        ],
+        "timing_scope": "posthoc certificate work; not part of candidate search or fitness"
+      },
+      "unavailable_methods": []
+    }
+  ]
+}
