@@ -19,11 +19,12 @@ import tempfile
 from time import perf_counter
 
 from .core import Instance, ShortestPathCoverage
+from .diagnostics import StderrTail, repair_diagnostic, sanitize
 from .isolation import command as worker_command, cleanup as cleanup_container
 
 
 TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py",
-           "route_search.py", "bounded_search.py", "strong_baselines.py")
+           "route_search.py", "bounded_search.py", "strong_baselines.py", "diagnostics.py")
 
 
 def checkpoints_checked(values):
@@ -83,6 +84,8 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
     if not isfinite(setup_timeout) or setup_timeout <= 0:
         raise ValueError("positive setup timeout required")
     events, failure, reason = [], None, "completed"
+    error_kind, exit_code = "completed", None
+    stderr_tail = StderrTail()
     bound_events, diagnostics = [], []
     setup_started = perf_counter()
     setup_seconds = None
@@ -95,8 +98,8 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
             shutil.copyfile(Path(__file__).parent / name, package / name)
         if program_path is not None:
             shutil.copyfile(Path(program_path).resolve(), work / "candidate.py")
-        # Keep logs bounded by discarding them; candidate exceptions are reflected
-        # by the nonzero exit status. No provider environment is passed through.
+        # Only the bounded stderr tail is retained. It is sanitized AFTER capture.
+        # No provider environment is passed through. Logs never supply scores.
         env = {"PATH": os.defpath, "HOME": directory, "TMPDIR": directory,
                "PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1",
                "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
@@ -105,11 +108,13 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
         argv, container_name, isolation = worker_command(work, package)
         with subprocess.Popen(argv,
                               cwd=directory, env=env, stdin=subprocess.PIPE,
-                              stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                               start_new_session=True) as proc:
             selector = selectors.DefaultSelector()
             selector.register(proc.stdout, selectors.EVENT_READ)
             os.set_blocking(proc.stdout.fileno(), False)
+            selector.register(proc.stderr, selectors.EVENT_READ)
+            os.set_blocking(proc.stderr.fileno(), False)
             buffer, total, done = b"", 0, False
             try:
                 proc.stdin.write((json.dumps(request) + "\n").encode())
@@ -120,21 +125,33 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                     if now >= deadline:
                         if start is None:
                             failure, reason = "worker setup timeout", "setup_timeout"
+                            error_kind = "setup_timeout"
                         else:
                             reason = "deadline"
                         break
                     readable = selector.select(timeout=min(0.05, deadline - now))
                     if not readable:
                         continue
+                    # Deployment receipt gets priority whenever both pipes are ready.
+                    # Only one bounded stderr read per pass, with a deadline check above.
+                    if not any(key.fileobj is proc.stdout for key, _ in readable):
+                        err = os.read(proc.stderr.fileno(), 65536)
+                        if err:
+                            stderr_tail.feed(err)
+                        else:
+                            selector.unregister(proc.stderr)
+                        continue
                     chunk = os.read(proc.stdout.fileno(), 65536)
                     received = perf_counter()
                     if not chunk:
                         if buffer:
                             failure = "truncated protocol message"
+                            error_kind = "protocol_violation"
                         break
                     total += len(chunk)
                     if total > max_output_bytes:
                         failure = "output byte limit exceeded"
+                        error_kind = "output_limit"
                         break
                     buffer += chunk
                     while b"\n" in buffer:
@@ -182,9 +199,13 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                     except subprocess.TimeoutExpired:
                         code = None
                     if code != 0 or not done:
-                        failure = failure or f"worker did not finish cleanly (exit={code})"
+                        if failure is None:
+                            failure = f"worker did not finish cleanly (exit={code})"
+                            error_kind = "worker_exit"
             except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
                 failure = f"{type(exc).__name__}: {exc}"
+                error_kind = ("infrastructure_error" if isinstance(exc, OSError) else
+                              "output_limit" if "limit exceeded" in str(exc) else "protocol_violation")
             finally:
                 selector.close()
                 # Kill the process group even if its leader has exited.
@@ -192,13 +213,24 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                     os.killpg(proc.pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
-                proc.wait()
+                exit_code = proc.wait()
                 cleanup_container(container_name, env)
+                # Drain already-buffered bytes after termination, without waiting for
+                # an escaped child or letting output allocate unbounded memory/work.
+                for _ in range(16):
+                    try:
+                        err = os.read(proc.stderr.fileno(), 65536)
+                    except BlockingIOError:
+                        break
+                    if not err:
+                        break
+                    stderr_tail.feed(err)
     elapsed_total = perf_counter() - setup_started
     try:
         scored = score_trace(instance, k, checkpoints, events, oracle)
     except (ValueError, TypeError, OverflowError) as exc:
         failure = f"invalid deployment: {exc}"
+        error_kind = "invalid_deployment"
         scored = score_trace(instance, k, checkpoints, [], oracle)
     extra = {}
     if baseline in METHODS:
@@ -210,10 +242,16 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
             verified = verify_online_bounds(instance,k,bound_events)
         except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
             failure = f"invalid online bound: {exc}"
+            error_kind = "invalid_bound"
             verified = []
         extra.update(search_bound_events=bound_events, verified_search_bounds=verified,
                      bound_verification_seconds=perf_counter()-began)
-    return {**scored, **extra, "correct": failure is None, "error": failure,
+    if failure is None:
+        error_kind = "deadline_reached" if reason == "deadline" else "completed"
+    diagnostic = repair_diagnostic(stderr_tail, error_kind, exit_code)
+    return {**scored, **extra, "correct": failure is None,
+            "error": sanitize(failure, 1024) if failure else None,
+            "diagnostic": diagnostic,
             "termination": reason, "setup_wall_seconds": setup_seconds,
             "total_wall_seconds_before_scoring": elapsed_total,
             "received_deployments": len(events), "events": events,

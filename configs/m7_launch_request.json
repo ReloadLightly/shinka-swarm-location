@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "campaign_id": "m7-evidence-feedback-100-v1",
+  "framework_commit": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+  "generations": 100,
+  "seed": 0,
+  "max_api_cost_usd": 3.0,
+  "shortlist_size": 5,
+  "models": {
+    "mutation": [
+      "gpt-5-mini",
+      "gpt-4.1-mini"
+    ],
+    "meta": "gpt-4.1-mini",
+    "novelty": "gpt-4.1-mini",
+    "embedding": "text-embedding-3-small"
+  },
+  "scope": "M6 comparison profile with M7 task-specific mutation/meta context and bounded repair evidence. Same native settings, scalar fitness, checkpoints and holdout protocol. No model execution implied.",
+  "cost_note": "Native submission threshold may overshoot with in-flight calls. No automatic recharge or provider fallback. A target of 100 slots is not a completed-generation count.",
+  "comparison_profile": "configs/comparisons_m6.json",
+  "feedback_context": "m7"
+}

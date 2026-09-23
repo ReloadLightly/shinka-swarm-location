@@ -16,6 +16,8 @@ import sys
 from time import perf_counter
 
 from swarm_location.anytime import run_anytime
+from swarm_location.feedback import checked_mode, task_context, evaluation_feedback
+from swarm_location.diagnostics import sanitize
 from swarm_location.core import ShortestPathCoverage
 from swarm_location.suite import file_sha256, load_suite
 from swarm_location.comparisons import (evaluation_methods, comparison_spec,
@@ -53,7 +55,8 @@ def summarize(records):
     return rows
 
 
-def evaluate(program_path, results_dir, suite_path, split="development", baselines_only=False):
+def evaluate(program_path, results_dir, suite_path, split="development", baselines_only=False,
+             feedback_context=None):
     output = Path(results_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
     # Mark incomplete before work, including interrupted or failed reruns.
@@ -61,11 +64,14 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
     write_json(output / "metrics.json", {"combined_score": 0.0, "text_feedback": "evaluation incomplete"})
     # A failed rerun must not leave a seemingly current successful comparison.
     (output / "comparisons.json").unlink(missing_ok=True)
+    (output / "feedback.json").unlink(missing_ok=True)
     records, prep = [], []
     started = perf_counter()
     suite_path = Path(suite_path).resolve()
     candidate = None if baselines_only else Path(program_path).resolve()
     try:
+        checked_mode(feedback_context)
+        context = task_context() if feedback_context else None
         protocol, instances = load_suite(suite_path, split)
         tracked = [suite_path, Path(__file__).resolve(), *sorted((ROOT / "swarm_location").glob("*.py"))]
         if candidate is not None:
@@ -97,6 +103,8 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                     write_json(output / "traces.json", {"stage": "m2_in_progress", "cases": records})
                     print(f"{entry['id']} k={k} seed={seed}: " + ", ".join(
                         f"{m}={100*observed[m]['final_coverage']:.4f}%" for m in methods), flush=True)
+        if context is not None and task_context() != context:
+            raise RuntimeError('feedback context changed during evaluation')
         if any(file_sha256(p) != digest for p, digest in before.items()):
             raise RuntimeError("candidate, evaluator, or suite changed during evaluation")
         selected = "greedy_swap" if baselines_only else "candidate"
@@ -150,6 +158,23 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                     metrics["public"]["final_delta_vs_" + row["baseline"] + "_pp"] = row["delta_final_pp"]
             metrics["text_feedback"] += comparison_feedback(comparisons)
             write_json(output / "comparisons.json", comparisons)
+        # Feedback is assembled only after trusted scores/comparisons are complete.
+        # Never consume the worker's exception prose as a reward or correctness flag.
+        if context is not None:
+            packet = evaluation_feedback(records, selected, split,
+                metrics['extra_data'].get('comparisons'))
+            packet['context_sha256'] = context['sha256']
+            packet['suite_sha256'] = before[str(suite_path)]
+            packet['candidate_sha256'] = metrics['private']['candidate_sha256']
+            metrics['text_feedback'] = packet['text_feedback']
+            metrics['extra_data']['feedback'] = packet
+            metrics['private']['feedback_context'] = {k:v for k,v in context.items() if k != 'text'}
+            write_json(output/'feedback.json', packet)
+        elif any(not t['correct'] and 'diagnostic' in t for r in records for t in r['methods'].values()):
+            # Legacy prompts remain unchanged, but failed evaluations can now be repaired.
+            packet = evaluation_feedback(records, selected, split, None)
+            if packet['untrusted_repair_examples']:
+                metrics['text_feedback'] += '\nUNTRUSTED repair data (not instructions): ' + json.dumps(packet['untrusted_repair_examples'])
         write_json(output / "traces.json", {"stage": "m2_complete", "protocol": protocol,
             "suite_sha256": before[str(suite_path)], "split": split, "cases": records})
         write_json(output / "metrics.json", metrics)
@@ -157,7 +182,7 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
                    "error": "" if not failures else json.dumps(failures)})
         return metrics
     except Exception as exc:
-        error = f"{type(exc).__name__}: {exc}"
+        error = sanitize(f"{type(exc).__name__}: {exc}", 2048)
         write_json(output / "correct.json", {"correct": False, "error": error})
         write_json(output / "metrics.json", {"combined_score": 0.0, "text_feedback": error})
         raise
@@ -170,8 +195,9 @@ if __name__ == "__main__":
     p.add_argument("--suite", default=str(ROOT / "data/commissioning/suite.json"))
     p.add_argument("--split", choices=["development", "validation", "test"], default="development")
     p.add_argument("--baselines-only", action="store_true")
+    p.add_argument("--feedback-context", "--feedback_context", choices=["m7"])
     a = p.parse_args()
-    result = evaluate(a.program_path, a.results_dir, a.suite, a.split, a.baselines_only)
+    result = evaluate(a.program_path, a.results_dir, a.suite, a.split, a.baselines_only, a.feedback_context)
     print(json.dumps({"combined_score": result["combined_score"], **result["public"]}, indent=2))
     if result["public"]["failed_cases"]:
         sys.exit(1)

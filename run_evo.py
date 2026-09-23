@@ -16,6 +16,7 @@ import sys
 from evaluate_anytime import write_json
 from swarm_location.suite import file_sha256, load_suite
 from swarm_location.comparisons import comparison_plan
+from swarm_location.feedback import task_context, attach_meta_context
 
 ROOT = Path(__file__).resolve().parent
 TASK = """Evolve a reusable anytime algorithm for endpoint-inclusive OD-weighted group
@@ -50,6 +51,7 @@ def parser():
     p.add_argument('--suite', type=Path, default=ROOT/'data/commissioning/suite.json')
     p.add_argument('--results-dir', type=Path, default=ROOT/'results/local_evolution')
     p.add_argument('--models', nargs='+')
+    p.add_argument('--feedback-context', choices=['m7'])
     p.add_argument('--meta-model')
     p.add_argument('--novelty-model')
     p.add_argument('--embedding-model')
@@ -87,6 +89,11 @@ def plan(args):
             + ". Comparisons report each fixed method separately; there is no oracle portfolio. "
             "Beating timed greedy alone is not a discovery. Distinguish checkpoint improvements "
             "from final-coverage improvements. Assessment data never enter development feedback.\n")
+    context = task_context() if args.feedback_context else None
+    if context is not None:
+        task += '\n' + context['text']
+        if not config['evo_config'].get('use_text_feedback'):
+            raise ValueError('M7 needs native use_text_feedback=True')
     evo = dict(config['evo_config'], num_generations=generations,
         task_sys_msg=task, job_type='local', language='python',
         init_program_path=str(ROOT/'anytime_initial.py'), results_dir=str(output),
@@ -97,6 +104,8 @@ def plan(args):
            'extra_cmd_args': {'suite': str(args.suite.resolve()), 'split': 'development'},
            'python_executable': sys.executable, 'numeric_threads_per_job': 1,
            'eval_verbose': True, 'time': '01:00:00'}
+    if context is not None:
+        job['extra_cmd_args']['feedback_context'] = 'm7'
     db = dict(config['db_config'], db_path=str(output/'evolution_db.sqlite'))
     resolved = {'framework_commit': config['framework_commit'], 'evo_config': evo,
         'db_config': db, 'job_config': job,
@@ -111,6 +120,8 @@ def plan(args):
         'scope': 'Development evaluation only. No held-out result is implied.'}
     if comparisons is not None:
         resolved['comparison_plan'] = comparisons
+    if context is not None:
+        resolved['feedback_context'] = context
     return resolved
 
 
@@ -143,6 +154,8 @@ def main(argv=None):
     db = DatabaseConfig(**resolved['db_config'])
     job = LocalJobConfig(**resolved['job_config'])
     output.mkdir(parents=True, exist_ok=True)
+    if 'feedback_context' in resolved:
+        write_json(output/'feedback_context.json', resolved['feedback_context'])
     if args.check_native:
         write_json(output/'native_config_check.json', {**version, 'configuration_constructed': True,
             'model_calls': 0, 'islands': db.num_islands, 'mutation_bandit': evo.llm_dynamic_selection,
@@ -181,6 +194,14 @@ def main(argv=None):
         max_evaluation_jobs=resolved['max_evaluation_jobs'],
         max_proposal_jobs=resolved['max_proposal_jobs'], max_db_workers=resolved['max_db_workers'],
         verbose=True, debug=False)
+    if 'feedback_context' in resolved:
+        attached = attach_meta_context(runner, resolved['feedback_context'])
+        write_json(output/'meta_context_binding.json', {
+            'version': resolved['feedback_context']['version'],
+            'context_sha256': resolved['feedback_context']['sha256'],
+            'native_meta_client_wrapped': attached,
+            'mutation_bandit_unchanged': True,
+            'scope': 'Request augmentation binding, not evidence of completed model calls'})
     runner.run()
 
 

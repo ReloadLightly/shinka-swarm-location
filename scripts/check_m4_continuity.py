@@ -31,8 +31,8 @@ PROTECTED = [
 
 def check(base: str = BASE, allow_source_changes=()) -> dict:
     allowed = set(allow_source_changes)
-    if not allowed <= {'swarm_location/strong_baselines.py'}:
-        raise ValueError('only the declared M6 fixed-method extension may be excepted')
+    if not allowed <= {'swarm_location/strong_baselines.py', 'swarm_location/anytime.py', 'swarm_location/anytime_worker.py'}:
+        raise ValueError('only declared M6 fixed-method and M7 receiver/diagnostic extensions may be excepted')
     def git(*args):
         return subprocess.check_output(['git', *args], cwd=ROOT)
     paths = git('ls-tree', '-r', '--name-only', base, '--', *PROTECTED).decode().splitlines()

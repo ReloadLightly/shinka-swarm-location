@@ -58,3 +58,14 @@ it is not significance, an automatic discovery claim or permission to open test.
 ## M6: early-incumbent controls completed
 
 The paired Docker study is recorded in results/early-controls/ and README Section 5.8. 1296 development solver trials; 0 failures. The separately named early_iterated, early_dfbnb and early_potential variants retain the original inner deadline and exact scorer. The opt-in comparisons_m6.json profile keeps four screening controls and includes all ten fixed controls in assessment; M4/M5 records are not replaced. No paid evolution or research holdout assessment was executed. Do not transfer the former M5 host-session noise threshold to another run.
+
+## M7 — mutation/meta feedback integration
+
+Priority 4 connects task-specific development evidence and helper costs to both
+mutation and the native three-stage meta client, with bounded untrusted repair
+diagnostics in the evaluator. See docs/m7_feedback.md and README Section 5.9.
+M7 requests opt in while retaining M6 comparators, fitness and native settings.
+This is not an evolutionary result. Receiver instrumentation changed; do not
+reuse M5 timing thresholds on another host or this changed implementation.
+The next original review item remains Priority 5 (separating evolution from
+holdout assessment), not another optimizer family or a silent problem change.

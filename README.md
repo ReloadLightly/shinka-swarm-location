@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M6 early-incumbent controls implemented and measured on Docker; first complete deployments arrive sooner, but the declared checkpoint objective does not improve. Section 5.8 preserves the negative result. No evolutionary campaign completed.**
+**Status: M7 mutation/meta feedback integration is being verified; Section 5.9 separates its evidence from evolutionary results. M6's negative checkpoint result is preserved in Section 5.8. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -40,6 +40,7 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
 | Early-incumbent control ablation | 1,296 Docker trials; three paired variants; no checkpoint-score improvement; Section 5.8 |
 | Opt-in M6 assessment profile | Four screening and ten assessment controls; no research holdout evaluation |
+| Task-specific mutation/meta context and bounded repair diagnostics | M7 implementation and verification; Section 5.9 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -862,6 +863,57 @@ The figures show all eight fixed-control mean incumbent curves. Dashed lines are
 ![Anaheim paired early-control coverage](results/early-controls/figures/Anaheim.png)
 
 <!-- M6-EARLY-FIGURES:END -->
+
+### 5.9 M7 — Evidence reaches mutation, repair and meta-memory
+
+The [M7 methods note](docs/m7_feedback.md) documents a compact task-specific
+brief with actual helper signatures, node-ID/index and normalized/integer-mass
+conventions, charged route-compilation costs, strong controls, and SHA-bound
+**development-only** M5/M6 findings. It contains no instance-specific deployments
+or holdout results. The new [M7 request](configs/m7_launch_request.json) retains the
+M6 comparator profile and opts into this context explicitly; old requests are not
+silently given a different prior.
+
+**Both native paths are connected.** The mutation task receives the brief, while
+an instance-local forwarding adapter augments the separate native meta client's
+three-stage requests. Updating `task_sys_msg` alone would not reach those meta
+system prompts. The native loop, island/archive logic, mutation-model UCB, costs,
+meta-state persistence and recommendation sampling remain in ShinkaEvolve. The
+separate meta role is not automatically selected by the mutation bandit.
+
+`feedback.json` supplies trace-derived checkpoint/final differences and
+per-network/budget observations, explicitly naming assessment controls not run.
+It asks for **Observation / Hypothesis / Next test / Falsifier**, within native
+formats. Receipt timings do not prove a code mechanism, and `correct` is not a
+research validation result. The scalar is unchanged.
+
+**Repair is no longer blind to exceptions.** Stderr is captured separately with a
+16 KiB retained tail, sanitized after timing, and rendered as at most 2,048
+characters. Import/runtime/return hints, parent-detected invalid deployments,
+protocol/output-limit failures and setup timeouts are distinguished. Valid anytime
+deadline stops retain their incumbent. Worker messages remain explicitly untrusted;
+they cannot supply correctness or numerical reward. Locals and source lines are
+omitted, recognizable secrets/paths/terminal controls are redacted, and successful
+logs are not turned into scientific claims. This is best-effort sanitization, not
+a guarantee against every prompt injection or secret encoding.
+
+<!-- M7-FEEDBACK:START -->
+
+Integration execution pending; no result is inferred from configuration.
+
+<!-- M7-FEEDBACK:END -->
+
+[Executed integration summary](results/feedback-integration/summary.json),
+[exact task brief and source hashes](results/feedback-integration/task-context.json),
+[seed feedback](results/feedback-integration/native/seed/feedback.json),
+[synthetic repair probes](results/feedback-integration/fault-probes.json), and
+[offline native request-boundary audit](results/feedback-integration/native-payloads/summary.json).
+
+Inspect a plan with `run_evo.py --feedback-context m7` or select
+`configs/m7_launch_request.json` for a later authorized campaign. The new receiver
+must be timed on the intended host; an archived host-session threshold is not
+portable. This milestone does not start paid evolution or establish that richer
+feedback improves LLM-generated programs.
 
 ## 6. Reproduce the first milestone
 

@@ -63,9 +63,10 @@ def continuity():
     for p in protected:
         original = subprocess.check_output(['git', 'show', f'{BASE}:{p}'], cwd=ROOT)
         if (ROOT/p).read_bytes() != original:
-            if p != 'swarm_location/strong_baselines.py':
+            if p not in {'swarm_location/strong_baselines.py', 'swarm_location/anytime.py',
+                         'swarm_location/anytime_worker.py', 'evaluate_anytime.py', 'run_evo.py', 'campaign.py'}:
                 raise ValueError(f'protected scientific file changed: {p}')
-            # M6 extends fixed method dispatch; do not relabel those bytes unchanged.
+            # M6 dispatch and M7 diagnostic/context changes are explicit, not byte-identical.
             # Current execution is pinned separately by implementations().
             extensions[p] = {'historical_sha256': hashlib.sha256(original).hexdigest(),
                              'current_sha256': file_sha256(ROOT/p)}

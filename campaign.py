@@ -6,6 +6,7 @@ A missing model route is written as BLOCKED before any inference or test scoring
 from __future__ import annotations
 import argparse
 from dataclasses import asdict
+from functools import partial
 from datetime import datetime,timezone
 import json
 from math import isfinite
@@ -21,6 +22,7 @@ from swarm_location.selection import snapshot_population,freeze_champion,evaluat
 from swarm_location.suite import file_sha256
 from swarm_location.comparisons import load_profile, bind_profile, comparison_plan
 from run_evo import verify_native,main as native_main
+from swarm_location.feedback import checked_mode, task_context
 
 ROOT=Path(__file__).resolve().parent
 
@@ -29,6 +31,9 @@ def checked_request(path: Path) -> dict:
     request=json.loads(Path(path).read_text())
     if type(request.get('schema_version')) is not int or request['schema_version'] not in (1, 2):
         raise ValueError('expected campaign request schema 1 or 2')
+    checked_mode(request.get('feedback_context'))
+    if request.get('feedback_context') and request['schema_version'] != 2:
+        raise ValueError('feedback context requires a new schema-2 request')
     if request['schema_version'] == 1 and 'comparison_profile' in request:
         raise ValueError('a comparison profile requires a new schema-2 campaign request')
     if request['schema_version'] == 2:
@@ -88,6 +93,9 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         for split in ('development', 'validation', 'test'):
             cases = sum(len(e['budgets']) for e in source_catalog['datasets'] if e['split'] == split) * len(source_catalog['seeds'][split])
             state['comparison_trial_plan'][split] = comparison_plan(bind_profile({}, profile, split), split, cases)
+    context = task_context() if request.get('feedback_context') else None
+    if context is not None:
+        state['feedback_context'] = {k:v for k,v in context.items() if k != 'text'}
     state_path=output/'campaign_status.json'
     if state_path.exists():
         previous = json.loads(state_path.read_text())
@@ -96,7 +104,8 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         if (profile is not None or previous.get('comparison_profile') is not None) and (
                 previous.get('request_sha256') != state['request_sha256']
                 or previous.get('catalog_sha256') != state['catalog_sha256']
-                or previous.get('comparison_profile') != profile):
+                or previous.get('comparison_profile') != profile
+                or previous.get('feedback_context') != state.get('feedback_context')):
             raise ValueError('versioned campaign preflight identity changed; use a new output directory')
     write_json(state_path,state)
     try:
@@ -137,6 +146,10 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
             identity['comparison_profile'] = profile
             identity['comparison_profile_path'] = request['comparison_profile']
             identity['comparison_trial_plan'] = state['comparison_trial_plan']
+        if context is not None:
+            if task_context() != context:
+                raise ValueError('feedback context changed before inference')
+            identity['feedback_context'] = context
         write_json(output/'campaign_manifest.json',identity) # Before the first model call.
         state.update(status='running_native',native_runner_started=True,inference_calls=None)
         write_json(state_path,state)
@@ -145,7 +158,7 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
             '--meta-model',roles['meta'],'--novelty-model',roles['novelty'],
             '--embedding-model',roles['embedding'],'--max-api-cost',str(request['max_api_cost_usd']),
             '--generations',str(request['generations']),'--seed',str(request['seed']),
-            '--docker-image',docker_image])
+            '--docker-image',docker_image] + (['--feedback-context','m7'] if context else []))
         state['status']='native_returned';write_json(state_path,state)
         if any(file_sha256(ROOT/path) != value for path,value in identity['source_sha256'].items()):
             raise RuntimeError('research implementation changed during evolution')
@@ -158,7 +171,8 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         prepare_stage(catalog, output, 'validation', download, profile_path, profile)
         state.update(status='selecting_on_validation',validation_solver_evaluations=None)
         write_json(state_path,state)
-        champion=freeze_champion(frozen,output/'validation-data/suite.json',evaluate,docker_image)
+        assessment = partial(evaluate, feedback_context='m7') if context else evaluate
+        champion=freeze_champion(frozen,output/'validation-data/suite.json',assessment,docker_image)
         state['validation_solver_evaluations']=sum(
             sum(len(c['methods']) for c in json.loads((frozen/'validation'/row['sha256']/'traces.json').read_text())['cases'])
             for row in champion['validation_results'])
@@ -168,7 +182,7 @@ def start(request_path:Path,output:Path,docker_image:str|None,execute:bool,downl
         prepare_stage(catalog, output, 'test', download, profile_path, profile)
         state.update(status='testing_frozen_program',test_solver_evaluations=None)
         write_json(state_path,state)
-        metrics=evaluate_frozen_test(frozen,output/'test-data/suite.json',evaluate,docker_image)
+        metrics=evaluate_frozen_test(frozen,output/'test-data/suite.json',assessment,docker_image)
         state['test_solver_evaluations']=sum(len(c['methods']) for c in json.loads((frozen/'test/traces.json').read_text())['cases'])
         state.update(status='completed',test_metrics=str(frozen/'test/metrics.json'),
                      test_correct=json.loads((frozen/'test/correct.json').read_text())['correct'])
