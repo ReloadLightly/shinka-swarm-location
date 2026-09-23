@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "source_base_commit": "73e702843bd3d834121f4be58f6853e809d6db15",
+  "base_tree": "02929d2435b7d46ab90dc8aa74e7b2a5a8809507",
+  "unchanged_existing_files": 118,
+  "explicit_changed_existing_files": [
+    ".github/workflows/exchange-landscape.yml",
+    "README.md",
+    "docs/next_step.md",
+    "evaluate_anytime.py",
+    "swarm_location/anytime.py",
+    "swarm_location/anytime_worker.py"
+  ],
+  "historical_result_files_unchanged": 58,
+  "model_and_old_solver_sources_unchanged": true,
+  "candidate_seeds_and_campaign_configuration_unchanged": true,
+  "scope": "Existing mathematical/scoring definitions preserved; protocol/optional comparison allowlist explicitly extended."
+}

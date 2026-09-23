@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "paired_cases": 72,
+  "solver_trials": 720,
+  "failed_trials": 0,
+  "deployments_rescored": 6254,
+  "online_partition_snapshots_verified": 932,
+  "checkpoint_bound_pairs_verified": 576,
+  "max_exact_vs_float_score_difference": 1.1102230246251565e-16,
+  "trials_sha256": "c68ae02f454667fa34c199e040c8c47d2fc0f7b8b116a1c737e117be65eb723e",
+  "model_calls": 0,
+  "validation_test_evaluations": 0
+}

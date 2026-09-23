@@ -1,0 +1,10 @@
+{
+  "source_base_commit": "73e702843bd3d834121f4be58f6853e809d6db15",
+  "implementation_patch_sha256": "a212a005c52a5ce013e415c7331f4fcf3da871b9fd0ddf5054fc742744d556e6",
+  "static_source_tree": "49abc0cf2f598871be411cf7555f3ee92e21bda3",
+  "workflow_run": "35816798052",
+  "python": "3.11.16",
+  "scope": "Independent second host execution; primary GitHub tables use this run, local precursor remains separate",
+  "model_calls": 0,
+  "validation_test_evaluations": 0
+}

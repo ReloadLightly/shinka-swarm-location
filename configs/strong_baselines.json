@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "name": "development-fixed-controls-v1",
+  "methods": ["topk", "greedy", "greedy_swap", "route_greedy", "celf", "route_swap", "early_celf_swap", "iterated", "dfbnb", "potential"],
+  "repeats": 3,
+  "timing": "existing external warm-problem clock; imports, route construction, initial solutions, search and proof emission timed",
+  "scope": "development only; no hyperparameter sweep; no frozen campaign configuration or fitness change",
+  "comparison_rule": "all paired trials preserved; no failed method or unfavorable repeat removed",
+  "source_base_commit": "73e702843bd3d834121f4be58f6853e809d6db15"
+}

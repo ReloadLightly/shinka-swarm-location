@@ -1,0 +1,407 @@
+{
+  "stage": "complete",
+  "paired_cases": 72,
+  "solver_trials": 720,
+  "failed_trials": 0,
+  "wall_seconds": 498.734280541,
+  "model_calls": 0,
+  "validation_test_evaluations": 0,
+  "trials_sha256": "2626096ec1673b40caa548753a9e89b08e18c7949d8720d96d94acaafe9ee02d",
+  "manifest_sha256": "544a32ab7ca711ce9975270d933c59ffc147ee997cff6fb47b580dbffefed6f8",
+  "summary": {
+    "by_network": [
+      {
+        "dataset": "Anaheim",
+        "method": "celf",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.93187672884128,
+        "final_coverage_pct": 79.90916897178838,
+        "mean_delta_vs_greedy_pp": -3.4527992901244033,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.90916897178838,
+          79.90916897178838,
+          79.90916897178838
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "dfbnb",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.9324856439313,
+        "final_coverage_pct": 79.90998085857507,
+        "mean_delta_vs_greedy_pp": -3.4521903750343865,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.90998085857507,
+          79.90998085857507,
+          79.90998085857507
+        ],
+        "final_online_optimality_proofs": 18
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "early_celf_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 77.40177005646912,
+        "final_coverage_pct": 79.90998085857507,
+        "mean_delta_vs_greedy_pp": 14.017094037503444,
+        "mean_checkpoint_coverage_pct": [
+          69.87794953693799,
+          79.90916897178838,
+          79.90998085857507,
+          79.90998085857507
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "greedy",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 63.38467601896568,
+        "final_coverage_pct": 79.90916897178838,
+        "mean_delta_vs_greedy_pp": 0.0,
+        "mean_checkpoint_coverage_pct": [
+          22.221532383776022,
+          71.49883374850995,
+          79.90916897178838,
+          79.90916897178838
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "greedy_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 63.35004281243527,
+        "final_coverage_pct": 79.90998085857507,
+        "mean_delta_vs_greedy_pp": -0.03463320653041311,
+        "mean_checkpoint_coverage_pct": [
+          22.221532383776022,
+          71.35948903560161,
+          79.90916897178838,
+          79.90998085857507
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "iterated",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.9338897304918,
+        "final_coverage_pct": 79.91456563101752,
+        "mean_delta_vs_greedy_pp": -3.450786288473884,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.90998085857507,
+          79.91101243237462,
+          79.91456563101752
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "potential",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.9324856439313,
+        "final_coverage_pct": 79.90998085857507,
+        "mean_delta_vs_greedy_pp": -3.4521903750343865,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.90998085857507,
+          79.90998085857507,
+          79.90998085857507
+        ],
+        "final_online_optimality_proofs": 18
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "route_greedy",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.92724685157733,
+        "final_coverage_pct": 79.90916897178838,
+        "mean_delta_vs_greedy_pp": -3.457429167388346,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.8906494627326,
+          79.90916897178838,
+          79.90916897178838
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "route_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 59.9324856439313,
+        "final_coverage_pct": 79.90998085857507,
+        "mean_delta_vs_greedy_pp": -3.4521903750343865,
+        "mean_checkpoint_coverage_pct": [
+          0.0,
+          79.90998085857507,
+          79.90998085857507,
+          79.90998085857507
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "Anaheim",
+        "method": "topk",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 69.87794953693799,
+        "final_coverage_pct": 69.87794953693799,
+        "mean_delta_vs_greedy_pp": 6.493273517972312,
+        "mean_checkpoint_coverage_pct": [
+          69.87794953693799,
+          69.87794953693799,
+          69.87794953693799,
+          69.87794953693799
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "celf",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 64.45507487520798,
+        "final_coverage_pct": 64.45507487520798,
+        "mean_delta_vs_greedy_pp": 0.0,
+        "mean_checkpoint_coverage_pct": [
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "dfbnb",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.89018302828619,
+        "final_coverage_pct": 65.96644481419855,
+        "mean_delta_vs_greedy_pp": 1.4351081530782017,
+        "mean_checkpoint_coverage_pct": [
+          65.66139767054908,
+          65.96644481419855,
+          65.96644481419855,
+          65.96644481419855
+        ],
+        "final_online_optimality_proofs": 36
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "early_celf_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.66139767054908,
+        "final_coverage_pct": 65.66139767054908,
+        "mean_delta_vs_greedy_pp": 1.206322795341097,
+        "mean_checkpoint_coverage_pct": [
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "greedy",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 64.45507487520798,
+        "final_coverage_pct": 64.45507487520798,
+        "mean_delta_vs_greedy_pp": 0.0,
+        "mean_checkpoint_coverage_pct": [
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "greedy_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.66139767054908,
+        "final_coverage_pct": 65.66139767054908,
+        "mean_delta_vs_greedy_pp": 1.206322795341097,
+        "mean_checkpoint_coverage_pct": [
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "iterated",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.96644481419855,
+        "final_coverage_pct": 65.96644481419855,
+        "mean_delta_vs_greedy_pp": 1.51136993899057,
+        "mean_checkpoint_coverage_pct": [
+          65.96644481419855,
+          65.96644481419855,
+          65.96644481419855,
+          65.96644481419855
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "potential",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.95797128243052,
+        "final_coverage_pct": 65.96644481419855,
+        "mean_delta_vs_greedy_pp": 1.502896407222529,
+        "mean_checkpoint_coverage_pct": [
+          65.9325506871264,
+          65.96644481419855,
+          65.96644481419855,
+          65.96644481419855
+        ],
+        "final_online_optimality_proofs": 36
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "route_greedy",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 64.45507487520798,
+        "final_coverage_pct": 64.45507487520798,
+        "mean_delta_vs_greedy_pp": 0.0,
+        "mean_checkpoint_coverage_pct": [
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798,
+          64.45507487520798
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "route_swap",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 65.66139767054908,
+        "final_coverage_pct": 65.66139767054908,
+        "mean_delta_vs_greedy_pp": 1.206322795341097,
+        "mean_checkpoint_coverage_pct": [
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908,
+          65.66139767054908
+        ],
+        "final_online_optimality_proofs": 0
+      },
+      {
+        "dataset": "SiouxFalls",
+        "method": "topk",
+        "trials": 36,
+        "failed_trials": 0,
+        "checkpoint_coverage_pct": 61.06489184692179,
+        "final_coverage_pct": 61.06489184692179,
+        "mean_delta_vs_greedy_pp": -3.3901830282861893,
+        "mean_checkpoint_coverage_pct": [
+          61.06489184692179,
+          61.06489184692179,
+          61.06489184692179,
+          61.06489184692179
+        ],
+        "final_online_optimality_proofs": 0
+      }
+    ],
+    "sioux_falls_k6": [
+      {
+        "method": "celf",
+        "trials": 9,
+        "mean_final_coverage_pct": 85.8014420410427,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "dfbnb",
+        "trials": 9,
+        "mean_final_coverage_pct": 88.18635607321131,
+        "matched_known_optimum_trials": 9,
+        "strictly_beat_completed_swap_trials": 9
+      },
+      {
+        "method": "early_celf_swap",
+        "trials": 9,
+        "mean_final_coverage_pct": 86.96616749861342,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "greedy",
+        "trials": 9,
+        "mean_final_coverage_pct": 85.8014420410427,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "greedy_swap",
+        "trials": 9,
+        "mean_final_coverage_pct": 86.96616749861342,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "iterated",
+        "trials": 9,
+        "mean_final_coverage_pct": 88.18635607321131,
+        "matched_known_optimum_trials": 9,
+        "strictly_beat_completed_swap_trials": 9
+      },
+      {
+        "method": "potential",
+        "trials": 9,
+        "mean_final_coverage_pct": 88.18635607321131,
+        "matched_known_optimum_trials": 9,
+        "strictly_beat_completed_swap_trials": 9
+      },
+      {
+        "method": "route_greedy",
+        "trials": 9,
+        "mean_final_coverage_pct": 85.8014420410427,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "route_swap",
+        "trials": 9,
+        "mean_final_coverage_pct": 86.96616749861342,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      },
+      {
+        "method": "topk",
+        "trials": 9,
+        "mean_final_coverage_pct": 78.75762617859124,
+        "matched_known_optimum_trials": 0,
+        "strictly_beat_completed_swap_trials": 0
+      }
+    ]
+  }
+}
