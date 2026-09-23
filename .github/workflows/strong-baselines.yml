@@ -19,20 +19,29 @@ jobs:
           python-version: '3.11'
       - name: Install the optional dependency used by the full historical test suite
         run: python -m pip install -r requirements-certificates.txt
-      - name: Test fixed solvers, exact bounds and the existing evaluator
+      - name: Test fixed solvers, exact bounds and the current evaluator
         run: |
           mkdir -p results/local_strong_ci
           python -m unittest discover -s tests -v > results/local_strong_ci/tests.txt 2>&1
           cat results/local_strong_ci/tests.txt
-      - name: Prepare only the original development networks
-        run: python scripts/prepare_suite.py --download
-      - name: Independently replay saved timed deployments and online bounds
+      - name: Check the historical result blocks in the current README
         run: |
-          python scripts/strong_baseline_study.py --output results/strong-baselines/study --verify > results/local_strong_ci/replay.json
-          cat results/local_strong_ci/replay.json
           python scripts/update_strong_readme.py --check
           python scripts/update_quality_readme.py --check
           python scripts/update_exchange_readme.py --check
+      # The frozen study hashes the entire old evaluator, not only its unchanged
+      # scoring code. Do not rewrite that manifest to match M4 or disable its guard.
+      - uses: actions/checkout@v4
+        with:
+          ref: a2f9f268d231ec8caae3b6987392eb643967dd60
+          path: historical-strong-source
+          persist-credentials: false
+      - name: Strict original-source replay of saved deployments and online bounds
+        working-directory: historical-strong-source
+        run: |
+          python scripts/prepare_suite.py --download
+          python scripts/strong_baseline_study.py --output results/strong-baselines/study --verify > "$GITHUB_WORKSPACE/results/local_strong_ci/replay.json"
+          cat "$GITHUB_WORKSPACE/results/local_strong_ci/replay.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
