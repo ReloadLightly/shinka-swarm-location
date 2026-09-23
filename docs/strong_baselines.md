@@ -269,8 +269,9 @@ contribution. Improvements must be compared with appropriate strong fixed contro
 and with representation/preprocessing differences accounted for.
 
 No LLM calls, evolved descendants, original-Israeli-data reconstruction, validation
-selection or test performance evaluation occurs in this study. The existing
-subscription-authenticated native campaign still needs its authorized runner.
+selection or test performance evaluation occurs in this study. Subscription-backed
+evolution still needs an authorized runner and matching model-access configuration;
+this baseline milestone does not supply or execute that campaign.
 Sampling-based controls and broader independent benchmarks remain optional later
 scientific extensions, not silently implemented components of this milestone.
 
