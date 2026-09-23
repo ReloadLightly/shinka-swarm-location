@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: strong fixed anytime controls, online bounds, exact certificates and exchange diagnostics implemented; no evolutionary campaign completed. See Sections 5.2–5.5.**
+**Status: M4 staged strong-control campaign integration implemented; native development commissioning and verification are reported in Section 5.6. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -625,6 +625,80 @@ For an explicitly revised future campaign manifest, `extra_baselines` now accept
 silently added to the current frozen campaign and the score remains the same
 checkpoint-coverage difference from timed greedy. More comparator executions
 increase evaluation cost; the submitted protocol must record that choice.
+
+## 5.6 M4: stronger controls integrated into a versioned native campaign
+
+The stronger fixed algorithms in Section 5.5 are now connected to an explicit
+new campaign profile, rather than merely being available as optional evaluator
+names. [`configs/comparisons_m4.json`](configs/comparisons_m4.json) defines the
+sets below; [`configs/m4_launch_request.json`](configs/m4_launch_request.json)
+selects that profile without rewriting the historical M3 request or defaults.
+The [research and integration note](docs/m4_comparators.md) distinguishes the
+chapter/literature basis from these project-specific experimental choices.
+
+| Stage | Fixed controls compared with each candidate | Cases per candidate | Total solver invocations per candidate |
+|---|---|---:|---:|
+| Development screening | Greedy, greedy + swap, topk, early topk + CELF/swap | 24 | 120 |
+| Validation assessment | Screening controls + iterated search, DFBnB, utility-form APTS | 40 | 320 |
+| Frozen test assessment | Same seven controls as validation | 40 | 320 |
+
+The counts are **protocol plans**, including one candidate trial per case, not
+claims that validation or test performance has been measured. Each method gets
+its own unchanged inner deadline. Using four rather than seven fixed controls
+during development avoids 72 solver invocations per candidate on these cases;
+this is not a measured runtime speedup. The full representation-ablation study
+remains in Section 5.5 and is not rerun for every evolutionary proposal.
+
+**Fitness is unchanged:** `100 + mean checkpoint improvement over timed greedy`
+in percentage points. Strong controls do not become extra scalar rewards or
+replace the reference with a retrospective oracle. Instead, each versioned
+evaluation writes `comparisons.json`, exposes checkpoint/final differences from
+each executed control in native public metrics, and gives the mutation/meta
+context per-source/per-budget feedback. Screening feedback explicitly marks the
+assessment controls that were not executed. Any failed required trial invalidates
+the evaluation; no successful subset hides failures. Positive fitness against
+greedy alone is not evidence of superiority over the stronger controls.
+
+The complete profile and its hashes travel through prepared suites, native run
+and campaign manifests, validation evidence and champion identity. Missing,
+duplicated, unknown or stage-inconsistent controls fail explicitly. Cached
+validation results must contain the declared comparisons; changing the test
+assessment profile is rejected before test access. The seed, shortlist selection
+rule, datasets, budgets, checkpoints, native island/bandit/meta settings, and
+independent timing/scoring boundary are unchanged. M1–M3 result files and the
+previous README result blocks are preserved.
+
+<!-- M4-INTEGRATION:START -->
+
+**Executed integration evidence:** 146 tests passed; the pinned native scheduler evaluated the unchanged greedy seed on 24 development cases with four fixed controls (**120 Docker-isolated solver trials, zero failures**). Independent replay rescored 924 submitted deployments and checked every staged comparison against its raw trajectories.
+
+Continuity checks confirm **96 protected files** and all six historical README result blocks are byte-for-byte unchanged. Validation/test stage routing and fixed-control completeness were exercised only on explicitly labelled synthetic unit fixtures. **Model calls: 0; evolved descendants: 0; research validation/test solver trials: 0.**
+
+[Integration summary](results/step4/integration/summary.json), [paired screening comparisons](results/step4/integration/native/seed/comparisons.json), [raw trajectories](results/step4/integration/native/seed/traces.json), [continuity record](results/step4/integration/continuity.json), and [test transcript](results/step4/integration/tests.txt).
+
+<!-- M4-INTEGRATION:END -->
+
+Inspect the development plan without model calls:
+
+```bash
+python scripts/prepare_research.py --split development --download \
+  --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4
+python run_evo.py --config configs/evolution_m3.json \
+  --suite data/commissioning_m4/suite.json --results-dir results/local_m4_plan
+```
+
+A later authorized campaign uses the new request explicitly:
+
+```bash
+python campaign.py --request configs/m4_launch_request.json \
+  --execute --download --docker-image "$IMAGE_ID" --output results/local_m4_campaign
+```
+
+Use a newly named output directory and an immutable image ID. The inherited
+100-slot target and $3 submission threshold are unchanged, not a guarantee of
+sufficient search effort. No paid run is started by these integration checks.
+Timing calibration on the intended host, repeated evolutionary runs and broader
+network generalization remain separate research tasks.
 
 ## 6. Reproduce the first milestone
 

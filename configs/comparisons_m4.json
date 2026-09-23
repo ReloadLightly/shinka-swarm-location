@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "profile_id": "m4-staged-controls-v1",
+  "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+  "baseline_sets": {
+    "development": ["greedy", "greedy_swap", "topk", "early_celf_swap"],
+    "validation": ["greedy", "greedy_swap", "topk", "early_celf_swap", "iterated", "dfbnb", "potential"],
+    "test": ["greedy", "greedy_swap", "topk", "early_celf_swap", "iterated", "dfbnb", "potential"]
+  },
+  "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim"
+}

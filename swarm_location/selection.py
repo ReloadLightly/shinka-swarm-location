@@ -12,6 +12,7 @@ from pathlib import Path
 import sqlite3
 
 from .suite import file_sha256
+from .comparisons import comparison_spec, verify_comparison_evidence
 
 
 def atomic_json(path: Path, data: dict):
@@ -106,6 +107,7 @@ def freeze_champion(directory: Path, validation_suite: Path, evaluator, docker_i
             metrics=json.loads((out/'metrics.json').read_text())
         else:
             metrics=evaluator(directory/row['path'],out,validation_suite,'validation')
+        verify_comparison_evidence(metrics, validation_suite, 'validation')
         correct=json.loads((out/'correct.json').read_text())['correct']
         if (metrics.get('private',{}).get('candidate_sha256') != row['sha256']
                 or metrics.get('private',{}).get('suite_sha256') != file_sha256(validation_suite)
@@ -130,6 +132,9 @@ def freeze_champion(directory: Path, validation_suite: Path, evaluator, docker_i
         'validation_suite_sha256':file_sha256(validation_suite),'docker_image_id':docker_image,
         'rule':'highest mean checkpoint coverage on validation; exact ties by code SHA-256',
         'selected':chosen,'validation_results':validations,'test_evaluations_before_freeze':0}
+    spec = comparison_spec(json.loads(validation_suite.read_text()), 'validation')
+    if spec is not None:
+        result['comparison_profile'] = spec
     atomic_json(manifest,result)
     return result
 
@@ -151,6 +156,10 @@ def verify_champion(directory: Path) -> dict:
             path=(directory/row[name+'_path']).resolve()
             if not path.is_relative_to(directory.resolve()) or file_sha256(path) != row[name+'_sha256']:
                 raise ValueError('validation evidence changed after selection')
+        if 'comparison_profile' in result:
+            metrics = json.loads((directory/row['metrics_path']).read_text())
+            if metrics.get('private', {}).get('comparison_profile') != result['comparison_profile']:
+                raise ValueError('champion comparison identity differs from its validation evidence')
     return result
 
 
@@ -159,6 +168,12 @@ def evaluate_frozen_test(directory: Path,test_suite: Path,evaluator,docker_image
     champion=verify_champion(directory)
     if champion['docker_image_id'] != docker_image:
         raise ValueError('test executor image differs from validation')
+    test_spec = comparison_spec(json.loads(test_suite.read_text()), 'test')
+    validation_spec = champion.get('comparison_profile')
+    if test_spec is not None or validation_spec is not None:
+        if (test_spec is None or validation_spec is None
+                or any(test_spec[key] != validation_spec[key] for key in test_spec if key != 'stage')):
+            raise ValueError('test comparator profile differs from frozen validation')
     opened=directory/'test_opened.json'
     # An interrupted test is preserved rather than automatically repeated until
     # favorable timing appears. Any resumed assessment must be separately labelled.
@@ -168,4 +183,5 @@ def evaluate_frozen_test(directory: Path,test_suite: Path,evaluator,docker_image
                    'test_suite_sha256':file_sha256(test_suite),
                    'opened_utc':datetime.now(timezone.utc).isoformat()},f,indent=2)
     metrics=evaluator(directory/champion['selected']['path'],directory/'test',test_suite,'test')
+    verify_comparison_evidence(metrics, test_suite, 'test')
     return metrics

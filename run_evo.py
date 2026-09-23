@@ -15,6 +15,7 @@ import sys
 
 from evaluate_anytime import write_json
 from swarm_location.suite import file_sha256, load_suite
+from swarm_location.comparisons import comparison_plan
 
 ROOT = Path(__file__).resolve().parent
 TASK = """Evolve a reusable anytime algorithm for endpoint-inclusive OD-weighted group
@@ -77,8 +78,17 @@ def plan(args):
     if type(generations) is not int or generations < 1:
         raise ValueError('generations must be a positive integer')
     output = args.results_dir.resolve()
+    comparisons = comparison_plan(suite, 'development',
+        sum(len(e['budgets']) for e, _ in instances) * len(suite['seeds']))
+    task = TASK
+    if comparisons is not None:
+        task += ("\nVersioned screening controls: " + ', '.join(comparisons['baselines'])
+            + ". Frozen validation/test controls: " + ', '.join(comparisons['assessment_baselines'])
+            + ". Comparisons report each fixed method separately; there is no oracle portfolio. "
+            "Beating timed greedy alone is not a discovery. Distinguish checkpoint improvements "
+            "from final-coverage improvements. Assessment data never enter development feedback.\n")
     evo = dict(config['evo_config'], num_generations=generations,
-        task_sys_msg=TASK, job_type='local', language='python',
+        task_sys_msg=task, job_type='local', language='python',
         init_program_path=str(ROOT/'anytime_initial.py'), results_dir=str(output),
         llm_models=args.models or [], meta_llm_models=[args.meta_model] if args.meta_model else [],
         novelty_llm_models=[args.novelty_model] if args.novelty_model else [],
@@ -88,7 +98,7 @@ def plan(args):
            'python_executable': sys.executable, 'numeric_threads_per_job': 1,
            'eval_verbose': True, 'time': '01:00:00'}
     db = dict(config['db_config'], db_path=str(output/'evolution_db.sqlite'))
-    return {'framework_commit': config['framework_commit'], 'evo_config': evo,
+    resolved = {'framework_commit': config['framework_commit'], 'evo_config': evo,
         'db_config': db, 'job_config': job,
         'max_evaluation_jobs': config['max_evaluation_jobs'],
         'max_proposal_jobs': config['max_proposal_jobs'], 'max_db_workers': config['max_db_workers'],
@@ -99,6 +109,9 @@ def plan(args):
         'source_networks': len(instances), 'checkpoints_seconds': suite['checkpoints_seconds'],
         'model_calls_enabled': args.run,
         'scope': 'Development evaluation only. No held-out result is implied.'}
+    if comparisons is not None:
+        resolved['comparison_plan'] = comparisons
+    return resolved
 
 
 def verify_native(commit):

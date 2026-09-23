@@ -1,4 +1,21 @@
-# Next scientific execution after the stronger-baseline study
+# After M4 staged-comparator integration
+
+Priority 1 is implemented: `configs/m4_launch_request.json` selects explicit
+screening and assessment controls, and their evidence reaches native feedback,
+metrics and frozen validation/test identities. See README §5.6 and
+`docs/m4_comparators.md` for executed integration evidence and exact scope.
+Use the explicit M4 request and a new directory; never upgrade an old campaign
+or its stored results in place. M3 defaults are intentionally unchanged.
+
+The next scientific issue is matched-backend timing calibration and null/same-code
+repeat measurements, not rebuilding fixed controls or changing the coverage
+objective. After separately deciding the launch resources and assessment protocol,
+run genuine native evolution. Integration checks and native seed commissioning
+are not evolved descendants or research holdout performance.
+
+## Historical handoff before this integration
+
+### Next scientific execution after the stronger-baseline study
 
 The fixed-route objective, original bulk-DAG evaluator, exact reference
 certificates and exchange-landscape diagnosis are implemented. Strong timed

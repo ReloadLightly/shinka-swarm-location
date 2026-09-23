@@ -1,0 +1,871 @@
+{
+  "schema_version": 1,
+  "profile_id": "m4-staged-controls-v1",
+  "stage": "development",
+  "definition_sha256": "e49bc961fb6680ef90e37d2fbc8fa69743e2c6a0a62017cebe74f4172b531032",
+  "file_sha256": "8578acda3d513f5733f882b9a84b173bbba22937e4875500b5115a36508cc4e1",
+  "baselines": [
+    "greedy",
+    "greedy_swap",
+    "topk",
+    "early_celf_swap"
+  ],
+  "assessment_baselines": [
+    "greedy",
+    "greedy_swap",
+    "topk",
+    "early_celf_swap",
+    "iterated",
+    "dfbnb",
+    "potential"
+  ],
+  "fitness": "100_plus_mean_checkpoint_delta_vs_greedy_pp",
+  "assessment_rule": "report_all_fixed_controls_no_automatic_discovery_claim",
+  "selected_method": "candidate",
+  "checkpoints_seconds": [
+    0.02,
+    0.1,
+    0.5,
+    2.0
+  ],
+  "evaluation_valid": true,
+  "rows": [
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "greedy",
+      "paired_cases": 24,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 63.688401151422504,
+      "baseline_mean_final_coverage_pct": 72.18212192349819,
+      "delta_mean_checkpoint_pp": 0.23147429566433333,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.9258971826573342,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "greedy_swap",
+      "paired_cases": 24,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 64.29166403494139,
+      "baseline_mean_final_coverage_pct": 72.78568926456207,
+      "delta_mean_checkpoint_pp": -0.37178858785455093,
+      "delta_final_pp": -0.6035673410638918,
+      "delta_at_checkpoints_pp": [
+        0.3227357849867857,
+        -0.6031613976705485,
+        -0.6031613976705485,
+        -0.6035673410638918
+      ]
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "topk",
+      "paired_cases": 24,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 63.19911473923965,
+      "baseline_mean_final_coverage_pct": 65.4714206919299,
+      "delta_mean_checkpoint_pp": 0.7207607078471817,
+      "delta_final_pp": 6.710701231568287,
+      "delta_at_checkpoints_pp": [
+        -13.04389325167692,
+        2.505533619929075,
+        6.710701231568287,
+        6.710701231568287
+      ]
+    },
+    {
+      "scope": "overall",
+      "dataset": null,
+      "k": null,
+      "baseline": "early_celf_swap",
+      "paired_cases": 24,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 62.79684017139186,
+      "baseline_mean_final_coverage_pct": 72.78568926456207,
+      "delta_mean_checkpoint_pp": 1.1230352756949809,
+      "delta_final_pp": -0.6035673410638918,
+      "delta_at_checkpoints_pp": [
+        10.507604794217462,
+        -4.808329009309761,
+        -0.6035673410638918,
+        -0.6035673410638918
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "Anaheim",
+      "k": null,
+      "baseline": "greedy",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 62.92172742763701,
+      "baseline_mean_final_coverage_pct": 79.90916897178838,
+      "delta_mean_checkpoint_pp": 0.46294859132866667,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        1.8517943653146685,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "Anaheim",
+      "k": null,
+      "baseline": "greedy_swap",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 62.92193039933368,
+      "baseline_mean_final_coverage_pct": 79.90998085857507,
+      "delta_mean_checkpoint_pp": 0.4627456196319953,
+      "delta_final_pp": -0.0008118867866863111,
+      "delta_at_checkpoints_pp": [
+        1.8517943653146685,
+        0.0,
+        0.0,
+        -0.0008118867866863111
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "Anaheim",
+      "k": null,
+      "baseline": "topk",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 65.33333763155751,
+      "baseline_mean_final_coverage_pct": 69.87794953693799,
+      "delta_mean_checkpoint_pp": -1.9486616125918261,
+      "delta_final_pp": 10.031219434850385,
+      "delta_at_checkpoints_pp": [
+        -29.47796953164003,
+        1.6208842115719602,
+        10.031219434850385,
+        10.031219434850385
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "Anaheim",
+      "k": null,
+      "baseline": "early_celf_swap",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 59.932282672234614,
+      "baseline_mean_final_coverage_pct": 79.90998085857507,
+      "delta_mean_checkpoint_pp": 3.452393346731059,
+      "delta_final_pp": -0.0008118867866863111,
+      "delta_at_checkpoints_pp": [
+        22.221532383776022,
+        -8.410335223278425,
+        -0.0008118867866863111,
+        -0.0008118867866863111
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 3,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 44.90662824372651,
+      "baseline_mean_final_coverage_pct": 52.468326863710004,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 3,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 44.90662824372651,
+      "baseline_mean_final_coverage_pct": 52.468326863710004,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 3,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 48.095966291734165,
+      "baseline_mean_final_coverage_pct": 52.468326863710004,
+      "delta_mean_checkpoint_pp": -3.189338048007658,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        -12.757352192030647,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 3,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 39.3512451477825,
+      "baseline_mean_final_coverage_pct": 52.468326863710004,
+      "delta_mean_checkpoint_pp": 5.555383095944011,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        22.221532383776022,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 6,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 61.42893029617631,
+      "baseline_mean_final_coverage_pct": 74.49806293364306,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 6,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 59.57713593086164,
+      "baseline_mean_final_coverage_pct": 74.49806293364306,
+      "delta_mean_checkpoint_pp": 1.8517943653146702,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        7.407177461258674,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 6,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 61.37042668948865,
+      "baseline_mean_final_coverage_pct": 61.37042668948865,
+      "delta_mean_checkpoint_pp": 0.05850360668765431,
+      "delta_final_pp": 13.127636244154417,
+      "delta_at_checkpoints_pp": [
+        -39.14889430571263,
+        13.127636244154417,
+        13.127636244154417,
+        13.127636244154417
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 6,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 55.873547200232295,
+      "baseline_mean_final_coverage_pct": 74.49806293364306,
+      "delta_mean_checkpoint_pp": 5.555383095944011,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        22.221532383776022,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 12,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 71.99585173610052,
+      "baseline_mean_final_coverage_pct": 93.1237009811413,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 12,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 71.99585173610052,
+      "baseline_mean_final_coverage_pct": 93.1237009811413,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 12,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 72.33657355757965,
+      "baseline_mean_final_coverage_pct": 78.91262569917781,
+      "delta_mean_checkpoint_pp": -0.3407218214791544,
+      "delta_final_pp": 14.211075281963502,
+      "delta_at_checkpoints_pp": [
+        -30.386884749009184,
+        0.601846899165559,
+        14.211075281963502,
+        14.211075281963502
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 12,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 69.842775735856,
+      "baseline_mean_final_coverage_pct": 93.1237009811413,
+      "delta_mean_checkpoint_pp": 2.153076000244525,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        22.221532383776022,
+        -13.609228382797944,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 24,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 73.35549943454473,
+      "baseline_mean_final_coverage_pct": 99.54658510865912,
+      "delta_mean_checkpoint_pp": 1.8517943653146667,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        7.407177461258674,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 24,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 75.20810568664609,
+      "baseline_mean_final_coverage_pct": 99.54983265580587,
+      "delta_mean_checkpoint_pp": -0.0008118867866890866,
+      "delta_final_pp": -0.0032475471467452444,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        -0.0032475471467452444
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 24,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 79.53038398742754,
+      "baseline_mean_final_coverage_pct": 86.76041889537551,
+      "delta_mean_checkpoint_pp": -4.3230901875681464,
+      "delta_final_pp": 12.786166213283611,
+      "delta_at_checkpoints_pp": [
+        -35.618746879807645,
+        -7.245946297032136,
+        12.786166213283611,
+        12.786166213283611
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "Anaheim",
+      "k": 24,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 74.6615626050677,
+      "baseline_mean_final_coverage_pct": 99.54983265580587,
+      "delta_mean_checkpoint_pp": 0.5457311947916876,
+      "delta_final_pp": -0.0032475471467452444,
+      "delta_at_checkpoints_pp": [
+        22.221532383776022,
+        -20.03211251031575,
+        -0.0032475471467452444,
+        -0.0032475471467452444
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "SiouxFalls",
+      "k": null,
+      "baseline": "greedy",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 64.45507487520798,
+      "baseline_mean_final_coverage_pct": 64.45507487520798,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "SiouxFalls",
+      "k": null,
+      "baseline": "greedy_swap",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 65.66139767054908,
+      "baseline_mean_final_coverage_pct": 65.66139767054908,
+      "delta_mean_checkpoint_pp": -1.206322795341097,
+      "delta_final_pp": -1.206322795341097,
+      "delta_at_checkpoints_pp": [
+        -1.206322795341097,
+        -1.206322795341097,
+        -1.206322795341097,
+        -1.206322795341097
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "SiouxFalls",
+      "k": null,
+      "baseline": "topk",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 61.064891846921796,
+      "baseline_mean_final_coverage_pct": 61.064891846921796,
+      "delta_mean_checkpoint_pp": 3.3901830282861893,
+      "delta_final_pp": 3.3901830282861893,
+      "delta_at_checkpoints_pp": [
+        3.3901830282861893,
+        3.3901830282861893,
+        3.3901830282861893,
+        3.3901830282861893
+      ]
+    },
+    {
+      "scope": "source",
+      "dataset": "SiouxFalls",
+      "k": null,
+      "baseline": "early_celf_swap",
+      "paired_cases": 12,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 65.66139767054908,
+      "baseline_mean_final_coverage_pct": 65.66139767054908,
+      "delta_mean_checkpoint_pp": -1.206322795341097,
+      "delta_final_pp": -1.206322795341097,
+      "delta_at_checkpoints_pp": [
+        -1.206322795341097,
+        -1.206322795341097,
+        -1.206322795341097,
+        -1.206322795341097
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 1,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 34.08208541320022,
+      "baseline_mean_final_coverage_pct": 34.08208541320022,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 1,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 34.08208541320022,
+      "baseline_mean_final_coverage_pct": 34.08208541320022,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 1,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 34.08208541320022,
+      "baseline_mean_final_coverage_pct": 34.08208541320022,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 1,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 34.08208541320022,
+      "baseline_mean_final_coverage_pct": 34.08208541320022,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 3,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 64.50360510260677,
+      "baseline_mean_final_coverage_pct": 64.50360510260677,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 3,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 66.91625069328896,
+      "baseline_mean_final_coverage_pct": 66.91625069328896,
+      "delta_mean_checkpoint_pp": -2.412645590682194,
+      "delta_final_pp": -2.412645590682194,
+      "delta_at_checkpoints_pp": [
+        -2.412645590682194,
+        -2.412645590682194,
+        -2.412645590682194,
+        -2.412645590682194
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 3,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 62.00776483638381,
+      "baseline_mean_final_coverage_pct": 62.00776483638381,
+      "delta_mean_checkpoint_pp": 2.4958402662229595,
+      "delta_final_pp": 2.4958402662229595,
+      "delta_at_checkpoints_pp": [
+        2.4958402662229595,
+        2.4958402662229595,
+        2.4958402662229595,
+        2.4958402662229595
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 3,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 66.91625069328896,
+      "baseline_mean_final_coverage_pct": 66.91625069328896,
+      "delta_mean_checkpoint_pp": -2.412645590682194,
+      "delta_final_pp": -2.412645590682194,
+      "delta_at_checkpoints_pp": [
+        -2.412645590682194,
+        -2.412645590682194,
+        -2.412645590682194,
+        -2.412645590682194
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 4,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 73.43316694398224,
+      "baseline_mean_final_coverage_pct": 73.43316694398224,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 4,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 74.68108707709375,
+      "baseline_mean_final_coverage_pct": 74.68108707709375,
+      "delta_mean_checkpoint_pp": -1.2479201331114798,
+      "delta_final_pp": -1.2479201331114798,
+      "delta_at_checkpoints_pp": [
+        -1.2479201331114798,
+        -1.2479201331114798,
+        -1.2479201331114798,
+        -1.2479201331114798
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 4,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 69.41209095951194,
+      "baseline_mean_final_coverage_pct": 69.41209095951194,
+      "delta_mean_checkpoint_pp": 4.021075984470324,
+      "delta_final_pp": 4.021075984470324,
+      "delta_at_checkpoints_pp": [
+        4.021075984470324,
+        4.021075984470324,
+        4.021075984470324,
+        4.021075984470324
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 4,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 74.68108707709375,
+      "baseline_mean_final_coverage_pct": 74.68108707709375,
+      "delta_mean_checkpoint_pp": -1.2479201331114798,
+      "delta_final_pp": -1.2479201331114798,
+      "delta_at_checkpoints_pp": [
+        -1.2479201331114798,
+        -1.2479201331114798,
+        -1.2479201331114798,
+        -1.2479201331114798
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 6,
+      "baseline": "greedy",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 85.8014420410427,
+      "baseline_mean_final_coverage_pct": 85.8014420410427,
+      "delta_mean_checkpoint_pp": 0.0,
+      "delta_final_pp": 0.0,
+      "delta_at_checkpoints_pp": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 6,
+      "baseline": "greedy_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 86.96616749861342,
+      "baseline_mean_final_coverage_pct": 86.96616749861342,
+      "delta_mean_checkpoint_pp": -1.1647254575707144,
+      "delta_final_pp": -1.1647254575707144,
+      "delta_at_checkpoints_pp": [
+        -1.1647254575707144,
+        -1.1647254575707144,
+        -1.1647254575707144,
+        -1.1647254575707144
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 6,
+      "baseline": "topk",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 78.75762617859122,
+      "baseline_mean_final_coverage_pct": 78.75762617859122,
+      "delta_mean_checkpoint_pp": 7.043815862451474,
+      "delta_final_pp": 7.043815862451474,
+      "delta_at_checkpoints_pp": [
+        7.043815862451474,
+        7.043815862451474,
+        7.043815862451474,
+        7.043815862451474
+      ]
+    },
+    {
+      "scope": "source_budget",
+      "dataset": "SiouxFalls",
+      "k": 6,
+      "baseline": "early_celf_swap",
+      "paired_cases": 3,
+      "failed_pairs": 0,
+      "valid": true,
+      "baseline_mean_checkpoint_coverage_pct": 86.96616749861342,
+      "baseline_mean_final_coverage_pct": 86.96616749861342,
+      "delta_mean_checkpoint_pp": -1.1647254575707144,
+      "delta_final_pp": -1.1647254575707144,
+      "delta_at_checkpoints_pp": [
+        -1.1647254575707144,
+        -1.1647254575707144,
+        -1.1647254575707144,
+        -1.1647254575707144
+      ]
+    }
+  ],
+  "interpretation": "Paired descriptive differences, not statistical significance, an oracle portfolio, or proof of evolutionary discovery. Positive fitness versus greedy alone is insufficient."
+}

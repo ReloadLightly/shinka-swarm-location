@@ -1,0 +1,66 @@
+name: Staged comparator integration
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['results/**', 'README.md', 'docs/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Full mathematics and staged-profile tests
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements-certificates.txt
+          mkdir -p results/local_m4_integration
+          python -m unittest discover -s tests -v 2>&1 | tee results/local_m4_integration/tests.txt
+      - name: Preserve all historical results and solver bytes
+        run: python scripts/check_m4_continuity.py --output results/local_m4_integration/continuity.json
+      - name: Prepare only the two development source networks
+        run: |
+          python scripts/prepare_research.py --split development --download \
+            --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4
+      - name: Native pinned package and immutable contained executor
+        run: |
+          python -m pip install -e . -r requirements-shinka.txt
+          docker pull python:3.11-slim
+          IMAGE_ID=$(docker image inspect python:3.11-slim --format '{{.Id}}')
+          echo "M4_IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: Native configuration and unchanged greedy seed; no model calls
+        run: |
+          python run_evo.py --config configs/evolution_m3.json --check-native \
+            --suite data/commissioning_m4/suite.json --docker-image "$M4_IMAGE_ID" \
+            --results-dir results/local_m4_integration/native
+          python run_evo.py --config configs/evolution_m3.json --native-seed \
+            --suite data/commissioning_m4/suite.json --docker-image "$M4_IMAGE_ID" \
+            --results-dir results/local_m4_integration/native
+      - name: Independent replay of integration trajectories and comparisons
+        run: |
+          python scripts/report_m4.py --evidence results/local_m4_integration \
+            --suite data/commissioning_m4/suite.json
+          python -m pip freeze > results/local_m4_integration/dependencies.txt
+          python - <<'PY'
+          import json, os, pathlib
+          pathlib.Path('results/local_m4_integration/provenance.json').write_text(json.dumps({
+            'source_commit': os.environ['GITHUB_SHA'], 'workflow_run': os.environ['GITHUB_RUN_ID'],
+            'scope': 'Native contained development seed only; zero model calls and research holdout evaluations'}, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m4-integration-${{ github.sha }}
+          path: |
+            results/local_m4_integration/
+            data/commissioning_m4/
+          retention-days: 30

@@ -1,0 +1,8 @@
+{
+  "source_commit": "b63de52ccd3d197bc0f14c7e2fd2b7c6aa7528d5",
+  "delivery_commit": "b2d26992704e78fc12d6f1c368b8bd5355b0cd94",
+  "workflow_run": "35821989294",
+  "docker_image_id": "sha256:274d131132dbdc6058ed77088525d77adaf0749a6d99f2cf7d42feb9a10737c8",
+  "patch_sha256": "bad98fc3c7b5395ab7b2b93b13a49755f1e33fb5162c85605c2c023fd534a02f",
+  "scope": "Native contained development seed only. Zero model calls, evolved descendants, and research validation/test solver trials. Synthetic unit fixtures do not represent research holdouts."
+}

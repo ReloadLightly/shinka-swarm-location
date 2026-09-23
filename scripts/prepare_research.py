@@ -108,14 +108,21 @@ def source_bytes(item: dict, catalog: dict, raw_dir: Path, download: bool) -> by
     return data
 
 
-def prepare(catalog_path: Path, output: Path, raw_dir: Path, split: str, download=False, audit_only=False):
+def prepare(catalog_path: Path, output: Path, raw_dir: Path, split: str, download=False, audit_only=False,
+            *, comparison_profile: Path | None = None):
     catalog_path, output, raw_dir = map(Path, (catalog_path, output, raw_dir))
     catalog = catalog_checked(catalog_path)
+    from swarm_location.comparisons import load_profile, bind_profile
+    profile = load_profile(comparison_profile) if comparison_profile is not None else None
     if split not in ('development','validation','test','all') or (split == 'all' and not audit_only):
         raise ValueError('all splits may only be structurally audited; materialize one split per workspace')
     entries = [e for e in catalog['datasets'] if split == 'all' or e['split'] == split]
     if not entries:
         raise ValueError('requested split has no source networks')
+    existing_suite = output/'suite.json'
+    expected_comparison = None if profile is None else {**profile, 'stage': split}
+    if existing_suite.exists() and json.loads(existing_suite.read_text()).get('comparison_profile') != expected_comparison:
+        raise ValueError('cannot replace a prepared suite with another comparator profile; use a new output directory')
     datasets, audit = [], []
     output.mkdir(parents=True, exist_ok=True)
     for entry in entries:
@@ -159,6 +166,12 @@ def prepare(catalog_path: Path, output: Path, raw_dir: Path, split: str, downloa
             'checkpoints_seconds':catalog['checkpoints_seconds'],'seeds':catalog['seeds'][split],
             'extra_baselines':['topk'],'datasets':datasets,
             'scope':'Whole source-family split; public data may have occurred in model pretraining'}
+        if profile is not None:
+            suite['name'] = profile['definition']['profile_id'] + '-' + split
+            suite = bind_profile(suite, profile, split)
+            existing = output/'suite.json'
+            if existing.exists() and json.loads(existing.read_text()) != suite:
+                raise ValueError('comparison suite already exists with a different protocol; use a new output directory')
         write_json(output/'suite.json',suite)
     return report
 
@@ -171,6 +184,8 @@ def main():
     p.add_argument('--split',choices=['development','validation','test','all'],default='development')
     p.add_argument('--download',action='store_true')
     p.add_argument('--audit-only',action='store_true')
-    a=p.parse_args();print(json.dumps(prepare(a.catalog,a.output,a.raw_dir,a.split,a.download,a.audit_only),indent=2))
+    p.add_argument('--comparison-profile',type=Path,help='Versioned staged controls; omitted retains historical M3')
+    a=p.parse_args();print(json.dumps(prepare(a.catalog,a.output,a.raw_dir,a.split,a.download,a.audit_only,
+        comparison_profile=a.comparison_profile),indent=2))
 
 if __name__=='__main__':main()
