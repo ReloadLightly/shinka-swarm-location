@@ -1,0 +1,116 @@
+name: Publish measured strong baselines
+on:
+  push:
+    branches: [work/strong-baselines]
+    paths: [.github/workflows/publish-strong-baselines.yml]
+permissions:
+  contents: write
+jobs:
+  measure_verify_publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Apply the exact reviewed implementation
+        run: |
+          set -eu
+          test "$GITHUB_REPOSITORY" = 'ReloadLightly/shinka-swarm-location'
+          test "$GITHUB_REF_NAME" = 'work/strong-baselines'
+          test "$(git rev-parse HEAD^)" = '73e702843bd3d834121f4be58f6853e809d6db15'
+          python - <<'PY'
+          import hashlib,lzma,pathlib,subprocess
+          parts=sorted(pathlib.Path('.github/strong-delivery').glob('part-*.xz'))
+          assert [p.name for p in parts] == ['part-00.xz','part-01.xz','part-02.xz']
+          patch=lzma.decompress(b''.join(p.read_bytes() for p in parts))
+          assert hashlib.sha256(patch).hexdigest() == 'a212a005c52a5ce013e415c7331f4fcf3da871b9fd0ddf5054fc742744d556e6'
+          path=pathlib.Path('/tmp/strong-source.patch');path.write_bytes(patch)
+          subprocess.run(['git','apply','--check','--index',str(path)],check=True)
+          subprocess.run(['git','apply','--index',str(path)],check=True)
+          PY
+          git rm -r -- .github/strong-delivery .github/workflows/publish-strong-baselines.yml
+          test "$(git write-tree)" = '49abc0cf2f598871be411cf7555f3ee92e21bda3'
+          mkdir -p /tmp/strong-publication-checks
+      - name: Install the declared optional mathematical-test dependency
+        run: python -m pip install -r requirements-certificates.txt
+      - name: Run the full test suite before measuring
+        run: |
+          python -m unittest discover -s tests -v > results/strong-baselines/tests.txt 2>&1
+          cat results/strong-baselines/tests.txt
+      - name: Prepare only pinned development data
+        run: python scripts/prepare_suite.py --download > /tmp/strong-publication-checks/data-preparation.txt
+      - name: Independently execute the frozen 720-trial comparison on this host
+        run: python scripts/strong_baseline_study.py --output results/strong-baselines/study
+      - name: Independently replay every deployment and online bound
+        run: |
+          python scripts/strong_baseline_study.py --output results/strong-baselines/study --verify > results/strong-baselines/verification.json
+          cat results/strong-baselines/verification.json
+          python scripts/update_strong_readme.py
+          python scripts/update_strong_readme.py --check
+      - name: Preserve historical science and tables
+        run: |
+          python scripts/update_quality_readme.py --check
+          python scripts/update_exchange_readme.py --check
+          python scripts/verify_quality_results.py --suite data/commissioning/suite.json > /tmp/strong-publication-checks/prior-certificates.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.exchange_study import compute
+          old=json.loads(Path('results/exchange-landscape/study.json').read_text())
+          actual=compute(Path('data/commissioning/suite.json'),Path('results/quality-certificates/reference-study'),old['science']['dataset'],old['science']['k'])
+          assert actual == old['science'], 'historical mathematics changed'
+          print('Full current-code census, plateau and escape proof match historical science.')
+          PY
+      - name: Commit measured evidence and publish only to the requested branch
+        run: |
+          set -eu
+          case "$(git remote get-url origin)" in
+            https://github.com/ReloadLightly/shinka-swarm-location|https://github.com/ReloadLightly/shinka-swarm-location.git) ;;
+            *) echo 'Unexpected repository; refusing push'; exit 1 ;;
+          esac
+          git fetch origin work/strong-baselines main
+          test "$(git rev-parse origin/work/strong-baselines)" = "$GITHUB_SHA"
+          test "$(git rev-parse origin/main)" = '73e702843bd3d834121f4be58f6853e809d6db15'
+          python - <<'PY'
+          import json,os,pathlib,platform
+          p=pathlib.Path('results/strong-baselines/ci-origin.json')
+          p.write_text(json.dumps({'source_base_commit':'73e702843bd3d834121f4be58f6853e809d6db15',
+            'implementation_patch_sha256':'a212a005c52a5ce013e415c7331f4fcf3da871b9fd0ddf5054fc742744d556e6',
+            'static_source_tree':'49abc0cf2f598871be411cf7555f3ee92e21bda3','workflow_run':os.environ['GITHUB_RUN_ID'],
+            'python':platform.python_version(),'scope':'Independent second host execution; primary GitHub tables use this run, local precursor remains separate',
+            'model_calls':0,'validation_test_evaluations':0},indent=2)+'\n')
+          PY
+          git add -- README.md results/strong-baselines
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Add measured strong anytime baselines and verified online search bounds'
+          python - <<'PY'
+          import json,os,pathlib,subprocess
+          rev=lambda x:subprocess.check_output(['git','rev-parse',x],text=True).strip()
+          s=json.loads(pathlib.Path('results/strong-baselines/study/summary.json').read_text())
+          v=json.loads(pathlib.Path('results/strong-baselines/verification.json').read_text())
+          assert s['solver_trials']==720 and s['failed_trials']==0 and v['success']
+          r={'repository':os.environ['GITHUB_REPOSITORY'],'branch':'work/strong-baselines','commit':rev('HEAD'),
+             'tree':rev('HEAD^{tree}'),'workflow_run':os.environ['GITHUB_RUN_ID'],'solver_trials':s['solver_trials'],
+             'failed_trials':s['failed_trials'],'trials_sha256':s['trials_sha256'],'verification':v,
+             'model_calls':0,'validation_test_evaluations':0,'push_confirmed':False}
+          pathlib.Path('/tmp/strong-publication-checks/publication.json').write_text(json.dumps(r,indent=2)+'\n')
+          print(json.dumps(r,indent=2))
+          PY
+          git push origin HEAD:work/strong-baselines
+      - name: Preserve the exact source and all measured evidence even if publication fails
+        if: always()
+        run: |
+          mkdir -p /tmp/strong-publication-checks
+          git archive --format=tar HEAD > /tmp/strong-publication-checks/source.tar
+          cp -a results/strong-baselines /tmp/strong-publication-checks/measured-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: strong-baselines-publication
+          path: /tmp/strong-publication-checks/
+          retention-days: 30
