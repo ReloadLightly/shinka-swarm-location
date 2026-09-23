@@ -22,7 +22,8 @@ from .core import Instance, ShortestPathCoverage
 from .isolation import command as worker_command, cleanup as cleanup_container
 
 
-TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py")
+TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py",
+           "route_search.py", "bounded_search.py", "strong_baselines.py")
 
 
 def checkpoints_checked(values):
@@ -74,13 +75,15 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
     instance.validate_budget(k)
     if (program_path is None) == (baseline is None):
         raise ValueError("supply exactly one candidate path or fixed baseline")
-    if baseline is not None and baseline not in ("greedy", "greedy_swap", "random", "topk"):
+    from .strong_baselines import METHODS, BOUND_METHODS
+    if baseline is not None and baseline not in ("greedy", "greedy_swap", "random", "topk", *METHODS):
         raise ValueError("unknown baseline")
     if type(seed) is not int:
         raise ValueError("seed must be an integer")
     if not isfinite(setup_timeout) or setup_timeout <= 0:
         raise ValueError("positive setup timeout required")
     events, failure, reason = [], None, "completed"
+    bound_events, diagnostics = [], []
     setup_started = perf_counter()
     setup_seconds = None
     start = None
@@ -153,6 +156,16 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                             raise ValueError("output after done message")
                         if message == {"done": True}:
                             done = True
+                        elif (baseline in BOUND_METHODS and isinstance(message, dict)
+                              and set(message) == {"search_bound"}):
+                            if len(bound_events) >= max_messages:
+                                raise ValueError("bound message limit exceeded")
+                            bound_events.append((elapsed, message["search_bound"]))
+                        elif (baseline in METHODS and isinstance(message, dict)
+                              and set(message) == {"diagnostic"}):
+                            if len(diagnostics) >= 16:
+                                raise ValueError("diagnostic message limit exceeded")
+                            diagnostics.append((elapsed,message["diagnostic"]))
                         elif isinstance(message, dict) and set(message) == {"selected"}:
                             if not isinstance(message["selected"], list):
                                 raise ValueError("selected must be a JSON list")
@@ -187,7 +200,20 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
     except (ValueError, TypeError, OverflowError) as exc:
         failure = f"invalid deployment: {exc}"
         scored = score_trace(instance, k, checkpoints, [], oracle)
-    return {**scored, "correct": failure is None, "error": failure,
+    extra = {}
+    if baseline in METHODS:
+        extra = {"solver_diagnostics": diagnostics}
+    if baseline in BOUND_METHODS:
+        from .baseline_proofs import verify_online_bounds
+        began = perf_counter()
+        try:
+            verified = verify_online_bounds(instance,k,bound_events)
+        except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
+            failure = f"invalid online bound: {exc}"
+            verified = []
+        extra.update(search_bound_events=bound_events, verified_search_bounds=verified,
+                     bound_verification_seconds=perf_counter()-began)
+    return {**scored, **extra, "correct": failure is None, "error": failure,
             "termination": reason, "setup_wall_seconds": setup_seconds,
             "total_wall_seconds_before_scoring": elapsed_total,
             "received_deployments": len(events), "events": events,

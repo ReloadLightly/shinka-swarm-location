@@ -26,11 +26,30 @@ jobs:
           cat results/local_exchange_ci/tests.txt
       - name: Prepare only development data
         run: python scripts/prepare_suite.py --download
-      - name: Recompute the full census and independently verify path and cut
+      - name: Recompute the historical science with current mathematical code
         run: |
-          python scripts/exchange_study.py --output results/exchange-landscape --verify
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.exchange_study import compute
+          old=json.loads(Path('results/exchange-landscape/study.json').read_text())
+          actual=compute(Path('data/commissioning/suite.json'),Path('results/quality-certificates/reference-study'),
+                         old['science']['dataset'],old['science']['k'])
+          assert actual == old['science'], 'current mathematics changed the historical diagnosis'
+          print('Full current-code census, neutral component and escape proof agree with the saved study.')
+          PY
           python scripts/update_exchange_readme.py --check
           python scripts/verify_quality_results.py --suite data/commissioning/suite.json
+      - uses: actions/checkout@v4
+        with:
+          ref: 73e702843bd3d834121f4be58f6853e809d6db15
+          path: historical-source
+          persist-credentials: false
+      - name: Strict original-source identity replay in a separate checkout
+        working-directory: historical-source
+        run: |
+          python scripts/prepare_suite.py --download
+          python scripts/exchange_study.py --output results/exchange-landscape --verify
       - uses: actions/upload-artifact@v4
         if: always()
         with:

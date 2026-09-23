@@ -1,20 +1,29 @@
-# Next execution after M3 preparation
+# Next scientific execution after the stronger-baseline study
 
-Read the actual campaign status in results/step3/ci/campaign/campaign_status.json.
-M3 now specifies independent whole-network validation/test partitions, native
-campaign orchestration, frozen development shortlist/validation selection/test
-access, and a Docker backend for the existing evaluator. Do not rebuild these.
+The fixed-route objective, original bulk-DAG evaluator, exact reference
+certificates and exchange-landscape diagnosis are implemented. Strong timed
+controls are now added: guarded exact-route greedy/CELF, route swaps, early
+complete deployment, a fixed iterated escape method, DFBnB, and a documented
+utility-form anytime Potential Search adaptation. See `docs/strong_baselines.md`
+and README Section 5.5 for the actual measured evidence, limits, and source mapping.
+Do not rebuild those components or treat their fixed-code results as evolution.
 
-The reachable runtimes lacked model credentials when this milestone was prepared.
-An authenticated supported model route is the remaining immediate prerequisite
-for a real campaign. The explicit launch request targets 100 slots on four islands
-with a bounded submission threshold. Inspect and retain that request, source/data
-hashes and container ID when launching. No paid success, evolved descendant or
-held-out champion should be claimed from software tests or seed jobs.
+The default native campaign's fitness and frozen configuration are unchanged.
+The evaluator now permits the new methods in an explicitly revised manifest's
+`extra_baselines`. Before a new native campaign, document which fixed comparisons
+are included and preserve the revised manifest. Any resumed campaign must retain
+its original manifest. Representation construction and strong-control warm starts
+must remain timed. Compare per-checkpoint and final coverage, and inspect online
+bound evidence rather than promoting small noisy timing gains to discovery.
 
-Do not score heldouts to fill an empty results table. Run native development
-evolution, freeze its actual population shortlist, select on validation, freeze
-one program, and evaluate test once. Keep the original seed as a no-improvement
-alternative and compare fixed greedy, greedy+swap and topk. Preserve failures,
-cost termination and negative findings. Report finite-source results without
-inventing population-level generalization. See docs/m3_protocol.md.
+For subscription-only execution, use an authorized ChatGPT-authenticated Codex
+runner and the native framework's supported integration; do not substitute the
+old API-dollar budget for a subscription allowance or silently start paid calls.
+No authenticated evolutionary campaign was executed by the stronger-baseline study.
+
+Holdout performance remains unopened. Evolve on development, freeze a shortlist,
+select on validation, freeze one program and assess the test source. Strong fixed
+controls and the no-improvement seed alternative remain necessary. Count actual
+unique descendants, model calls, failures and costs from evidence. Preserve
+negative results and finite-benchmark limitations. Do not hardcode known Sioux
+Falls deployments into a claimed reusable algorithm.

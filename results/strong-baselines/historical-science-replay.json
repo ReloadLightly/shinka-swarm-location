@@ -1,0 +1,14 @@
+{
+  "verified_certificates": 48,
+  "verified_bound_witnesses": 24,
+  "development_cases": 12,
+  "max_abs_difference_from_production_scorer": 1.1102230246251565e-16,
+  "validation_test_evaluations": 0,
+  "model_calls": 0,
+  "annotated_trials": 96,
+  "checkpoint_certificates": 384,
+  "final_certificates": 96,
+  "success": true,
+  "candidate_reexecutions_for_sidecars": 0,
+  "exchange_scientific_record_identical": true
+}

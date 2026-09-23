@@ -30,7 +30,14 @@ def main():
     # Candidate-specific imports/compilation and all search work are timed.
     with contextlib.redirect_stdout(sys.stderr):
         if request["baseline"] is not None:
-            from swarm_location.anytime_baselines import solve
+            if request["baseline"] not in ("random", "topk", "greedy", "greedy_swap"):
+                from swarm_location.strong_baselines import BOUND_METHODS
+                from swarm_location.strong_baselines import solve
+                report.diagnostic = lambda data: emit({"diagnostic": data})
+                if request["baseline"] in BOUND_METHODS:
+                    report.bound = lambda data: emit({"search_bound": data})
+            else:
+                from swarm_location.anytime_baselines import solve
             result = solve(problem, request["k"], request["seed"], report,
                            request["budget"], request["baseline"])
         else:

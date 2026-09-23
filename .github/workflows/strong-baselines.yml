@@ -1,0 +1,41 @@
+name: Strong fixed baselines
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install the optional dependency used by the full historical test suite
+        run: python -m pip install -r requirements-certificates.txt
+      - name: Test fixed solvers, exact bounds and the existing evaluator
+        run: |
+          mkdir -p results/local_strong_ci
+          python -m unittest discover -s tests -v > results/local_strong_ci/tests.txt 2>&1
+          cat results/local_strong_ci/tests.txt
+      - name: Prepare only the original development networks
+        run: python scripts/prepare_suite.py --download
+      - name: Independently replay saved timed deployments and online bounds
+        run: |
+          python scripts/strong_baseline_study.py --output results/strong-baselines/study --verify > results/local_strong_ci/replay.json
+          cat results/local_strong_ci/replay.json
+          python scripts/update_strong_readme.py --check
+          python scripts/update_quality_readme.py --check
+          python scripts/update_exchange_readme.py --check
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: strong-baseline-checks-${{ github.sha }}
+          path: results/local_strong_ci/
+          retention-days: 30

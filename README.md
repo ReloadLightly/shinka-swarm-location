@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M3 campaign remains `blocked_model_access`; quality certificates implemented and locally verified. See Sections 5.2–5.3.**
+**Status: strong fixed anytime controls, online bounds, exact certificates and exchange diagnostics implemented; no evolutionary campaign completed. See Sections 5.2–5.5.**
 
 ### Abstract
 
@@ -34,6 +34,8 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Independent anytime worker / fast DAG gains | Implemented; M2 checks and measured results below |
 | Native scheduler and full-run configuration | Seed path checked separately from unexecuted paid evolution |
 | Coverage + verified quality certificates | Implemented separately; see Section 5.3 |
+| Exact exchange landscape | Exhaustive development diagnosis and verified escape barrier; Section 5.4 |
+| Strong fixed anytime controls | DFBnB, utility-form APTS, route greedy/CELF, refinement and iterated search; Section 5.5 |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -491,6 +493,139 @@ The complete census is deliberately limited to tractable small development cases
 large requests fail explicitly rather than becoming unreported samples. No new
 algorithm is silently inserted into the frozen ShinkaEvolve campaign.
 
+## 5.5 Strong fixed anytime controls and online bound reporting
+
+The next missing scientific component was a stronger **timed** comparison, not
+another offline optimum calculation. Chapter 4 names DFBnB and Potential Search;
+the original Potential Search paper also includes group-betweenness maximization.
+The implemented utility-form anytime adaptation is explicitly derived in
+[the methods/source-mapping note](docs/strong_baselines.md). It is not recovered
+author code or a numerical reproduction of the Israeli-network experiment.
+
+Seven new fixed methods run through the existing external clock and independent
+DAG scorer: exact route greedy, route CELF, route CELF plus strict single-node
+swaps, an early complete topk answer followed by CELF/swap, seeded iterated search,
+DFBnB, and utility-form anytime Potential Search (`potential`). Original singleton,
+bulk-DAG greedy, and bulk-DAG greedy+swap controls remain unchanged. All seven
+methods guard exact route enumeration and fall back to DAG search with only the
+remaining time if their representation limits are exceeded; none samples routes.
+
+The route-greedy/CELF pair isolates lazy evaluation from the representation change.
+DFBnB and APTS share the same fully timed CELF+swap warm start; `route_swap` measures
+that warm start without the tree. The iterated control changes a working solution
+through larger perturbations and occasional restarts while preserving its best
+reported deployment. It uses no known optimum, stored deployment or case-specific
+escape threshold. This is fixed-code algorithm engineering, not LLM evolution.
+
+For DFBnB and APTS, every reported upper bound comes with an incremental complete
+search-space partition. Its calculation, journal serialization and transmission
+are timed. The external parent timestamps the complete message and independently
+checks the exact partition after capture. This is **a bound available during
+search**, not an offline bound attached retroactively to a checkpoint. Candidate
+programs cannot inject these trusted fixed-solver messages. Earlier valid bounds
+remain usable if a deadline interrupts the latest expansion/message.
+
+The development study compares ten methods on the unchanged M2 suite, repeating
+each of its 24 network/budget/seed cases three times in reproducibly shuffled
+orders: **72 paired cases and 720 timed trials**. Common DAG setup remains outside
+the warm search budget; all method-specific imports, route preparation, warm
+starts, search and reporting are inside it. The canonical comparison uses the GitHub-hosted
+Linux process backend, not Docker. Raw measurements and source hashes are saved
+before interpreting results; verification replays them rather than retiming them.
+
+<!-- STRONG-BASELINES:START -->
+
+| Development network | Fixed method | Mean checkpoint coverage (%) | Mean final coverage (%) | Online optimum proofs / trials |
+|---|---|---:|---:|---:|
+| Anaheim | Singleton ranking | 69.8779 | 69.8779 | Not emitted |
+| Anaheim | DAG greedy | 63.3847 | 79.9092 | Not emitted |
+| Anaheim | DAG greedy + swap | 63.3500 | 79.9100 | Not emitted |
+| Anaheim | Route greedy | 59.9272 | 79.9092 | Not emitted |
+| Anaheim | Route CELF | 59.9319 | 79.9092 | Not emitted |
+| Anaheim | Route CELF + swap | 59.9325 | 79.9100 | Not emitted |
+| Anaheim | Early topk + CELF/swap | 77.4018 | 79.9100 | Not emitted |
+| Anaheim | Fixed iterated search | 59.9339 | 79.9146 | Not emitted |
+| Anaheim | Anytime DFBnB | 59.9325 | 79.9100 | 18/36 |
+| Anaheim | Utility-form APTS | 59.9325 | 79.9100 | 18/36 |
+| SiouxFalls | Singleton ranking | 61.0649 | 61.0649 | Not emitted |
+| SiouxFalls | DAG greedy | 64.4551 | 64.4551 | Not emitted |
+| SiouxFalls | DAG greedy + swap | 65.6614 | 65.6614 | Not emitted |
+| SiouxFalls | Route greedy | 64.4551 | 64.4551 | Not emitted |
+| SiouxFalls | Route CELF | 64.4551 | 64.4551 | Not emitted |
+| SiouxFalls | Route CELF + swap | 65.6614 | 65.6614 | Not emitted |
+| SiouxFalls | Early topk + CELF/swap | 65.6614 | 65.6614 | Not emitted |
+| SiouxFalls | Fixed iterated search | 65.9664 | 65.9664 | Not emitted |
+| SiouxFalls | Anytime DFBnB | 65.8902 | 65.9664 | 36/36 |
+| SiouxFalls | Utility-form APTS | 65.9580 | 65.9664 | 36/36 |
+
+**Six-monitor Sioux Falls diagnostic within the timed comparison:**
+
+| Fixed method | Mean final coverage (%) | Trials matching known optimum | Trials strictly above completed old swap |
+|---|---:|---:|---:|
+| Singleton ranking | 78.7576 | 0/9 | 0/9 |
+| DAG greedy | 85.8014 | 0/9 | 0/9 |
+| DAG greedy + swap | 86.9662 | 0/9 | 0/9 |
+| Route greedy | 85.8014 | 0/9 | 0/9 |
+| Route CELF | 85.8014 | 0/9 | 0/9 |
+| Route CELF + swap | 86.9662 | 0/9 | 0/9 |
+| Early topk + CELF/swap | 86.9662 | 0/9 | 0/9 |
+| Fixed iterated search | 88.1864 | 9/9 | 9/9 |
+| Anytime DFBnB | 88.1864 | 9/9 | 9/9 |
+| Utility-form APTS | 88.1864 | 9/9 | 9/9 |
+
+**Executed evidence:** 120 tests passed; 72 paired cases, 720 timed trials, 0 failed trials. Independent replay checked 6,231 reported deployments, 837 transmitted bound snapshots, and 576 checkpoint/bound pairs. Maximum exact-versus-production score difference: 1.11e-16.
+
+These are fixed-code results on two development networks using the recorded Linux process backend. Means pool four budgets and nine repeat/seed combinations per network. Matching a known optimum uses a numerical comparison; the separate online-proof count requires exact equality of a verified bound and a feasible value. A hard deadline can retain an earlier, looser bound. No evolutionary superiority, statistical significance, Docker timing result or held-out transfer is implied.
+
+[Full per-checkpoint comparison and timing costs](results/strong-baselines/comparison.md), [summary](results/strong-baselines/study/summary.json), [raw incumbent and bound journals](results/strong-baselines/study/trials.jsonl), [frozen measurement manifest](results/strong-baselines/study/manifest.json), [independent replay](results/strong-baselines/verification.json), and [test transcript](results/strong-baselines/tests.txt).
+
+<!-- STRONG-BASELINES:END -->
+
+### Interpretation
+
+The independently executed canonical comparison is reported above. A local
+720-trial precursor comparison using the same frozen solver code is summarized
+separately in [local-precursor](results/strong-baselines/local-precursor/); its full
+raw journals are retained in the associated delivery archive. The two host timings
+are not pooled and neither run was selected for a more favorable outcome.
+
+The per-checkpoint tables distinguish getting a full deployment out early from
+improving the final answer or proving its quality. Differences between full route
+greedy and CELF isolate lazy marginal reevaluation; differences from bulk-DAG
+methods also include representation and implementation effects. The documented
+six-monitor local trap is a useful diagnostic, not a held-out benchmark or an
+invitation to hardcode its known solutions. A successful fixed method is a
+stronger reference for future evolution, not evidence that evolution was needed.
+
+Small timing differences require replication on the intended execution backend.
+Three repeats and three seeds on one graph are not nine independent networks.
+Online certificates can remain loose when interrupted; a solver's stopping label
+is never accepted as proof. Stochastic/sampling controls remain deferred, not
+implicitly implemented. Historical result files and frozen campaign settings
+are not rewritten by this comparison.
+
+### Reproduce or opt into the new comparisons
+
+```bash
+python scripts/prepare_suite.py --download
+python -m unittest discover -s tests -v
+python scripts/strong_baseline_study.py --output results/local_strong_baselines
+python scripts/strong_baseline_study.py --output results/local_strong_baselines --verify
+python scripts/update_strong_readme.py --check
+```
+
+Use a new output directory for a new measurement. The saved canonical run is
+verified with `--output results/strong-baselines/study --verify`. The new study
+and solver implementations use the standard library; the existing full test suite
+also exercises the optional LP dependency in `requirements-certificates.txt`.
+
+For an explicitly revised future campaign manifest, `extra_baselines` now accepts
+`route_greedy`, `celf`, `route_swap`, `early_celf_swap`, `iterated`, `dfbnb`, and
+`potential`, in addition to the existing optional controls. No new methods are
+silently added to the current frozen campaign and the score remains the same
+checkpoint-coverage difference from timed greedy. More comparator executions
+increase evaluation cost; the submitted protocol must record that choice.
+
 ## 6. Reproduce the first milestone
 
 The local path uses only Python's standard library; it needs no API key or GPU.
@@ -600,10 +735,12 @@ change construction, exchanges, restarts, search scheduling, and conditional
 strategies. The graph, OD demand, routing assumptions, feasibility checks, scoring
 code, benchmark splits, and computational budget remain external to that region.
 
-Next: establish additional whole-network validation/test instances, calibrate timing
-variation before selecting champions, and execute a predeclared native campaign
-with explicit models/budget in an isolated worker. Compare against fixed
-greedy+swap, not merely weak placement baselines. Meta interpretations must follow
+Next: execute an authorized native campaign with explicitly recorded stronger
+fixed comparisons, rather than rebuilding the evaluator. Keep the established
+whole-network validation/test partition unopened until its selection stage, and
+repeat timing measurements on the actual campaign backend before selecting a
+champion. Preserve the original manifest when resuming an existing campaign;
+record any comparator additions in a new one. Meta interpretations must follow
 measured per-source/per-budget evidence and cannot award fitness.
 
 The detailed handoff is in [docs/next_step.md](docs/next_step.md).
@@ -620,8 +757,12 @@ reduction in infrastructure losses.
 
 M1's contribution is a transparent executable reference task and measured
 baselines. M2 adds the efficient anytime evaluator and native job integration, not
-evidence of evolutionary superiority. Neither is a full Chapter 4 numerical
-replication or a completed algorithm-discovery study.
+evidence of evolutionary superiority. The subsequent certificate, landscape and
+strong-baseline studies add exact diagnostics and seven fixed search methods, not
+an evolved discovery. The new timed study has only two development source graphs;
+its route-based methods have explicit size guards, and its timings are local-process
+measurements. None is a full Chapter 4 numerical replication or a completed
+algorithm-discovery study.
 
 ## 9. References
 
@@ -647,7 +788,9 @@ Open-Ended and Sample-Efficient Program Evolution.
 [arXiv:2509.19349](https://arxiv.org/abs/2509.19349).
 
 Additional benchmarking research, exact pin references, and the Anaheim source are
-listed in [the M2 methods note](docs/m2_method.md).
+listed in [the M2 methods note](docs/m2_method.md). Original Potential Search,
+CELF and variable-neighborhood sources, and the exact implementation distinctions,
+are listed in [the stronger-baseline methods note](docs/strong_baselines.md).
 
 ## Licensing
 

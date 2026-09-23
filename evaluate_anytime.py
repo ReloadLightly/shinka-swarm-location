@@ -69,8 +69,9 @@ def evaluate(program_path, results_dir, suite_path, split="development", baselin
         before = {str(p): file_sha256(p) for p in tracked}
         methods = ["random", "topk", "greedy", "greedy_swap"] if baselines_only else ["greedy", "greedy_swap", "candidate"]
         extras = protocol.get("extra_baselines", [])
-        if not isinstance(extras, list) or any(m not in ("random", "topk") for m in extras) or len(set(extras)) != len(extras):
-            raise ValueError("extra_baselines may contain unique random/topk controls")
+        from swarm_location.strong_baselines import METHODS
+        if not isinstance(extras, list) or any(m not in ("random", "topk", *METHODS) for m in extras) or len(set(extras)) != len(extras):
+            raise ValueError("extra_baselines must be unique registered fixed controls")
         methods = list(dict.fromkeys([*methods, *extras]))
         checkpoints = protocol["checkpoints_seconds"]
         for entry, instance in instances:

@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-23T03:27:21.880244+00:00",
+  "config": {
+    "schema_version": 1,
+    "name": "development-fixed-controls-v1",
+    "methods": [
+      "topk",
+      "greedy",
+      "greedy_swap",
+      "route_greedy",
+      "celf",
+      "route_swap",
+      "early_celf_swap",
+      "iterated",
+      "dfbnb",
+      "potential"
+    ],
+    "repeats": 3,
+    "timing": "existing external warm-problem clock; imports, route construction, initial solutions, search and proof emission timed",
+    "scope": "development only; no hyperparameter sweep; no frozen campaign configuration or fitness change",
+    "comparison_rule": "all paired trials preserved; no failed method or unfavorable repeat removed",
+    "source_base_commit": "73e702843bd3d834121f4be58f6853e809d6db15"
+  },
+  "config_sha256": "c708586ec140fa8e22d1d01f4397eb9a6a6aaefbdd25f9ce8a039d2701c17c7b",
+  "suite": {
+    "schema_version": 2,
+    "name": "m2-development-commissioning",
+    "checkpoints_seconds": [
+      0.02,
+      0.1,
+      0.5,
+      2.0
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "datasets": [
+      {
+        "id": "SiouxFalls",
+        "source_graph": "SiouxFalls",
+        "split": "development",
+        "path": "SiouxFalls.json",
+        "sha256": "74c3469f21dd1b0370691f7a7e4a16ffc21fb283bdd7abfe5bfa9c7a0d63c84c",
+        "budgets": [
+          1,
+          3,
+          4,
+          6
+        ]
+      },
+      {
+        "id": "Anaheim",
+        "source_graph": "Anaheim",
+        "split": "development",
+        "path": "Anaheim.json",
+        "sha256": "b10c50e711ba3e5b9828445244c0faf0ec1a80a104ed11afb51f6dc688835d97",
+        "budgets": [
+          3,
+          6,
+          12,
+          24
+        ]
+      }
+    ],
+    "scope": "Two development source networks; no held-out generalization claim."
+  },
+  "suite_sha256": "dd1aec44c64da895347e4bd7d286ac0192f8c5b5f194e85f4d2a2e0fa5977ecb",
+  "implementation_sha256": {
+    "scripts/strong_baseline_study.py": "19fb9e2361994db3bdc5297124e854be531c19d39947ce4c5fcc1ae2128d7529",
+    "evaluate_anytime.py": "f4967a4f082ae2f1fd3201ad80bb3aeb31ac08d914e3d80f89aa39e7c4ba552f",
+    "swarm_location/__init__.py": "a5719c2125edcb86c2e488fee1c2f65aa30a30bcd46f82f1c68fb3086b6c62f1",
+    "swarm_location/anytime.py": "21914ca9d80420031ca30f223722ed8eb668d3b10b458f5c8fe07946b054bfb7",
+    "swarm_location/anytime_baselines.py": "6f633ecc38f8ba5b8324f238b08623fa9fc0e4b15fc29280b6f3f1f0840115ce",
+    "swarm_location/anytime_worker.py": "3808b163d55b10de91ca1768518c360b5015b2f6d281ef2c5845b21692f1adb4",
+    "swarm_location/baseline_proofs.py": "0e77e319a97e1fa3efd059e64380ee5e7781e1ba84a6679fdd79cfb890142937",
+    "swarm_location/baselines.py": "8bc1ce91100d0a5e6333f26a655ee6ddfdcec46931b044bca4e9fd6f8ccd75a4",
+    "swarm_location/bounded_search.py": "b3bc730e59d166e5d34c6436a60a3f5d76ff9940cdf02ad63d1ba744233b28e5",
+    "swarm_location/certificate_references.py": "e3e4add23553cb9279c8f1c7685019a8fd3a0f393d3ee401a635dac956eddc59",
+    "swarm_location/certificates.py": "ee58f00fa5db572bd268c5394a601405f80e7109f1ca5c8f30b0f8a664379ec4",
+    "swarm_location/core.py": "aa495f99edac1c18f5810bc466f0a4d2cf02cdf9822c8befae7aa3c459844440",
+    "swarm_location/exchange_landscape.py": "6d5c22ac31535e8a728554d803cd8385ca87cf970492c3c8be7e9492a83b8b97",
+    "swarm_location/isolation.py": "e31f1a5e398f79d066e816efe79411e08352071cce348c4db8f78f8a5ef8780d",
+    "swarm_location/route_search.py": "61070f2461354f3240e5d5f9a44cebbd52e11d09b56c8ac3e8ae69c76138aca7",
+    "swarm_location/search.py": "93d15fc52caa58c76991dd91eb8b5e32d57f7274fcfabbfa6ddaf39fc8efb620",
+    "swarm_location/selection.py": "bc9b1fafdbe010a47233229fa421e27925826b912e8734835e357c81803a0908",
+    "swarm_location/strong_baselines.py": "eb7dc79e4c1b6fac7cf73ee1d1e2829cb2095b02c0791313d91069606f40bddb",
+    "swarm_location/suite.py": "e48480609fcb8676a2eb16db993efb8b02f4b51673063f000f25cdfffb8fbf26",
+    "swarm_location/worker.py": "56cef512b75d01d8fe65cf11b3ebf72fec0441b8a8e5dc3ee6627b11566b2125"
+  },
+  "python": "3.13.5",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "model_calls": 0,
+  "validation_test_evaluations": 0
+}
