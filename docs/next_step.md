@@ -44,3 +44,12 @@ controls and the no-improvement seed alternative remain necessary. Count actual
 unique descendants, model calls, failures and costs from evidence. Preserve
 negative results and finite-benchmark limitations. Do not hardcode known Sioux
 Falls deployments into a claimed reusable algorithm.
+
+## M5 timing calibration
+
+Priority 2 adds a frozen same-backend null/strong-control timing study; see
+`docs/m5_timing.md` and README Section 5.7 for its actual execution status. Keep
+all previous algorithms, clocks and fitness unchanged. Calibrate on the actual
+future campaign host/session; no universal threshold transfers from an Actions
+VM to WSL. The empirical guard only screens for fresh development confirmation;
+it is not significance, an automatic discovery claim or permission to open test.

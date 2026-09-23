@@ -700,6 +700,28 @@ sufficient search effort. No paid run is started by these integration checks.
 Timing calibration on the intended host, repeated evolutionary runs and broader
 network generalization remain separate research tasks.
 
+## 5.7 M5: Docker timing calibration before evolutionary confirmation
+
+The [predeclared timing protocol](docs/m5_timing.md) measures identical-code
+variation and repeats all seven strong assessment controls on the **unchanged
+campaign Docker backend**. It retains the existing four checkpoints and fitness.
+The [configuration](configs/timing_m5.json) separates a finite, host-session
+screening guard from proof of algorithmic improvement. Whole-suite repetitions,
+not individual seeds or checkpoints, are the statistical reporting unit.
+
+<!-- M5-TIMING:START -->
+
+Timing study planned; no measured noise threshold or completion is inferred from configuration.
+
+<!-- M5-TIMING:END -->
+
+Reproduce on the actual campaign host with `scripts/calibrate_timing.py`; its
+`--verify` mode replays saved evidence without rerunning solvers. The optional
+`--screen-program` mode freezes a candidate and requests confirmation only after
+a fresh same-session M4 evaluation exceeds the measured guard. It does not change
+the native scalar score, candidate population, comparator profile or holdout rules.
+See the protocol for commands, assumptions and the five-repeat confirmation plan.
+
 ## 6. Reproduce the first milestone
 
 The local path uses only Python's standard library; it needs no API key or GPU.

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "study_id": "m5-docker-timing-v1",
+  "base_commit": "4c4838f0135812e90a5444657a4719c077c22be4",
+  "null_repeats": 12,
+  "control_repeats": 5,
+  "order_seed": 20260923,
+  "checkpoints_seconds": [0.02, 0.1, 0.5, 2.0],
+  "controls": ["greedy", "greedy_swap", "topk", "early_celf_swap", "iterated", "dfbnb", "potential"],
+  "screening_floor_pp": 0.10,
+  "screening_padding_pp": 0.05,
+  "confirmation_repeats": 5,
+  "longer_budget_assessment": null,
+  "scope": "Development-only, one host session, serial original Docker backend. Empirical screening guard, not a significance test or a population-wide noise bound."
+}
