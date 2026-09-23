@@ -1,0 +1,102 @@
+name: Paired early-incumbent controls
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Replay archived evidence, or measure a new development-only study
+        type: choice
+        options: [verify, measure]
+        default: verify
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.event_name != 'workflow_dispatch' || inputs.action != 'measure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Current tests, legacy search trajectories and historical evidence
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements-certificates.txt
+          mkdir -p results/local_m6_ci
+          python -m unittest discover -s tests -v > results/local_m6_ci/tests.txt 2>&1
+          tail -5 results/local_m6_ci/tests.txt
+          python scripts/check_m4_continuity.py --allow-source-change swarm_location/strong_baselines.py --output results/local_m6_ci/historical.json
+          python - <<'PY'
+          from scripts.early_control_study import continuity
+          from evaluate_anytime import write_json
+          write_json('results/local_m6_ci/continuity.json',continuity())
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: 2ac4a1fd18d566db124fa6628d3259bc0570f3e0
+          path: measured-early-source
+          persist-credentials: false
+      - name: Strict replay of all archived deployments, bounds and paired differences
+        working-directory: measured-early-source
+        run: |
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4 > "$GITHUB_WORKSPACE/results/local_m6_ci/prepare.txt"
+          python scripts/early_control_study.py --suite data/commissioning_m4/suite.json --output "$GITHUB_WORKSPACE/results/early-controls/study" --verify > "$GITHUB_WORKSPACE/results/local_m6_ci/replay.txt"
+          cat "$GITHUB_WORKSPACE/results/local_m6_ci/replay.txt"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from scripts.early_control_study import readme_block,START,END
+          root=Path(os.environ['GITHUB_WORKSPACE']);base=root/'results/early-controls'
+          summary=json.loads((base/'study/summary.json').read_text())
+          assert (root/'README.md').read_text().split(START)[1].split(END)[0].strip()==readme_block(summary).strip()
+          sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+          renderer=json.loads((base/'figures/renderer.json').read_text())
+          assert renderer['source_curves_sha256']==sha(base/'study/curves.json')
+          assert renderer['script_sha256']==sha(root/'scripts/render_early_controls.py')
+          assert {p['path'] for p in renderer['plots']}=={'SiouxFalls.png','Anaheim.png'}
+          for p in renderer['plots']:assert sha(base/'figures'/p['path'])==p['sha256']
+          print('Archived early-control tables and both full-curve figures match their evidence.')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: early-control-replay-${{ github.sha }}
+          path: results/local_m6_ci/
+          retention-days: 30
+  measure:
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'measure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare only development and resolve the immutable campaign executor
+        run: |
+          set -euo pipefail
+          python scripts/prepare_research.py --split development --download --comparison-profile configs/comparisons_m4.json --output data/commissioning_m4
+          docker pull python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9
+          IMAGE_ID=$(docker image inspect python@sha256:da047cb8f9d1d98e5c070f5300ba9f7274e33b8fc0e5be5ed88740aed1b95ba9 --format '{{.Id}}')
+          echo "IMAGE_ID=$IMAGE_ID" >> "$GITHUB_ENV"
+      - name: New paired study, never a replacement of recorded evidence
+        run: python scripts/early_control_study.py --suite data/commissioning_m4/suite.json --docker-image "$IMAGE_ID" --output results/local_early_measurement
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: new-early-control-measurement-${{ github.run_id }}
+          path: |
+            results/local_early_measurement/
+            data/commissioning_m4/
+          retention-days: 30

@@ -59,10 +59,16 @@ def continuity():
     protected = [p for p in protected if p.startswith(('swarm_location/', 'configs/', 'results/', 'data/'))
                  or p in ('evaluate_anytime.py', 'evaluate.py', 'anytime_initial.py', 'initial.py',
                           'run_evo.py', 'campaign.py', 'scripts/prepare_research.py')]
+    extensions = {}
     for p in protected:
         original = subprocess.check_output(['git', 'show', f'{BASE}:{p}'], cwd=ROOT)
         if (ROOT/p).read_bytes() != original:
-            raise ValueError(f'protected scientific file changed: {p}')
+            if p != 'swarm_location/strong_baselines.py':
+                raise ValueError(f'protected scientific file changed: {p}')
+            # M6 extends fixed method dispatch; do not relabel those bytes unchanged.
+            # Current execution is pinned separately by implementations().
+            extensions[p] = {'historical_sha256': hashlib.sha256(original).hexdigest(),
+                             'current_sha256': file_sha256(ROOT/p)}
     old = subprocess.check_output(['git', 'show', f'{BASE}:README.md'], cwd=ROOT).decode()
     current = (ROOT/'README.md').read_text()
     names = ['RESULTS-TABLE','M2-RESULTS','M3-RESULTS','QUALITY-CERTIFICATES',
@@ -72,7 +78,8 @@ def continuity():
         if current.split(a)[1].split(b)[0] != old.split(a)[1].split(b)[0]:
             raise ValueError(f'historical README block changed: {name}')
     return {'base_commit': BASE, 'protected_files': len(protected),
-            'historical_readme_blocks': names, 'unchanged': True}
+            'historical_readme_blocks': names, 'unchanged': not extensions,
+            'declared_source_extensions': extensions, 'historical_evidence_unchanged': True}
 
 
 def read_optional(path):

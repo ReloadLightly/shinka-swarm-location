@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "study_id": "m6-early-incumbents-v1",
+  "base_commit": "deabcf2cc2dfacb1455a337dc0912124331ae38b",
+  "repeats": 6,
+  "order_seed": 2026092303,
+  "checkpoints_seconds": [0.02, 0.1, 0.5, 2.0],
+  "methods": ["iterated", "early_iterated", "dfbnb", "early_dfbnb", "potential", "early_potential", "topk", "early_celf_swap"],
+  "null_baseline": "early_celf_swap",
+  "longer_budget_assessment": null,
+  "scope": "Paired whole-development-suite blocks on one Docker host/session; compare each early method with its parent. Same-code duplicate is descriptive only. No threshold transfer, holdout assessment, or LLM evolution."
+}

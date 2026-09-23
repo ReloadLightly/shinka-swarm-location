@@ -1,7 +1,7 @@
 # Shinka Swarm Location
 ## A chapter-grounded benchmark for evolving network-monitor deployment algorithms
 
-**Status: M5 Docker timing calibration completed; identical-code noise, repeated strong controls and a host-session screening guard are reported in Section 5.7. No evolutionary campaign completed.**
+**Status: M6 early-incumbent controls implemented and measured on Docker; first complete deployments arrive sooner, but the declared checkpoint objective does not improve. Section 5.8 preserves the negative result. No evolutionary campaign completed.**
 
 ### Abstract
 
@@ -38,6 +38,8 @@ from the untouched historical M1 calculations; no LLM-generated discovery is cla
 | Strong fixed anytime controls | DFBnB, utility-form APTS, route greedy/CELF, refinement and iterated search; Section 5.5 |
 | Staged native campaign comparisons | Four screening and seven assessment controls; Section 5.6 |
 | Docker timing calibration | 2,688 trials; empirical host-session guard; Section 5.7 |
+| Early-incumbent control ablation | 1,296 Docker trials; three paired variants; no checkpoint-score improvement; Section 5.8 |
+| Opt-in M6 assessment profile | Four screening and ten assessment controls; no research holdout evaluation |
 | LLM-generated descendants / evolutionary runs | **0 / 0** |
 | Original Israeli-network numerical reproduction | Original code/data not recovered |
 | Matched-time comparison | Two development networks; no validation/test result |
@@ -775,6 +777,91 @@ Reproduce on the actual campaign host with `scripts/calibrate_timing.py`; its
 a fresh same-session M4 evaluation exceeds the measured guard. It does not change
 the native scalar score, candidate population, comparator profile or holdout rules.
 See the protocol for commands, assumptions and the five-repeat confirmation plan.
+
+### 5.8 M6 — Early incumbents for advanced fixed controls
+
+The [M6 protocol](docs/m6_early_controls.md) compares `early_iterated`,
+`early_dfbnb`, and `early_potential` with their original methods. Each reports the
+same complete singleton-ranked deployment used by `early_celf_swap` before
+building the exact route representation, then continues the existing search while
+retaining the best incumbent. Prefix work and all later search share one deadline.
+No new optimizer family, alternative routing model, or free preprocessing is added.
+
+<!-- M6-EARLY-CONTROLS:START -->
+
+**Executed:** 6 complete paired development blocks, 24 cases per block; **1,296 Docker solver trials**, 0 failures. Independent replay rescored 9,408 deployments and verified 3,427 online bound snapshots.
+
+| Early control minus original (pp) | Mean checkpoint difference | SD across blocks | Block range | Final difference |
+|---|---:|---:|---:|---:|
+| early_iterated − iterated | -0.003664 | 0.007257 | -0.012812 to +0.003943 | +0.000000 |
+| early_dfbnb − dfbnb | -0.000101 | 0.000000 | -0.000101 to -0.000101 | +0.000000 |
+| early_potential − potential | -0.000101 | 0.000000 | -0.000101 to -0.000101 | +0.000000 |
+
+The same-session identical-`early_celf_swap` probe ranged from **+0.000000 to +0.000000 pp** across complete blocks. This is a descriptive control, not a significance test or a replacement for the M5 calibration. The historical 1.97 pp threshold is not imported into this different host/session.
+
+| Network / control | 20 ms (%) | 100 ms (%) | 500 ms (%) | 2 s (%) | Complete by 20 ms |
+|---|---:|---:|---:|---:|---:|
+| Anaheim / iterated | 0.0000 | 79.9100 | 79.9123 | 79.9146 | 0/72 |
+| Anaheim / early_iterated | 0.0000 | 79.9092 | 79.9123 | 79.9146 | 0/72 |
+| Anaheim / dfbnb | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 0/72 |
+| Anaheim / early_dfbnb | 0.0000 | 79.9092 | 79.9100 | 79.9100 | 0/72 |
+| Anaheim / potential | 0.0000 | 79.9100 | 79.9100 | 79.9100 | 0/72 |
+| Anaheim / early_potential | 0.0000 | 79.9092 | 79.9100 | 79.9100 | 0/72 |
+| Anaheim / topk | 57.7407 | 69.8779 | 69.8779 | 69.8779 | 60/72 |
+| Anaheim / early_celf_swap | 0.0000 | 79.9092 | 79.9100 | 79.9100 | 0/72 |
+| SiouxFalls / iterated | 65.7007 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / early_iterated | 65.6722 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / dfbnb | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / early_dfbnb | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / potential | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / early_potential | 65.6614 | 65.9664 | 65.9664 | 65.9664 | 72/72 |
+| SiouxFalls / topk | 61.0649 | 61.0649 | 61.0649 | 61.0649 | 72/72 |
+| SiouxFalls / early_celf_swap | 65.6614 | 65.6614 | 65.6614 | 65.6614 | 72/72 |
+
+All six block values, per-source/per-budget paired differences, exact mean incumbent curves, final-coverage variability and the full raw journal are retained. These repetitions are not six independent networks. An early prefix can consume time and change warm-start pruning or improvement-triggered restart decisions; no universal dominance is claimed.
+
+**Model calls: 0; evolved descendants: 0; research validation/test trials: 0.** The objective, four checkpoint deadlines and scalar fitness are unchanged.
+
+<!-- M6-EARLY-CONTROLS:END -->
+
+<!-- M6-INTERPRETATION:START -->
+
+**Finding: faster first complete deployments, but no improvement in the declared checkpoint objective.** All three mean paired checkpoint differences are slightly negative on this host. Final two-second coverage is exactly equal in every one of the 432 early-versus-parent case pairs. This is a negative result for checkpoint-score improvement, not a failure to execute the prefix.
+
+| Anaheim: mean first complete deployment | Original (ms) | Early variant (ms) |
+|---|---:|---:|
+| early_iterated / iterated | 63.126 | 21.423 |
+| early_dfbnb / dfbnb | 63.297 | 21.294 |
+| early_potential / potential | 63.645 | 21.298 |
+
+On Anaheim, the complete singleton-ranked answer arrives at roughly 21 ms rather than 63 ms, but all 72 trials of each new variant miss the 20 ms checkpoint. The full curves show the earlier availability between checkpoints; it is not rewarded by the four-point objective. The prefix also delays the small local-search gain visible at 100 ms. On Sioux Falls, both versions already supply a complete deployment by 20 ms. **First-complete latency is not time to equal coverage:** the initial singleton-ranked deployment can be weaker than the parent's first complete solution.
+
+The identical-control pair has zero *checkpoint-score* difference in all six blocks, while its receipt timestamps vary. This does not establish zero timing noise. No checkpoint was moved, no budget extended, and no variant selected after seeing the measurements to obtain a favorable result. The three early controls remain separately named and included in the predeclared optional assessment set, so evolution receives no novelty credit merely for assembling this existing initialization pattern.
+
+<!-- M6-INTERPRETATION:END -->
+
+[Summary and full block distributions](results/early-controls/study/summary.json),
+[frozen source, schedule and runtime](results/early-controls/study/manifest.json),
+[raw trials](results/early-controls/study/trials.jsonl.gz), and
+[complete coverage curves](results/early-controls/study/curves.json).
+
+The opt-in [`comparisons_m6.json`](configs/comparisons_m6.json) keeps the four
+M4 development controls and adds all three early variants to validation/test:
+**ten fixed controls, 440 solver invocations per 40-case assessment** including the
+candidate. [`m6_launch_request.json`](configs/m6_launch_request.json) selects this
+profile. The M4 configuration and previous evidence remain unchanged. These are
+planned assessment counts, not executed holdout results. No measured winner was
+selected to redefine the comparison set, and native Shinka search remains unrestricted.
+
+<!-- M6-EARLY-FIGURES:START -->
+
+The figures show all eight fixed-control mean incumbent curves. Dashed lines are early variants; overlapping lines are retained. These are descriptive six-block means, not confidence bands.
+
+![SiouxFalls paired early-control coverage](results/early-controls/figures/SiouxFalls.png)
+
+![Anaheim paired early-control coverage](results/early-controls/figures/Anaheim.png)
+
+<!-- M6-EARLY-FIGURES:END -->
 
 ## 6. Reproduce the first milestone
 
