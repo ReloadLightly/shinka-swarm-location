@@ -110,7 +110,138 @@
           "git_blob_sha1": "aa25589272b9d61a29dc051427b6629edf10dd61"
         }
       }
+    },
+    {
+      "id": "Philadelphia",
+      "source_graph": "Philadelphia",
+      "split": "validation",
+      "expected_nodes": 13389,
+      "expected_edges": 40003,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "Philadelphia/Philadelphia_net.tntp",
+          "git_blob_sha1": "65c502d5a70737516ac12800bef843f463b6f43e"
+        },
+        "trips": {
+          "path": "Philadelphia/Philadelphia_trips.tntp",
+          "git_blob_sha1": "c166670f2f26398bf9e99e6b00648d4fb4bb047c"
+        }
+      }
+    },
+    {
+      "id": "GoldCoast",
+      "source_graph": "GoldCoast",
+      "split": "validation",
+      "expected_nodes": 4807,
+      "expected_edges": 11140,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "GoldCoast/Goldcoast_network_2016_01.tntp",
+          "git_blob_sha1": "dd4b06138ae41997d75f14208d2ac82999c8b1da"
+        },
+        "trips": {
+          "path": "GoldCoast/Goldcoast_trips_2016_01.tntp",
+          "git_blob_sha1": "f2c85cf215f8a5676a8ac6adc97db9471aa5e756"
+        }
+      },
+      "header_total_tolerance": {
+        "absolute": "3.434",
+        "relative": "0"
+      },
+      "source_note": "Pinned OD rows sum to 139256.434; header says 139253. Preserve every supplied row and report the exact 3.434 discrepancy. No demand values are altered."
+    },
+    {
+      "id": "Barcelona",
+      "source_graph": "Barcelona",
+      "split": "test",
+      "expected_nodes": 1020,
+      "expected_edges": 2522,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "Barcelona/Barcelona_net.tntp",
+          "git_blob_sha1": "b85048bde57df1bc6fede65478b75bb22936c855"
+        },
+        "trips": {
+          "path": "Barcelona/Barcelona_trips.tntp",
+          "git_blob_sha1": "0e318100b8f01d67ac4c69421f4d0404371b206c"
+        }
+      }
+    },
+    {
+      "id": "Birmingham",
+      "source_graph": "Birmingham",
+      "split": "test",
+      "expected_nodes": 14639,
+      "expected_edges": 33937,
+      "budgets": [
+        20,
+        40,
+        60,
+        80,
+        100
+      ],
+      "files": {
+        "network": {
+          "path": "Birmingham-England/Birmingham_Net.tntp",
+          "git_blob_sha1": "64a8653a45e426129dffee26b8cbc9ffc606ca66"
+        },
+        "trips": {
+          "path": "Birmingham-England/Birmingham_Trips.tntp",
+          "git_blob_sha1": "1a8c403ef235b57feb1cc59097baccc3f7c08cfa"
+        }
+      }
     }
   ],
-  "assessment_note": "Historical EMA and Barcelona splits remain unopened. This new large-scale corpus is DEVELOPMENT ONLY until additional independent assessment source families are supplied. Chicago variants are one family."
+  "assessment_note": "Validation: Philadelphia and GoldCoast. Test: Barcelona and Birmingham. Source families are disjoint from development. Select frozen finalists on validation; use test only for final assessment. Both standard (60s) and optional chapter-hour (3600s) profiles keep complete networks and fixed OD routes. No solver outcomes were used to assign these splits.",
+  "time_profiles": {
+    "standard": [
+      0.5,
+      0.772657,
+      1.193996,
+      1.845098,
+      2.851254,
+      4.40608,
+      6.808773,
+      10.521686,
+      16.259299,
+      25.125707,
+      38.827084,
+      60.0
+    ],
+    "chapter-hour": [
+      0.5,
+      1,
+      2,
+      5,
+      10,
+      30,
+      60,
+      120,
+      300,
+      600,
+      1800,
+      3600
+    ]
+  }
 }

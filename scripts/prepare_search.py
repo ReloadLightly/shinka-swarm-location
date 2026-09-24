@@ -17,9 +17,15 @@ from swarm_location.core import Instance
 from evaluate_anytime import write_json
 
 
-def prepare(catalog_path, raw_dir, output, split="development", ids=None, download=False):
+def prepare(catalog_path, raw_dir, output, split="development", ids=None, download=False, time_profile="standard"):
     catalog_path, raw_dir, output = map(Path, (catalog_path, raw_dir, output))
     catalog = json.loads(catalog_path.read_text())
+    profiles = catalog.get('time_profiles', {'standard': catalog['checkpoints_seconds']})
+    if time_profile not in profiles:
+        raise ValueError('unknown time profile')
+    checkpoints = profiles[time_profile]
+    from swarm_location.anytime import checkpoints_checked
+    checkpoints_checked(checkpoints)
     groups, identifiers = {}, set()
     for item in catalog["datasets"]:
         if item["id"] in identifiers or item["split"] not in ("development", "validation", "test"):
@@ -40,7 +46,7 @@ def prepare(catalog_path, raw_dir, output, split="development", ids=None, downlo
     for item in selected:
         net = source_bytes(item["files"]["network"], catalog, raw_dir, download).decode("utf-8-sig")
         trips = source_bytes(item["files"]["trips"], catalog, raw_dir, download).decode("utf-8-sig")
-        data, audit = parse_documented(net, trips, item["id"], catalog["header_total_tolerance"],
+        data, audit = parse_documented(net, trips, item["id"], item.get("header_total_tolerance", catalog["header_total_tolerance"]),
                                      schema_version=2, intrazonal="exclude")
         instance = Instance.from_dict(data)
         if len(instance.nodes) != item["expected_nodes"] or len(instance.edges) != item["expected_edges"]:
@@ -59,12 +65,15 @@ def prepare(catalog_path, raw_dir, output, split="development", ids=None, downlo
                        "zero_weight_edges_preserved": sum(w == 0 for _, _, w in instance.edges), **audit})
     suite = {"schema_version": 2, "name": "chapter-search-" + split,
              "research_protocol": "chapter-search-v2", "datasets": entries,
-             "checkpoints_seconds": catalog["checkpoints_seconds"], "seeds": catalog["seeds"][split],
+             "checkpoints_seconds": checkpoints, "time_profile": time_profile, "seeds": catalog["seeds"][split],
              "fitness": {"coverage_weight": 0.5, "certificate_weight": 0.5},
              "setup_timeout_seconds": 1800, "relabel_seed": 90231,
              "controls": ["greedy", "early_celf_swap", "program:controls/dag_dfbnb.py", "program:controls/dag_potential.py"],
              "catalog_sha256": hashlib.sha256(catalog_path.read_bytes()).hexdigest()}
-    write_json(output / "suite.json", suite)
+    target = output / 'suite.json'
+    if target.exists() and json.loads(target.read_text()) != suite:
+        raise ValueError('a different suite already exists here; use a new output directory')
+    write_json(target, suite)
     write_json(output / "import_audit.json", audits)
     return audits
 
@@ -77,5 +86,6 @@ if __name__ == "__main__":
     p.add_argument("--split", choices=["development", "validation", "test"], default="development")
     p.add_argument("--ids", nargs="+")
     p.add_argument("--download", action="store_true")
+    p.add_argument("--time-profile", default="standard", help="standard (60s) or chapter-hour (3600s); no runs are launched")
     a = p.parse_args()
-    print(json.dumps(prepare(a.catalog, a.raw_dir, a.output, a.split, a.ids, a.download), indent=2))
+    print(json.dumps(prepare(a.catalog, a.raw_dir, a.output, a.split, a.ids, a.download, a.time_profile), indent=2))

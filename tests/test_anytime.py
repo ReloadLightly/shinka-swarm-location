@@ -238,6 +238,7 @@ class LauncherTests(unittest.TestCase):
             args.novelty_model = 'novelty'
             args.embedding_model = 'embedding'
             args.max_api_cost = 1
+            args.docker_image = 'sha256:' + 'a'*64
             p = plan(args)
             self.assertEqual(p['evo_config']['meta_llm_models'],['interpretation'])
             self.assertEqual(p['evo_config']['llm_models'],['mutation-a','mutation-b'])

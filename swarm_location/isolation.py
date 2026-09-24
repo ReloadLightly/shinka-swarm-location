@@ -61,3 +61,22 @@ def cleanup(name: str | None, env: dict) -> None:
                             capture_output=True,timeout=30)
     if result.returncode and b'No such container' not in result.stderr:
         raise RuntimeError('Docker trial cleanup failed; inspect the named container')
+
+
+def require_isolation(trusted_local=False, *, check_available=False):
+    """Research entry points never silently downgrade generated code to a process."""
+    image = os.environ.get('SWARM_DOCKER_IMAGE')
+    if not image:
+        if not trusted_local:
+            raise ValueError('Docker isolation required; --trusted-local is only for explicitly trusted debugging')
+        return {'mode': 'trusted-local-debug'}
+    checked_image(image)
+    if check_available:
+        docker = shutil.which('docker')
+        if docker is None:
+            raise RuntimeError('Docker isolation required but docker executable is unavailable')
+        result = subprocess.run([docker, 'image', 'inspect', '--format', '{{.Id}}', image],
+                                capture_output=True, text=True, timeout=30)
+        if result.returncode or result.stdout.strip() != image:
+            raise RuntimeError('the pinned Docker image is not available locally; no process fallback')
+    return {'mode': 'docker', 'image_id': image}

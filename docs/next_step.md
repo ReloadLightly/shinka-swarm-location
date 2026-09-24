@@ -1,19 +1,19 @@
 # Current experiment entry points
 
-The current specification is README.md. The executable path is
-`prepare_search.py` → `evaluate_search.py --build-references` →
-`run_evo.py --run`, using `source_catalog_search.json`, `evolution_search.json`,
-and `search_initial.py`.
+The current specification is README.md. The executable path remains
+`prepare_search.py` → `evaluate_search.py --build-references` → `run_evo.py --run`.
+Common route preparation is cached automatically. Repeating an interrupted
+command resumes completed control/candidate cases by identity; verifier retries
+reuse the captured timed search. Real evolution requires the pinned Docker image.
 
-Preserve whole-program evolution and both deployment and certificate outcomes.
-Use identical suite, code, Docker image and resource settings for references and
-candidate evaluation. The optional bound helper does not restrict search policy.
+The source catalogue assigns Winnipeg/Chicago to development,
+Philadelphia/GoldCoast to validation, and Barcelona/Birmingham to test. The
+`standard` and opt-in `chapter-hour` time profiles are separate matched-budget
+comparisons. Freeze finalist code hashes before assessment and preserve source
+families across splits. No held-out optimizer outcomes are supplied by import
+checks or unit tests.
 
-Independent large-network assessment families are the remaining protocol choice;
-Chicago variants belong to one family. Native launch and large-network execution
-must be measured separately from unit checks. Verification records belong in
-`results/scientific_repair/`, not as a chronology in the landing README.
-
-Prior specifications and workflow definitions are retained in `docs/history/`.
-Historical workflows should be replayed on their recorded source commits. The
-active research-checks workflow tests the current source without rewriting README.
+Keep the whole EVOLVE block editable and both deployment/certificate outcomes.
+The current verifier supports the declared witness families; new mathematical
+bound formulas require new independently checkable witnesses, not trusted claims.
+Maintain the README as this experiment's specification, not a session chronology.

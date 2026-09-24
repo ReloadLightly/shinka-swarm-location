@@ -67,6 +67,9 @@ Fitness reports normalized anytime coverage and certified lower/upper quality
 separately, plus their suite-declared weighted mean. Normalizers are offline best
 feasible fixed controls, NOT optimal values; improvements may exceed one. Every
 fixed control uses the same API and timing. Baselines are NOT rerun per candidate.
+Common route DAGs are prepared once; every worker hydrates private data before GO.
+A failed program receives a redacted diagnostic tail. Completed cases resume;
+a verifier retry replays the same captured search, not a new favorable trial.
 Use per-case evidence to explain tradeoffs and propose the next testable mechanism.
 Candidate imports, custom preprocessing and search run within the elapsed-time
 budget. API work counters are incomplete diagnostics, not the computation budget.
@@ -89,6 +92,9 @@ def parser():
     p.add_argument('--embedding-model')
     p.add_argument('--max-api-cost', type=float)
     p.add_argument('--generations', type=int)
+    p.add_argument('--references', type=Path, help='Identity-pinned offline reference file')
+    p.add_argument('--dag-cache', type=Path, help='Reusable evaluator-owned common DAG cache')
+    p.add_argument('--trusted-local', action='store_true', help='Trusted no-model seed debugging only; never --run')
     p.add_argument('--docker-image', help='Immutable local sha256 Docker image ID for generated-program isolation')
     p.add_argument('--seed', type=int, default=0, help='Host RNG seed; provider calls are not bitwise deterministic')
     p.add_argument('--evaluation-time', help='Native per-candidate job timeout, HH:MM:SS')
@@ -96,6 +102,10 @@ def parser():
 
 
 def plan(args):
+    if args.run and (not args.docker_image or args.trusted_local):
+        raise ValueError('real evolution requires --docker-image; --trusted-local cannot authorize generated code')
+    if args.native_seed and not args.docker_image and not args.trusted_local:
+        raise ValueError('native seed needs Docker or explicit --trusted-local debugging')
     if args.docker_image:
         from swarm_location.isolation import checked_image
         checked_image(args.docker_image)
@@ -135,6 +145,12 @@ def plan(args):
            'extra_cmd_args': {'suite': str(args.suite.resolve()), 'split': 'development'},
            'python_executable': sys.executable, 'numeric_threads_per_job': 1,
            'eval_verbose': True, 'time': getattr(args, 'evaluation_time', None) or config.get('evaluation_job_time', '01:00:00')}
+    if args.references:
+        job['extra_cmd_args']['references'] = str(args.references.resolve())
+    if args.dag_cache:
+        job['extra_cmd_args']['dag-cache'] = str(args.dag_cache.resolve())
+    if args.trusted_local:
+        job['extra_cmd_args']['trusted-local'] = True
     db = dict(config['db_config'], db_path=str(output/'evolution_db.sqlite'))
     resolved = {'framework_commit': config['framework_commit'], 'evo_config': evo,
         'db_config': db, 'job_config': job,
@@ -173,6 +189,9 @@ def main(argv=None):
     print(json.dumps(resolved, indent=2))
     if not (args.run or args.native_seed or args.check_native):
         return  # Dependency-free plan; no framework/client initialization.
+    if args.run or args.native_seed:
+        from swarm_location.isolation import require_isolation
+        require_isolation(args.trusted_local, check_available=True)
     version = verify_native(resolved['framework_commit'])
     from shinka.core import EvolutionConfig, ShinkaEvolveRunner
     from shinka.database import DatabaseConfig

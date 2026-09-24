@@ -14,7 +14,12 @@ from swarm_location.search import SearchProblem
 
 def main():
     request = json.loads(sys.stdin.readline())
-    problem = SearchProblem(Instance.from_dict(request["instance"]))
+    if request.get('prepared_file'):
+        from swarm_location.prepared import load_prepared
+        prepared = load_prepared(request['prepared_file'], request['prepared_sha256'])
+        problem = SearchProblem(prepared.instance, prepared=prepared)
+    else:
+        problem = SearchProblem(Instance.load(request['instance_file']))
     output = sys.stdout
 
     def emit(message):
@@ -33,6 +38,7 @@ def main():
     # Candidate-specific imports/compilation and all search work are timed.
     with contextlib.redirect_stdout(sys.stderr):
         if request["baseline"] is not None:
+            emit({"phase": "search"})
             if request["baseline"] not in ("random", "topk", "greedy", "greedy_swap"):
                 from swarm_location.strong_baselines import BOUND_METHODS
                 from swarm_location.strong_baselines import solve
@@ -44,9 +50,11 @@ def main():
             result = solve(problem, request["k"], request["seed"], report,
                            request["budget"], request["baseline"])
         else:
+            emit({'phase': 'candidate_import'})
             spec = importlib.util.spec_from_file_location("candidate", "candidate.py")
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
+            emit({'phase': 'search'})
             result = module.solve(problem, request["k"], request["seed"], report,
                                   request["budget"])
         if result is not None:
