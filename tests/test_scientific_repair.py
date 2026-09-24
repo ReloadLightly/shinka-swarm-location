@@ -206,9 +206,9 @@ class RepairTests(unittest.TestCase):
                                   'sha256':file_sha256(path),'budgets':[2]}]}
             suite_path = root/'suite.json';suite_path.write_text(json.dumps(suite))
             cache = root/'references.json'
-            build_references(suite_path, cache)
+            build_references(suite_path, cache, trusted_local=True)
             with patch('evaluate_search.build_references', side_effect=AssertionError('must not retime controls')):
-                result = evaluate(ROOT/'search_initial.py', root/'result', suite_path, cache)
+                result = evaluate(ROOT/'search_initial.py', root/'result', suite_path, cache, trusted_local=True)
             self.assertEqual(result['public']['solver_runs_this_evaluation'], 1)
             self.assertEqual(result['public']['fixed_control_runs_this_evaluation'], 0)
             self.assertGreater(result['combined_score'], 0)
@@ -216,7 +216,7 @@ class RepairTests(unittest.TestCase):
             suite['fitness']['certificate_weight'] = 0
             suite_path.write_text(json.dumps(suite))
             with self.assertRaisesRegex(ValueError, 'cache mismatch'):
-                evaluate(ROOT/'search_initial.py', root/'result', suite_path, cache)
+                evaluate(ROOT/'search_initial.py', root/'result', suite_path, cache, trusted_local=True)
             self.assertFalse(json.loads((root/'result/correct.json').read_text())['correct'])
         self.assertEqual(family_mean([{'source_graph':'A','v':1},{'source_graph':'A','v':1},{'source_graph':'B','v':0}], 'v'), .5)
 

@@ -19,11 +19,14 @@ import tempfile
 from time import perf_counter
 
 from .core import Instance, ShortestPathCoverage
+from .diagnostics import Tail, failure_kind
+from .persistence import atomic_json, digest, file_digest
 from .isolation import command as worker_command, cleanup as cleanup_container
 
 
 TRUSTED = ("__init__.py", "core.py", "search.py", "anytime_baselines.py", "anytime_worker.py",
-           "route_search.py", "bounded_search.py", "strong_baselines.py", "dag_bounds.py")
+           "route_search.py", "bounded_search.py", "strong_baselines.py", "dag_bounds.py",
+           "prepared.py", "persistence.py", "diagnostics.py")
 
 
 def checkpoints_checked(values):
@@ -61,9 +64,10 @@ def score_trace(instance, k, checkpoints, events, oracle=None):
             "final_coverage": value, "selected": list(best), "improvements": improvements}
 
 
-def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
+def _capture_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                 baseline=None, seed=0, setup_timeout=120.0, oracle=None,
-                max_messages=4096, max_output_bytes=4_000_000, allow_candidate_bounds=False):
+                max_messages=4096, max_output_bytes=4_000_000, allow_candidate_bounds=False,
+                prepared_path=None, prepared_sha256=None):
     """Do not expose results directories, provider credentials, or scored data.
 
     This minimizes accidental leakage. Same-user subprocesses are not an OS
@@ -87,6 +91,7 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
     setup_started = perf_counter()
     setup_seconds = None
     start = None
+    stderr_tail, phase, code = Tail(), "setup", None
     with tempfile.TemporaryDirectory(prefix="swarm-location-") as directory:
         work = Path(directory)
         package = work / "swarm_location"
@@ -95,20 +100,39 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
             shutil.copyfile(Path(__file__).parent / name, package / name)
         if program_path is not None:
             shutil.copyfile(Path(program_path).resolve(), work / "candidate.py")
-        # Keep logs bounded by discarding them; candidate exceptions are reflected
-        # by the nonzero exit status. No provider environment is passed through.
+        # Read diagnostics on a separate nonblocking pipe. Never let candidate
+        # logs fill a pipe or collect the provider environment.
         env = {"PATH": os.defpath, "HOME": directory, "TMPDIR": directory,
                "PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1",
                "OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
-        request = {"instance": instance.to_dict(), "k": k, "seed": seed,
-                   "budget": checkpoints[-1], "baseline": baseline, "allow_candidate_bounds": allow_candidate_bounds}
+        request = {"k": k, "seed": seed, "budget": checkpoints[-1],
+                   "baseline": baseline, "allow_candidate_bounds": allow_candidate_bounds}
+        if prepared_path is not None:
+            destination = work / 'prepared.jsonl.gz'
+            if os.environ.get('SWARM_DOCKER_IMAGE'):
+                try:
+                    os.link(prepared_path, destination)
+                except OSError:
+                    shutil.copyfile(prepared_path, destination)
+            else:
+                # Same-user debug code must not mutate the shared cache via a link.
+                shutil.copyfile(prepared_path, destination)
+            destination.chmod(0o444)
+            request.update(prepared_file=destination.name, prepared_sha256=prepared_sha256)
+        else:
+            # Keep large instance writes out of the stdin/GO deadline handshake.
+            atomic_json(work / 'instance.json', instance.to_dict())
+            (work / 'instance.json').chmod(0o444)
+            request['instance_file'] = 'instance.json' 
         argv, container_name, isolation = worker_command(work, package)
         with subprocess.Popen(argv,
                               cwd=directory, env=env, stdin=subprocess.PIPE,
-                              stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                               start_new_session=True) as proc:
             selector = selectors.DefaultSelector()
             selector.register(proc.stdout, selectors.EVENT_READ)
+            selector.register(proc.stderr, selectors.EVENT_READ)
+            os.set_blocking(proc.stderr.fileno(), False)
             os.set_blocking(proc.stdout.fileno(), False)
             buffer, total, done = b"", 0, False
             try:
@@ -126,8 +150,20 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                     readable = selector.select(timeout=min(0.05, deadline - now))
                     if not readable:
                         continue
-                    chunk = os.read(proc.stdout.fileno(), 65536)
+                    stdout_ready = any(key.fileobj is proc.stdout for key, _ in readable)
+                    # Stamp stdout before draining stderr; diagnostics never enter
+                    # the incumbent protocol or its output-byte allowance.
+                    chunk = os.read(proc.stdout.fileno(), 65536) if stdout_ready else None
                     received = perf_counter()
+                    for key, _ in readable:
+                        if key.fileobj is proc.stderr:
+                            diagnostic = os.read(proc.stderr.fileno(), 16384)
+                            if diagnostic:
+                                stderr_tail.add(diagnostic)
+                            else:
+                                selector.unregister(proc.stderr)
+                    if not stdout_ready:
+                        continue
                     if not chunk:
                         if buffer:
                             failure = "truncated protocol message"
@@ -154,7 +190,10 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                             break
                         if done:
                             raise ValueError("output after done message")
-                        if message == {"done": True}:
+                        if (isinstance(message, dict) and set(message) == {'phase'} and
+                                message['phase'] in ('candidate_import', 'search')):
+                            phase = message['phase']  # Diagnostic, not a trusted score.
+                        elif message == {"done": True}:
                             done = True
                         elif ((baseline in BOUND_METHODS or allow_candidate_bounds) and isinstance(message, dict)
                               and set(message) == {"search_bound"}):
@@ -193,32 +232,101 @@ def run_anytime(instance: Instance, k: int, checkpoints, *, program_path=None,
                 except ProcessLookupError:
                     pass
                 proc.wait()
+                # Pipes may contain the traceback written immediately before exit.
+                while True:
+                    try:
+                        chunk = os.read(proc.stderr.fileno(), 16384)
+                    except (BlockingIOError, OSError):
+                        break
+                    if not chunk:
+                        break
+                    stderr_tail.add(chunk)
                 cleanup_container(container_name, env)
-    elapsed_total = perf_counter() - setup_started
+    return {"checkpoints_seconds": list(checkpoints), "events": events,
+            "search_bound_events": bound_events, "solver_diagnostics": diagnostics,
+            "failure": failure, "termination": reason, "phase": phase,
+            "returncode": code, "stderr_tail": stderr_tail.text(),
+            "stderr_bytes": stderr_tail.total, "stderr_truncated": stderr_tail.total > stderr_tail.limit,
+            "setup_wall_seconds": setup_seconds,
+            "total_wall_seconds_before_scoring": perf_counter() - setup_started,
+            "received_deployments": len(events), "seed": seed, "k": k,
+            "instance": instance.name, "isolation": isolation}
+
+
+def postprocess(instance, k, checkpoints, capture, baseline=None, allow_candidate_bounds=False, oracle=None):
+    """Trusted scoring only: never imports the candidate. Also used by verifier."""
+    failure = capture['failure']
+    kind = failure_kind(failure, capture.get('stderr_tail', ''), capture.get('phase'), capture.get('returncode'))
+    oracle = oracle or ShortestPathCoverage(instance)
     try:
-        scored = score_trace(instance, k, checkpoints, events, oracle)
+        scored = score_trace(instance, k, checkpoints, capture['events'], oracle)
     except (ValueError, TypeError, OverflowError) as exc:
-        failure = f"invalid deployment: {exc}"
+        failure, kind = f"invalid deployment: {exc}", 'invalid_deployment'
         scored = score_trace(instance, k, checkpoints, [], oracle)
+    from .strong_baselines import BOUND_METHODS
     extra = {}
-    if baseline in METHODS or allow_candidate_bounds:
-        extra = {"solver_diagnostics": diagnostics}
     if baseline in BOUND_METHODS or allow_candidate_bounds:
         from .baseline_proofs import verify_online_bounds
         began = perf_counter()
         try:
-            if any(e.get("kind") == "dag_partition_v2" for _, e in bound_events) or (allow_candidate_bounds and baseline is None and not any(e.get("kind") == "online_partition_v1" for _, e in bound_events)):
+            bound_events = capture['search_bound_events']
+            if any(not isinstance(e, dict) for _, e in bound_events):
+                raise ValueError('certificate must be an object')
+            if (any(e.get('kind') == 'dag_partition_v2' for _, e in bound_events) or
+                    (allow_candidate_bounds and baseline is None and
+                     not any(e.get('kind') == 'online_partition_v1' for _, e in bound_events))):
                 from .dag_bounds import verify_dag_bounds
                 verified = verify_dag_bounds(instance, k, bound_events, oracle)
             else:
-                verified = verify_online_bounds(instance,k,bound_events)
+                verified = verify_online_bounds(instance, k, bound_events)
         except (ValueError, TypeError, KeyError, ArithmeticError) as exc:
-            failure = f"invalid online bound: {exc}"
-            verified = []
-        extra.update(search_bound_events=bound_events, verified_search_bounds=verified,
-                     bound_verification_seconds=perf_counter()-began)
-    return {**scored, **extra, "correct": failure is None, "error": failure,
-            "termination": reason, "setup_wall_seconds": setup_seconds,
-            "total_wall_seconds_before_scoring": elapsed_total,
-            "received_deployments": len(events), "events": events,
-            "seed": seed, "k": k, "instance": instance.name, "isolation": isolation}
+            failure, kind, verified = f"invalid online bound: {exc}", 'invalid_certificate', []
+        extra.update(verified_search_bounds=verified, bound_verification_seconds=perf_counter()-began)
+    trace = {**capture, **scored, **extra, 'correct': failure is None, 'error': failure,
+             'failure_kind': kind, 'retryable': kind in ('setup_timeout', 'worker_setup')}
+    if allow_candidate_bounds and failure is None:
+        from .verification import certificate_curve
+        trace['certificate_at_checkpoints'] = certificate_curve(instance, k, trace, oracle)
+    return trace
+
+
+def run_anytime(instance, k, checkpoints, *, program_path=None, baseline=None, seed=0,
+                setup_timeout=120., oracle=None, max_messages=4096,
+                max_output_bytes=4_000_000, allow_candidate_bounds=False,
+                prepared_path=None, prepared_sha256=None, verification_limits=None,
+                capture_path=None):
+    """Low-level trusted-debug API. Research CLI enforces generated-code isolation.
+
+    Persist capture before verification. A retry after verifier interruption replays
+    the SAME timed output, rather than drawing a more favorable timing sample.
+    """
+    checkpoints = checkpoints_checked(checkpoints)
+    stamp = {'instance': digest(instance.to_dict()), 'k': k, 'seed': seed,
+             'checkpoints': list(checkpoints), 'baseline': baseline,
+             'candidate': file_digest(program_path) if program_path is not None else None,
+             'prepared': prepared_sha256, 'bounds': allow_candidate_bounds,
+             'source': file_digest(__file__), 'image': os.environ.get('SWARM_DOCKER_IMAGE')}
+    resumed = False
+    capture_path = Path(capture_path) if capture_path is not None else None
+    if capture_path is not None and capture_path.exists():
+        saved = json.loads(capture_path.read_text())
+        if saved['identity'] != stamp or saved['sha256'] != digest(saved['capture']):
+            raise ValueError('capture identity/checksum mismatch')
+        capture = saved['capture']
+        resumed = True
+    else:
+        capture = _capture_anytime(instance, k, checkpoints, program_path=program_path,
+            baseline=baseline, seed=seed, setup_timeout=setup_timeout, oracle=oracle,
+            max_messages=max_messages, max_output_bytes=max_output_bytes,
+            allow_candidate_bounds=allow_candidate_bounds,
+            prepared_path=prepared_path, prepared_sha256=prepared_sha256)
+        if capture_path is not None and capture['phase'] != 'setup':
+            atomic_json(capture_path, {'identity': stamp, 'capture': capture, 'sha256': digest(capture)})
+    if verification_limits is not None:
+        from .verification import verify_capture
+        result = verify_capture(instance, k, checkpoints, capture, baseline,
+            allow_candidate_bounds, prepared_path, prepared_sha256, verification_limits)
+    else:
+        result = postprocess(instance, k, checkpoints, capture, baseline, allow_candidate_bounds, oracle)
+    result['capture_reused'] = resumed
+    return result

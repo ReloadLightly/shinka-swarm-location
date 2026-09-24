@@ -1,7 +1,7 @@
 name: Current experiment checks
 on:
   push:
-    branches: [main]
+    branches: [main, work/evaluation-path-20260924]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -46,12 +46,18 @@ jobs:
                                  'path': path.name, 'sha256': file_sha256(path), 'budgets': [2]}]}
           (root/'suite.json').write_text(json.dumps(suite))
           PY
-          python evaluate_search.py --suite data/local_ci/suite.json --build-references
+          python evaluate_search.py --suite data/local_ci/suite.json --build-references --trusted-local
       - name: Native ShinkaEvolve configuration and seed integration, without model calls
         run: |
           python -m pip install -e . -r requirements-shinka.txt
           python run_evo.py --check-native --suite data/local_ci/suite.json --results-dir results/local_ci/native
-          python run_evo.py --native-seed --suite data/local_ci/suite.json --results-dir results/local_ci/native
+          python run_evo.py --native-seed --trusted-local --suite data/local_ci/suite.json --results-dir results/local_ci/native
+      - name: Docker execution, immutable preparation, and resumed evaluation
+        run: |
+          docker pull python:3.11-slim
+          export SWARM_TEST_DOCKER_IMAGE="$(docker image inspect --format '{{.Id}}' python:3.11-slim)"
+          python -m unittest discover -s tests -p test_docker_execution.py -v > results/local_ci/docker-tests.txt 2>&1
+          cat results/local_ci/docker-tests.txt
       - name: Ensure checks do not rewrite the experiment specification
         run: git diff --exit-code -- README.md
       - uses: actions/upload-artifact@v4

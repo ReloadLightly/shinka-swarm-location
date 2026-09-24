@@ -10,8 +10,14 @@ from .core import ShortestPathCoverage
 
 
 class SearchProblem(ShortestPathCoverage):
-    def __init__(self, instance):
-        super().__init__(instance)
+    def __init__(self, instance, prepared=None):
+        if prepared is None:
+            super().__init__(instance)
+        else:
+            if prepared.instance != instance:
+                raise ValueError("prepared instance mismatch")
+            self.instance, self.nodes = instance, instance.nodes
+            self.total_demand, self.dags = prepared.total_demand, prepared.dags
         self._by_origin = {dag.source: dag for dag in self.dags}
         self.origin_demand = {d.source: fsum(q for _, q in d.destinations) / self.total_demand
                               for d in self.dags}

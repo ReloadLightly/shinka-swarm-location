@@ -284,6 +284,15 @@ class ShortestPathCoverage:
                     MappingProxyType(counts), tuple(sorted(destinations))))
         self.dags = tuple(dags)
 
+    @classmethod
+    def from_dags(cls, instance, dags):
+        """Hydrate evaluator-owned preparation without recomputing shortest paths."""
+        result = cls.__new__(cls)
+        result.instance, result.nodes = instance, instance.nodes
+        result.total_demand = fsum(q for _, _, q in instance.od)
+        result.dags = tuple(dags)
+        return result
+
     def score(self, selected: Iterable[int]) -> float:
         monitored = set(self.instance.validate_selection(selected))
         covered = []
