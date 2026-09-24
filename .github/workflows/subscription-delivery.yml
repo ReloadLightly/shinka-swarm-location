@@ -1,0 +1,69 @@
+name: Publish subscription implementation objects
+on:
+  push:
+    branches: [work/subscription-headless-20260924]
+    paths: [.github/workflows/subscription-delivery.yml, .delivery/subscription0, .delivery/subscription1]
+permissions:
+  contents: write
+jobs:
+  objects:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify implementation and upload exact file objects without moving branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, lzma, os, pathlib, subprocess, urllib.request
+          repo = 'ReloadLightly/shinka-swarm-location'
+          base = '970efda26fc5d0a27806afe1a7beb0efe1317945'
+          assert os.environ['GITHUB_REPOSITORY'] == repo
+          assert os.environ['GITHUB_REF'] == 'refs/heads/work/subscription-headless-20260924'
+          def api(path, payload=None):
+              request = urllib.request.Request('https://api.github.com/repos/'+repo+path,
+                  data=None if payload is None else json.dumps(payload).encode(),
+                  headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                           'Accept':'application/vnd.github+json', 'Content-Type':'application/json'})
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  return json.load(response)
+          assert api('/git/ref/heads/main')['object']['sha'] == base, 'main advanced'
+          patch = lzma.decompress(b''.join(pathlib.Path('.delivery/subscription'+str(i)).read_bytes() for i in range(2)))
+          assert hashlib.sha256(patch).hexdigest() == '270e5ea53acccbf062164c18d1d051bd07ab4e04afa12e33f6b6e71d34b1d9b9'
+          subprocess.run(['git','apply','--check'], input=patch, check=True)
+          subprocess.run(['git','apply'], input=patch, check=True)
+          expected = {
+              '.github/workflows/research-checks.yml':'30bf0a46ec80b986c26ac31ee645a3879f1832f5',
+              '.gitignore':'5e1a959ee07fc15a5fd325f40ff98aa18578780a',
+              'README.md':'8eeeac5acb8586f0a28aa8575d8fc27ba954f3af',
+              'docs/next_step.md':'d2b9d65cc3867e339c864be39f260ccbbc718c26',
+              'requirements-subscription.txt':'d3a7f37d9d0fc64004489bb98f41fdf4bcb0c038',
+              'run_evo.py':'9eea193ce54cd6d0aa098be4cac652536a66fa12',
+              'scripts/codex_headless.py':'a6c2dc09d346ee4c1635ea4f2534b91e70a4ed40',
+              'scripts/prepare_local_embeddings.py':'64f28bae50355a5f9551b9ae41e95e958a44b066',
+              'swarm_location/local_embeddings.py':'c43aa9d8f689261d11bd4c36cb9654faeb2b5299',
+              'swarm_location/subscription.py':'a3c775184d697ef1a2a00bbaf93cf23afdbf1879',
+              'tests/test_subscription.py':'551bae144ac255979b958a3551556ef63c610b6c'}
+          entries = []
+          for name, sha in expected.items():
+              path = pathlib.Path(name)
+              assert path.is_file() and not path.is_symlink()
+              actual = subprocess.check_output(['git','hash-object',name], text=True).strip()
+              assert actual == sha, (name,actual,sha)
+              blob = api('/git/blobs', {'content':base64.b64encode(path.read_bytes()).decode(), 'encoding':'base64'})
+              assert blob['sha'] == sha
+              entries.append({'path':name,'mode':'100644','type':'blob','sha':sha})
+          result = {'base':base,'expected_tree':'04d4743c6fb0db59681b620dc76be3cc67e1ba09',
+                    'tree_elements':entries,'branches_updated':False,'model_calls':0}
+          pathlib.Path('subscription-publication.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: subscription-publication-objects
+          path: subscription-publication.json
+          retention-days: 7
