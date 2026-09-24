@@ -1,0 +1,27 @@
+name: Headless source transfer
+on:
+  push:
+    branches: [work/subscription-headless-20260924]
+    paths: [.github/workflows/headless-source-transfer.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          mkdir transfer
+          git archive 970efda26fc5d0a27806afe1a7beb0efe1317945 > transfer/source.tar
+          curl --fail --location --retry 2 https://codeload.github.com/SakanaAI/ShinkaEvolve/tar.gz/9912af12d423504b8d580f4179fd15f5f88b8c50 -o transfer/native.tar.gz
+          curl --fail --location 'https://huggingface.co/api/models/sentence-transformers/all-MiniLM-L6-v2?blobs=true' -o transfer/embedding-model.json
+          sha256sum transfer/* > transfer/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: headless-integration-inputs
+          path: transfer/
+          retention-days: 7
