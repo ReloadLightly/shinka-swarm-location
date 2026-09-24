@@ -1,7 +1,7 @@
 name: Current experiment checks
 on:
   push:
-    branches: [main, work/evaluation-path-20260924]
+    branches: [main, work/evaluation-path-20260924, work/subscription-headless-20260924]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -58,6 +58,16 @@ jobs:
           export SWARM_TEST_DOCKER_IMAGE="$(docker image inspect --format '{{.Id}}' python:3.11-slim)"
           python -m unittest discover -s tests -p test_docker_execution.py -v > results/local_ci/docker-tests.txt 2>&1
           cat results/local_ci/docker-tests.txt
+      - name: Subscription routing and real local embeddings without account inference
+        run: |
+          python -m pip install -r requirements-subscription.txt
+          python scripts/prepare_local_embeddings.py --download --directory data/local_embeddings
+          export SWARM_TEST_NATIVE_SUBSCRIPTION=1
+          export SWARM_TEST_EMBEDDING_DIR="$PWD/data/local_embeddings"
+          export PYTHON_DOTENV_DISABLED=1
+          export SHINKA_PRICING_MODE=offline
+          python -m unittest discover -s tests -p test_subscription.py -v > results/local_ci/subscription-tests.txt 2>&1
+          tail -8 results/local_ci/subscription-tests.txt
       - name: Ensure checks do not rewrite the experiment specification
         run: git diff --exit-code -- README.md
       - uses: actions/upload-artifact@v4

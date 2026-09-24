@@ -155,56 +155,111 @@ Verifier costs are recorded separately from the search clock. The default checke
 allowance is 1,800 seconds per case and its memory follows the worker setting;
 suite fields can explicitly specify different verification limits.
 
-## 5. Native ShinkaEvolve configuration
+## 5. Native ShinkaEvolve and subscription transport
 
-The [configuration](configs/evolution_search.json) uses **200 generations and two
-islands**, weighted parent selection, archive/top-program inspirations, migration
-every ten generations, and diff/full/cross edits. A cost-aware UCB bandit selects
-mutation models. Meta-recommendations run every ten generations; the meta model is
-separate from mutation-bandit routing. Novelty uses embeddings and a separate role.
+The [configuration](configs/evolution_search.json) retains **200 generations and
+two islands**, weighted parent selection, archive/top-program inspirations,
+migration every ten generations, and diff/full/cross edits. Native ShinkaEvolve
+owns sampling, patching, evaluation scheduling, the database, and meta-recommendations.
+The local transport does not implement a second evolution loop.
 
-Model identifiers and an explicit API-spending threshold are supplied at launch.
-Native programs, ancestry, evaluations, and recommendations are retained for
-resumption and mechanism analysis. Resource budgets limit execution, not the
-scientific program-search space. No mandatory pilot is inserted before evolution.
+The subscription launch uses the pinned framework's **Headless/Codex provider**.
+Mutation, meta-recommendation, and novelty-judge roles all invoke the installed
+`codex exec` with the user's saved **ChatGPT login**, not API keys. The
+[command bridge](scripts/codex_headless.py) implements the native
+`SHINKA_HEADLESS_COMMAND` protocol using the official CLI. Shared Codex configuration,
+profiles, authentication files, and managed policies are not edited or copied.
+The bridge requests read-only, non-interactive execution in a temporary directory,
+disables shell, subagent, web, app and plugin tools for these text-generation calls,
+and strips provider API credentials from the child environment. Generated search
+programs still execute only in the evaluator's Docker boundary.
 
-## 6. Running and resuming
+Supply the model that is available in the local account explicitly. By default,
+UCB chooses between its **medium- and high-effort arms**; these are configurations
+of one model, not two different model families. Meta uses high effort and the
+novelty judge medium, with role overrides available as explicit
+`headless/codex@MODEL?effort=EFFORT` identifiers. `--codex-efforts` can select other
+supported effort arms. The pinned provider does not transmit temperature or output
+token-limit settings to Codex; the model/effort identifiers and per-invocation
+wall timeout are the operative controls.
 
-Use Python 3.10+ on Linux/WSL and Docker for generated programs:
+Semantic novelty remains enabled. A checksum-pinned `all-MiniLM-L6-v2` model runs
+locally with ONNX Runtime on one CPU thread, exposed only on IPv4 loopback through
+the native local-embedding interface. All code tokens are covered in chunks,
+pooled and normalized; no constant or hash-only vectors replace embeddings.
+This is a declared local embedding choice, not equivalence to a commercial
+embedding model. The similarity threshold remains 0.99 and the native LLM judge
+handles candidate similarities according to the pinned framework.
+
+Subscription mode rejects paid model/embedding routes and `--max-api-cost`, and
+never switches to APIs automatically. Its marginal API cost field is zero; that
+is **not** zero subscription usage or an unlimited allowance. The API-price cost
+coefficient is zero in this mode, while native UCB still learns from improvements.
+Per-call token usage, latency timestamps, and provider failures are retained under
+`subscription/`. Account limits and optional purchased credits remain governed by
+OpenAI account settings: disable paid overage/automatic credit purchases when the
+run must stay strictly within the included 20× allowance.
+
+A failed/quota-limited Codex request or local embedding failure pauses the provider
+and cancels the native run through its cleanup path. In-flight evaluator jobs may
+finish while the native scheduler drains. Further model requests are blocked;
+no retry loop consumes more allowance. After resolving the issue or waiting for a
+quota reset, `--resume-provider` explicitly resumes the same run. Case-level
+resumption and independent timing repetitions retain the distinction in Section 4.
+
+## 6. Running and resuming on the authenticated Docker host
+
+Use Python 3.10+ on Linux/WSL, Docker, and an installed Codex CLI with a working
+ChatGPT login. Credentials stay on this host; do not upload them to GitHub or CI.
+Install the native framework and the small local-embedding runtime, then retrieve
+the pinned public data and model weights (these downloads are not inference):
 
 ```bash
-python -m pip install -e . -r requirements-shinka.txt -r requirements-certificates.txt
+python -m pip install -e . -r requirements-shinka.txt -r requirements-certificates.txt -r requirements-subscription.txt
 python scripts/prepare_search.py --download --output data/search
+python scripts/prepare_local_embeddings.py --download
+codex login status
 
 docker pull python:3.11-slim
 export SWARM_DOCKER_IMAGE="$(docker image inspect --format '{{.Id}}' python:3.11-slim)"
 export SWARM_WORKER_MEMORY_MIB=4096
-python evaluate_search.py --suite data/search/suite.json --build-references
-python evaluate_search.py --suite data/search/suite.json \
-  --program_path search_initial.py --results_dir results/local_search
 ```
 
-A pinned local TransportationNetworks checkout can replace `--download` with
-`--raw-dir /path/to/TransportationNetworks`. `--dag-cache /path/to/cache` shares
-common preparation across suites; `--references /path/to/references.json` selects
-an explicit reference file. Rerun an interrupted command with the same paths.
-Existing compatible references are reused; incompatible files are not overwritten.
+A local pinned TransportationNetworks checkout can replace `--download` with
+`--raw-dir /path/to/TransportationNetworks`. The model asset command verifies the
+pinned revision and checksums before reuse. No dependencies are installed, shared
+settings changed, or login flows started automatically by the run command.
+
+Set `CODEX_MODEL` to an available model identifier. This **single run command**
+builds/resumes all development fixed-control references first, then starts native
+evolution using subscription-backed Codex and the managed local embedding server:
 
 ```bash
-python run_evo.py --run --suite data/search/suite.json \
-  --config configs/evolution_search.json --results-dir results/local_evolution \
-  --docker-image "$SWARM_DOCKER_IMAGE" \
-  --models "${MUTATION_MODEL_A:?}" "${MUTATION_MODEL_B:?}" \
-  --meta-model "${META_MODEL:?}" --novelty-model "${NOVELTY_MODEL:?}" \
-  --embedding-model "${EMBEDDING_MODEL:?}" --max-api-cost "${API_BUDGET_USD:?}"
+python run_evo.py --run --subscription --codex-model "${CODEX_MODEL:?}" \
+  --suite data/search/suite.json --results-dir results/local_subscription \
+  --docker-image "$SWARM_DOCKER_IMAGE"
 ```
 
-The native per-candidate job allowance is 12 hours for the standard development
-suite; individual searches retain their 60-second deadline. Unfinished evaluation
-cases survive native job interruption. `--evaluation-time` explicitly changes the
-job allowance. For no-model, explicitly trusted local debugging, use
-`evaluate_search.py --trusted-local` or `run_evo.py --native-seed --trusted-local`.
-The latter flag is rejected with real `--run` evolution.
+Rerun the same command and paths after an interruption. Add `--resume-provider`
+only after resolving a recorded provider pause. The full development suite,
+monitor budgets, checkpoint fitness, and 200-generation configuration are retained;
+there is no mandatory pilot. `--codex-profile NAME` uses an existing local profile;
+`--headless-timeout SECONDS` changes the Codex invocation allowance, not search time.
+`--embedding-directory PATH` selects the pinned local assets; `--embedding-port PORT`
+selects a free loopback port (default 8877). An occupied port fails rather than
+attaching to an unknown service. These identities cannot silently change on resume.
+
+`--dag-cache PATH` shares common preparation across suites; `--references PATH`
+selects an explicit reference file. The native job allowance is 12 hours per
+candidate; each standard-profile search retains its 60-second deadline.
+`--evaluation-time` explicitly changes the job allowance. Logs, native ancestry,
+recommendations, evaluation cases, and timed captures remain on the execution host.
+
+The separately authorized API path is still available later by omitting
+`--subscription` and supplying all four model roles plus a positive
+`--max-api-cost`. Nothing enables that path in response to a subscription failure.
+For trusted no-model debugging, use `evaluate_search.py --trusted-local` or
+`run_evo.py --native-seed --trusted-local`; real evolution rejects that flag.
 
 ## 7. Independent assessment and planned analysis
 
@@ -247,5 +302,10 @@ of an evolutionary improvement or of completed held-out assessment.
   edited by Y. Altshuler, CRC Press, 2025; §4.7.4, pp. 198–200.
 - [ShinkaEvolve documentation](https://sakanaai.github.io/ShinkaEvolve/);
   framework commit pinned in [requirements-shinka.txt](requirements-shinka.txt).
+- [Codex non-interactive mode](https://developers.openai.com/codex/noninteractive/)
+  and [authentication](https://developers.openai.com/codex/auth/).
+- [Local embedding model](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2),
+  revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`; public model assets are
+  downloaded separately and never committed to this repository.
 - [TransportationNetworks](https://github.com/bstabler/TransportationNetworks);
   input paths, hashes, splits, and time profiles are pinned in the catalogue.

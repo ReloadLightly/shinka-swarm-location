@@ -16,3 +16,6 @@ data/commissioning_m3/
 data/raw_search/
 data/search/
 data/local_ci/
+
+# Local subscription credentials are never copied here; these are public model assets.
+data/local_embeddings/
