@@ -27,9 +27,9 @@ jobs:
           raw = 'https://raw.githubusercontent.com/bstabler/TransportationNetworks/d1639b4ef218c17928ba573e806ddf8ba5e7ae6d/'
           for item in tree['tree']:
               path = item['path']
-              if path.split('/')[0] not in ('Austin','Philadelphia','Berlin-Center','Hessen','Barcelona'):
+              if path.split('/')[0] not in ('Philadelphia','Birmingham-England','GoldCoast','Barcelona'):
                   continue
-              if path.endswith('.tntp') and ('net' in path or 'trips' in path) or path.endswith('README.md'):
+              if path.endswith('.tntp') and ('net' in path.lower() or 'trips' in path.lower()) or path.endswith('README.md'):
                   target = pathlib.Path('transfer/assessment-inputs') / path
                   target.parent.mkdir(parents=True, exist_ok=True)
                   target.write_bytes(urllib.request.urlopen(raw + path).read())
