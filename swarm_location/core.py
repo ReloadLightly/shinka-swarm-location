@@ -32,6 +32,7 @@ class Instance:
     first_thru_node: int | None = None
     non_thru_nodes: tuple[int, ...] | None = None
     allow_zero_weights: bool = False
+    shortest_path_ties: str = "all_min_time"
 
     def __post_init__(self) -> None:
         if not self.nodes or any(not _integer(v) for v in self.nodes):
@@ -41,6 +42,8 @@ class Instance:
         ns = set(self.nodes)
         if type(self.allow_zero_weights) is not bool:
             raise ValueError("allow_zero_weights must be boolean")
+        if self.shortest_path_ties not in ("all_min_time", "min_time_min_hops"):
+            raise ValueError("unknown shortest-path tie convention")
         if self.non_thru_nodes is not None and (
                 any(not _integer(v) for v in self.non_thru_nodes) or
                 len(set(self.non_thru_nodes)) != len(self.non_thru_nodes) or
@@ -85,6 +88,7 @@ class Instance:
             first_thru_node=data.get("first_thru_node"),
             non_thru_nodes=(None if data.get("non_thru_nodes") is None else tuple(sorted(data["non_thru_nodes"]))),
             allow_zero_weights=data.get("schema_version") == 2,
+            shortest_path_ties=data.get("shortest_path_ties", "all_min_time"),
         )
 
     @classmethod
@@ -97,6 +101,8 @@ class Instance:
                 "od": [list(x) for x in self.od], "first_thru_node": self.first_thru_node}
         if self.non_thru_nodes is not None:
             data["non_thru_nodes"] = list(self.non_thru_nodes)
+        if self.shortest_path_ties != "all_min_time":
+            data["shortest_path_ties"] = self.shortest_path_ties
         return data
 
     @property
@@ -188,6 +194,48 @@ class CompactPredecessors(Mapping):
         return len(self._order)
 
 
+def _compact_avoid(dag, selected):
+    """Count unmonitored routes without allocating predecessor tuples per node."""
+    pred = dag.predecessors
+    index, offsets, arcs = pred._index, pred._offsets, pred._arcs
+    avoid = [0] * len(index)
+    for v in dag.order:
+        i = index[v]
+        if v in selected:
+            continue
+        if v == dag.source:
+            avoid[i] = 1
+        else:
+            count = 0
+            for j in range(offsets[i], offsets[i + 1]):
+                count += avoid[index[arcs[j]]]
+            avoid[i] = count
+    return avoid
+
+
+def _score_dags(dags, selected, total_demand):
+    covered = []
+    for dag in dags:
+        if isinstance(dag.predecessors, CompactPredecessors):
+            avoid = _compact_avoid(dag, selected)
+            index, counts = dag.predecessors._index, dag.counts._values
+            for t, q in dag.destinations:
+                i = index[t]
+                covered.append(q * ((counts[i] - avoid[i]) / counts[i]))
+        else:
+            avoid = {}
+            for v in dag.order:
+                if v in selected:
+                    avoid[v] = 0
+                elif v == dag.source:
+                    avoid[v] = 1
+                else:
+                    avoid[v] = sum(avoid[u] for u in dag.predecessors[v])
+            for t, q in dag.destinations:
+                covered.append(q * ((dag.counts[t] - avoid[t]) / dag.counts[t]))
+    return fsum(covered) / total_demand
+
+
 class ShortestPathCoverage:
     """Exact shortest-path counting without enumerating paths.
 
@@ -214,10 +262,15 @@ class ShortestPathCoverage:
                 origins.setdefault(s, []).append((t, q))
         dags = []
         node_index = {v: i for i, v in enumerate(instance.nodes)}
+        # Zero-time SCCs admit infinitely many walks. The public TNTP suite
+        # declares a lexicographic shortest-route convention: minimum travel
+        # time, then minimum number of links. Exact integer pairs avoid an
+        # arbitrary epsilon; equal pairs retain ALL tied routes.
+        min_hops = instance.shortest_path_ties == "min_time_min_hops"
         for source, destinations in sorted(origins.items()):
-            dist = {source: 0}
+            dist = {source: (0, 0) if min_hops else 0}
             pred: dict[int, list[int]] = {source: []}
-            queue = [(0, source)]
+            queue = [(dist[source], source)]
             while queue:
                 du, u = heappop(queue)
                 if du != dist[u]:
@@ -228,7 +281,7 @@ class ShortestPathCoverage:
                 for v, weight in adjacency[u]:
                     if v == source:  # A route never revisits its own origin.
                         continue
-                    candidate = du + weight
+                    candidate = (du[0] + weight, du[1] + 1) if min_hops else du + weight
                     if v not in dist or candidate < dist[v]:
                         dist[v] = candidate
                         pred[v] = [u]
@@ -245,9 +298,9 @@ class ShortestPathCoverage:
                     relevant.add(v)
                     todo.extend(pred[v])
             pred = {v: pred[v] for v in relevant}
-            # Sorting by (distance, ID) is NOT a topological order for zero ties.
-            # Centroid connector cycles disappear under endpoint-only traversal;
-            # a relevant internal zero-cost cycle is rejected, never epsilonized.
+            # Sorting by (distance, ID) is NOT a topological order for zero ties
+            # under all_min_time. The lexicographic convention is acyclic by
+            # construction, but still check both conventions here.
             successors = {v: [] for v in relevant}
             indegree = {v: len(pred[v]) for v in relevant}
             for v, parents in pred.items():
@@ -295,19 +348,7 @@ class ShortestPathCoverage:
 
     def score(self, selected: Iterable[int]) -> float:
         monitored = set(self.instance.validate_selection(selected))
-        covered = []
-        for dag in self.dags:
-            avoid = {}
-            for v in dag.order:
-                if v in monitored:
-                    avoid[v] = 0
-                elif v == dag.source:
-                    avoid[v] = 1
-                else:
-                    avoid[v] = sum(avoid[u] for u in dag.predecessors[v])
-            for t, q in dag.destinations:
-                covered.append(q * ((dag.counts[t] - avoid[t]) / dag.counts[t]))
-        return fsum(covered) / self.total_demand
+        return _score_dags(self.dags, monitored, self.total_demand)
 
     def marginal_gains(self, selected: Iterable[int]) -> dict[int, float]:
         selected = self.instance.validate_selection(selected)

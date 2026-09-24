@@ -251,7 +251,11 @@ def _evaluate(program_path, results_dir, suite_path, references_path, split, *, 
                             "delta_joint_score": 100*(row["joint_quality"]-control_joint)}
                     records.append(row)
                     write_json(output/'traces.json', {"complete": False, "cases": records})
-                    feedback.append(f"{entry['id']} k={k} seed={seed}: quality={quality:.4f}, certificate={certificate:.4f}, final={100*trace['final_coverage']:.4f}%")
+                    tightest_upper = min((float(Fraction(b['upper_exact']))
+                        for b in trace.get('verified_search_bounds', [])), default=1.0)
+                    feedback.append(f"{entry['id']} k={k} seed={seed}: quality={quality:.4f}, "
+                        f"certificate={certificate:.4f}, final={100*trace['final_coverage']:.4f}%, "
+                        f"tightest verified upper={tightest_upper:.4f}")
         if (file_sha256(program_path) != candidate_hash or file_sha256(references_path) != cache_hash or
                 identity(suite_path, protocol, split, trusted_local) != stamp):
             raise RuntimeError("candidate, cache or implementation changed during evaluation")
@@ -276,6 +280,8 @@ def _evaluate(program_path, results_dir, suite_path, references_path, split, *, 
             "extra_data": {"per_case": [{k:v for k,v in r.items() if k != 'trace'} for r in records]},
             "text_feedback": "Two separate outcomes: deployment quality and verified certificate quality. "
                              "Current best-known normalizers are feasible controls, not optima. "
+                             "A universal upper bound makes certificate quality follow raw coverage; "
+                             "a tighter verified bound adds distinct information. "
                              "Wall-clock fitness remains noisy; compare final coverage separately. " + '; '.join(feedback)}
         write_json(output/'traces.json', {"complete": True, "cases": records})
         write_json(output/'metrics.json', metrics)

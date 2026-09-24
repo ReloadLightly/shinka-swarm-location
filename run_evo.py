@@ -45,6 +45,9 @@ A positive development score is not held-out transfer or real-world detection.
 
 SEARCH_TASK = """Evolve a complete reusable search procedure for chapter 4.7.4:
 place at most k monitors to cover distinct trips on fixed directed shortest routes.
+For the public TNTP corpus, routes minimize free-flow time and then link count;
+every remaining exact tie is retained. Zero-time links are preserved. Do not
+change this route convention inside a search program.
 The whole EVOLVE block is editable, including imports, data structures, construction,
 revision, sampling, local search, populations, restarts, frontier policy, branching,
 pruning and compute allocation. There is no finite candidate catalogue.

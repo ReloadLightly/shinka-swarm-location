@@ -275,7 +275,10 @@ class EvaluationPathTests(unittest.TestCase):
         self.assertEqual(catalog['time_profiles']['standard'][-1], 60)
         self.assertEqual(catalog['time_profiles']['chapter-hour'][-1], 3600)
         self.assertEqual(len(catalog['time_profiles']['chapter-hour']), 12)
-        self.assertTrue(all(v['budgets']==[20,40,60,80,100] for v in catalog['datasets']))
+        self.assertEqual(next(v['budgets'] for v in catalog['datasets'] if v['id']=='Winnipeg'),
+                         [5,10,20,30,40])
+        self.assertTrue(all(v['budgets']==[20,40,60,80,100] for v in catalog['datasets']
+                            if v['id']!='Winnipeg'))
 
 
 if __name__ == '__main__': unittest.main()

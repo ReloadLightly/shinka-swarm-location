@@ -27,12 +27,19 @@ def source_bytes(spec, catalog, raw_dir, download=False):
     return content
 
 
-def parse_documented(network, trips, name, tolerance, *, schema_version=2, intrazonal="exclude"):
+def parse_documented(network, trips, name, tolerance, *, schema_version=2, intrazonal="exclude",
+                     shortest_path_ties="all_min_time", centroid_override=None):
     if schema_version != 2 or intrazonal not in ("exclude", "reject"):
         raise ValueError("this importer requires schema 2 and an explicit intrazonal policy")
     metadata = dict(re.findall(r"<([^>]+)>\s*([^\n]*)", network))
     n = int(metadata["NUMBER OF NODES"].strip())
     first = int(metadata.get("FIRST THRU NODE", "1").strip())
+    source_first = first
+    zones = int(metadata["NUMBER OF ZONES"].strip()) if "NUMBER OF ZONES" in metadata else None
+    if centroid_override is not None:
+        if centroid_override != "zones_endpoint_only" or zones is None or first != 1 or not 0 < zones < n:
+            raise ValueError("centroid override requires a zone count and a first-through-node header of 1")
+        first = zones + 1
     body = network.split("<END OF METADATA>", 1)[1]
     edges = []
     for line in body.splitlines():
@@ -75,14 +82,19 @@ def parse_documented(network, trips, name, tolerance, *, schema_version=2, intra
             elif q > 0:
                 od.append([source, target, int(q) if q.denominator == 1 else float(q)])
     error = abs(total-declared)
-    allowed = max(Fraction(str(tolerance.get("absolute", 0))), abs(declared)*Fraction(str(tolerance.get("relative", 0))))
+    allowed = max(Fraction(str(tolerance.get("absolute", 0))),
+                  max(abs(total), abs(declared))*Fraction(str(tolerance.get("relative", 0))))
     if error > allowed:
         raise ValueError(f"OD total differs from declared header by {error}")
     data = {"schema_version": 2, "name": name + "-free-flow", "nodes": list(range(1,n+1)),
-            "edges": edges, "od": od, "first_thru_node": first}
+            "edges": edges, "od": od, "first_thru_node": first,
+            "shortest_path_ties": shortest_path_ties}
     Instance.from_dict(data)
     audit = {"declared_total_demand_exact": str(declared), "parsed_total_demand_exact": str(total),
              "header_discrepancy_exact": str(error), "intrazonal_policy": intrazonal,
              "excluded_intrazonal_demand_exact": str(dropped), "od_entries_dropped": dropped_pairs,
-             "retained_interzonal_demand_exact": str(total-dropped), "source_values_modified": False}
+             "retained_interzonal_demand_exact": str(total-dropped), "source_values_modified": False,
+             "header_first_thru_node": source_first, "effective_first_thru_node": first,
+             "header_number_of_zones": zones, "centroid_override": centroid_override,
+             "shortest_path_ties": shortest_path_ties}
     return data, audit

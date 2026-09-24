@@ -27,6 +27,14 @@ def solve(problem, k, random_seed, report, time_budget):
         return best
     best_value = problem.score(best)
 
+    # Publish an admissible bound while there is still time to act on it.
+    # On chapter-scale graphs, an all-origin greedy pass can consume most of
+    # a short search budget; the root proof must enter the clock first.
+    tree = DagPartition(problem.instance, k, problem)
+    report.bound(tree.snapshot(best))
+    if perf_counter() >= end:
+        return best
+
     def offer(group):
         nonlocal best, best_value
         value = problem.score(group)
@@ -48,7 +56,6 @@ def solve(problem, k, random_seed, report, time_budget):
     if perf_counter() >= end:
         return best
 
-    tree = DagPartition(problem.instance, k, problem)
     lower, _, _ = tree.oracle.intervals(best)
     live = {0}
     stack = [0]

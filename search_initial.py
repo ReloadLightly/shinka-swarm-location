@@ -27,6 +27,22 @@ def solve(problem, k, random_seed, report, time_budget):
         return best
     best_value = problem.score(best)
 
+    # An editable starting allocation for chapter-scale graphs. The trusted
+    # evaluator still scores every reported set against ALL OD demand. The
+    # sample only ranks proposed nodes; it is never a substitute for fitness.
+    origins = list(problem.origin_demand)
+    rng.shuffle(origins)
+    target_arcs = min(sum(problem.origin_arcs.values()), 2_000_000)
+    sampled, sampled_arcs = [], 0
+    for origin in origins:
+        work = problem.origin_arcs[origin]
+        if sampled and sampled_arcs + work > target_arcs:
+            continue
+        sampled.append(origin)
+        sampled_arcs += work
+    sampled = None if len(sampled) == len(origins) else tuple(sampled)
+    construction_deadline = start + (0.65 if sampled else 0.35) * time_budget
+
     def offer(group):
         nonlocal best, best_value
         value = problem.score(group)
@@ -37,16 +53,21 @@ def solve(problem, k, random_seed, report, time_budget):
         return False
 
     # Overlapping singleton sets are not mistaken for independent traffic.
-    gains = problem.marginal_gains([])
+    gains = problem.marginal_gains_origins([], sampled)
     rank = sorted(gains, key=lambda v: (-gains[v], v))
     offer(rank[:k])
     chosen = []
-    while len(chosen) < k and perf_counter() < start + .35 * time_budget:
-        gains = problem.marginal_gains(chosen)
+    while len(chosen) < k and perf_counter() < construction_deadline:
+        gains = problem.marginal_gains_origins(chosen, sampled)
         chosen.append(min(gains, key=lambda v: (-gains[v], v)))
         offer(chosen + [v for v in rank if v not in chosen][:k-len(chosen)])
     if perf_counter() >= end:
         return best
+
+    report.diagnostic({"construction_coverage_estimate": best_value,
+                       "sampled_origin_arcs": sampled_arcs,
+                       "sampled_origin_demand_fraction": sum(problem.origin_demand[s] for s in (sampled or origins)),
+                       "origin_query_work": problem.query_work})
 
     tree = DagPartition(problem.instance, k, problem)
     lower, _, _ = tree.oracle.intervals(best)
@@ -88,6 +109,8 @@ def solve(problem, k, random_seed, report, time_budget):
         report.bound(tree.snapshot(best))
     report.bound(tree.snapshot(best))
     report.diagnostic({"partition_splits": len(tree.ops), "open_search_nodes": len(live),
+                       "sampled_origin_arcs": sampled_arcs,
+                       "sampled_origin_demand_fraction": sum(problem.origin_demand[s] for s in (sampled or origins)),
                        "origin_query_work": problem.query_work})
     return best
 # EVOLVE-BLOCK-END

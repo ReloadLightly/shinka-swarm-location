@@ -97,6 +97,70 @@ class RepairTests(unittest.TestCase):
         data['edges'] = [[0, 3, 1], [0, 1, 1], [1, 2, 0], [2, 1, 0]]
         self.assertEqual(ShortestPathCoverage(Instance.from_dict(data)).score([3]), 1)
 
+    def test_declared_minimum_hops_resolves_zero_cycles_and_keeps_equal_routes(self):
+        # Independent simple routes: 0-1-3, 0-2-3 and 0-1-2-3 all take two
+        # time units. The first two have two links; the third has three.
+        data = {'schema_version': 2, 'name': 'zero-pair', 'nodes': [0, 1, 2, 3],
+                'edges': [[0, 1, 1], [0, 2, 1], [1, 2, 0], [2, 1, 0],
+                          [1, 3, 1], [2, 3, 1]], 'od': [[0, 3, 1]],
+                'shortest_path_ties': 'min_time_min_hops'}
+        instance = Instance.from_dict(data)
+        oracle = ShortestPathCoverage(instance)
+        self.assertEqual(oracle.dags[0].counts[3], 2)
+        self.assertEqual(oracle.score([1]), .5)
+        self.assertEqual(oracle.score([1, 2]), 1)
+        self.assertEqual(Instance.from_dict(instance.to_dict()), instance)
+        for seed in range(3):
+            changed, mapping = relabel(instance, seed)
+            self.assertEqual(changed.shortest_path_ties, 'min_time_min_hops')
+            self.assertEqual(ShortestPathCoverage(changed).score([mapping[1]]), .5)
+
+    def test_compact_kernel_matches_route_fraction_and_marginals(self):
+        data = {'schema_version': 2, 'name': 'padded-zero-pair',
+                'nodes': list(range(1050)), 'edges': [[0, 1, 1], [0, 2, 1],
+                [1, 2, 0], [2, 1, 0], [1, 3, 1], [2, 3, 1]],
+                'od': [[0, 3, 2]], 'shortest_path_ties': 'min_time_min_hops'}
+        instance = Instance.from_dict(data)
+        problem = SearchProblem(instance)
+        self.assertEqual(problem.dags[0].counts[3], 2)
+        self.assertEqual(problem.score([1]), .5)
+        self.assertEqual(problem.marginal_gains([])[1], .5)
+        self.assertEqual(problem.marginal_gains([1])[2], .5)
+        self.assertEqual(problem.score_origins([1], [0]), .5)
+        from swarm_location.prepared import ensure_prepared, load_prepared
+        with tempfile.TemporaryDirectory() as folder:
+            path, checksum, reused = ensure_prepared(instance, folder)
+            self.assertFalse(reused)
+            restored = load_prepared(path, checksum, instance)
+            replay = SearchProblem(instance, prepared=restored)
+            self.assertEqual(replay.score([1]), .5)
+            self.assertEqual(replay.marginal_gains([1])[2], .5)
+
+    def test_source_specific_zone_override_is_audited(self):
+        network = ('<NUMBER OF NODES> 4\n<NUMBER OF ZONES> 2\n<FIRST THRU NODE> 1\n'
+                   '<END OF METADATA>\n1 3 1 1 0 0 1 0 0 1;\n'
+                   '3 1 1 1 0 0 1 0 0 1;\n3 2 1 1 1 0 1 0 0 1;\n')
+        trips = '<TOTAL OD FLOW> 1\n<END OF METADATA>\nOrigin 1\n2 : 1;\n'
+        data, audit = parse_documented(network, trips, 'zones', {'relative':'0','absolute':'0'},
+            shortest_path_ties='min_time_min_hops', centroid_override='zones_endpoint_only')
+        self.assertEqual((audit['header_first_thru_node'], audit['effective_first_thru_node']), (1, 3))
+        self.assertEqual(data['first_thru_node'], 3)
+        self.assertEqual(ShortestPathCoverage(Instance.from_dict(data)).score([3]), 1)
+        with self.assertRaisesRegex(ValueError, 'centroid override'):
+            parse_documented(network.replace('NODE> 1', 'NODE> 3'), trips, 'zones',
+                             {'relative':'0','absolute':'0'}, centroid_override='zones_endpoint_only')
+
+    def test_header_rounding_does_not_change_trip_rows(self):
+        network = '<NUMBER OF NODES> 2\n<END OF METADATA>\n1 2 1 1 1 0 1 0 0 1;\n'
+        trips = '<TOTAL OD FLOW> 1000000.00001\n<END OF METADATA>\nOrigin 1\n2 : 1000000;\n'
+        data, audit = parse_documented(network, trips, 'rounded',
+                                        {'relative':'0.000000001','absolute':'0'})
+        self.assertEqual(data['od'], [[1, 2, 1000000]])
+        self.assertEqual(audit['header_discrepancy_exact'], '1/100000')
+        with self.assertRaisesRegex(ValueError, 'OD total'):
+            parse_documented(network, trips.replace('1000000.00001', '1000000.01'),
+                             'rounded', {'relative':'0.000000001','absolute':'0'})
+
     def test_origin_queries_partition_full_objective(self):
         problem = SearchProblem(sample())
         for selected in [[], [1], [2, 4]]:

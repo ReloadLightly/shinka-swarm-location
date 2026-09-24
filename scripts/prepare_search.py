@@ -47,7 +47,9 @@ def prepare(catalog_path, raw_dir, output, split="development", ids=None, downlo
         net = source_bytes(item["files"]["network"], catalog, raw_dir, download).decode("utf-8-sig")
         trips = source_bytes(item["files"]["trips"], catalog, raw_dir, download).decode("utf-8-sig")
         data, audit = parse_documented(net, trips, item["id"], item.get("header_total_tolerance", catalog["header_total_tolerance"]),
-                                     schema_version=2, intrazonal="exclude")
+                                     schema_version=2, intrazonal="exclude",
+                                     shortest_path_ties=catalog["shortest_path_ties"],
+                                     centroid_override=item.get("centroid_override"))
         instance = Instance.from_dict(data)
         if len(instance.nodes) != item["expected_nodes"] or len(instance.edges) != item["expected_edges"]:
             raise ValueError("source dimensions differ from catalog")

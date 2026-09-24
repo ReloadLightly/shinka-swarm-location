@@ -12,7 +12,7 @@ independent-network assessment are planned research outputs.
 
 ## 1. Scientific problem
 
-Given a directed transportation graph, fixed travel-time shortest routes,
+Given a directed transportation graph, fixed free-flow travel-time shortest routes,
 origin–destination (OD) demand, and at most $k$ monitors, choose $S$ maximizing the
 fraction of distinct trips observed:
 
@@ -24,7 +24,12 @@ $$
 Here $\sigma_{s,t}$ counts shortest routes and $\sigma_{s,t}(S)$ those intersecting
 at least one monitor. Endpoints count, tied shortest routes have equal probability,
 and a trip crossing several monitors counts once. Placement does not reroute
-traffic. TNTP centroids retain their endpoint-only transit semantics.
+traffic. For these TNTP data, shortest routes additionally minimize link count
+among equal-time routes, a declared convention for zero-time cycles. Ties on
+both criteria receive equal weight. TNTP centroids are endpoint-only transit
+nodes; Chicago-Sketch's contrary first-through-node header has a catalogued,
+audited zone-count override. The source and this choice are detailed in
+[source fidelity](docs/source_fidelity.md).
 
 The chapter compares greedy, Depth-First Branch and Bound (DFBnB), and Potential
 Search through deployment quality, interrupted-search behavior, and
@@ -80,7 +85,8 @@ family, not by random seeds or subgraphs.
 | Test | Barcelona | 1,020 | 2,522 | Barcelona |
 | Test | Birmingham | 14,639 | 33,937 | Birmingham |
 
-Each network uses $k\in\{20,40,60,80,100\}$ and three declared replicates:
+Winnipeg uses $k\in\{5,10,20,30,40\}$; the other networks use
+$k\in\{20,40,60,80,100\}$. Each has three declared relabelings:
 **45 development, 30 validation, and 30 test cases** per program and time profile.
 Chicago's two representations share one source-family weight. Reproducible node
 relabelings are shared by candidates and controls; they are not additional
@@ -93,13 +99,18 @@ search allowance while retaining this project's public inputs and monitor-budget
 grid. Both profiles require separate matched-budget runs: a program told that it
 has an hour may make different decisions from one given a minute.
 
-Import preserves zero-time connectors and counts through zero-distance ties in
-topological order. Positive intrazonal trips are excluded with exact mass
+Import preserves zero-time connectors and counts through lexicographically tied
+routes in topological order. Positive intrazonal trips are excluded with exact mass
 accounting; no supplied interzonal demand is rescaled. GoldCoast's pinned rows sum
 to 139,256.434, versus 139,253 in its header: a source-specific tolerance records
-that 3.434 discrepancy without changing rows. Relevant internal zero-cost cycles
-and parallel directed links remain explicit unsupported representations, not
-silently perturbed or collapsed.
+that 3.434 discrepancy without changing rows. The general header-rounding
+tolerance is relative $10^{-9}$; exact discrepancies are recorded. Parallel
+directed links remain an explicit unsupported representation. The minimum-link
+convention resolves zero-time cycles without perturbing link costs; it excludes
+time-shortest simple routes with extra zero-cost detours.
+
+[Development headroom, route-import timings, and current execution limits](results/chapter_search/feasibility_2026-09-24.md)
+are recorded separately. Held-out checks built routes without scoring deployments.
 
 ## 4. Evaluation and reliable execution
 

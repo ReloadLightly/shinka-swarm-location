@@ -1,6 +1,9 @@
 # Scientific-core repair: scope and evidence
 
-Base: upstream `fc459b5cf56037005b69665f12a24b9e998e936e`.
+Original repair base: upstream `fc459b5cf56037005b69665f12a24b9e998e936e`.
+This document records the repair design; the current run specification is
+`README.md`. The later source-route decision is described in
+`docs/source_fidelity.md`.
 
 ## What the book actually asks
 
@@ -15,8 +18,9 @@ separate from this fixed-cardinality location problem.
 
 `core.py`: explicitly versioned nonnegative links; exact integer-scaled distances;
 topological counting through zero-time ties; no origin revisits; preserve centroid
-barriers. Relevant internal zero-cost cycles still fail explicitly: they require
-a different simple-path counting treatment, not an epsilon. Dead branches cannot
+barriers. For the current TNTP suite, a declared fewest-links secondary criterion
+resolves zero-time cycles without an epsilon; it does not count all equal-time
+simple paths through these cycles. Dead branches cannot
 contribute to OD coverage and are removed from stored DAGs. Large DAGs use compact
 count and predecessor mappings; arbitrary-size path counts remain exact.
 
@@ -24,8 +28,9 @@ count and predecessor mappings; arbitrary-size path counts remain exact.
 explicit exclusion and exact accounting of intrazonal non-network demand,
 no connector deletion, no graph shrinking. The new catalog contains Winnipeg,
 Chicago-Sketch and Chicago-Regional. Chicago variants are ONE source family.
-The supplied new large-scale corpus is development-only; additional independent
-validation/test sources are still required for a large-network transfer claim.
+Philadelphia and GoldCoast are the validation families; Barcelona and Birmingham
+are the test families. Their pinned files import without scoring them. Independent
+assessment remains planned, so large-network transfer is not yet established.
 Historical held-out files and old import policies have not been repurposed.
 
 `search.py`: per-origin score/gain queries expose computational allocation as a

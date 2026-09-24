@@ -6,7 +6,7 @@ These primitives enable adaptive sampling, stale-gain schedules and incremental
 representations without forcing a finite catalogue of search algorithms.
 """
 from math import fsum
-from .core import ShortestPathCoverage
+from .core import ShortestPathCoverage, CompactPredecessors, _compact_avoid, _score_dags
 
 
 class SearchProblem(ShortestPathCoverage):
@@ -38,15 +38,7 @@ class SearchProblem(ShortestPathCoverage):
         dags = self._origins(origins)
         self.query_work["score_calls"] += 1
         self.query_work["origin_dag_arcs"] += sum(self.origin_arcs[d.source] for d in dags)
-        covered = []
-        for dag in dags:
-            avoid = {}
-            for v in dag.order:
-                avoid[v] = (0 if v in selected else 1 if v == dag.source else
-                            sum(avoid[u] for u in dag.predecessors[v]))
-            for t, q in dag.destinations:
-                covered.append(q * ((dag.counts[t] - avoid[t]) / dag.counts[t]))
-        return fsum(covered) / self.total_demand
+        return _score_dags(dags, selected, self.total_demand)
 
     def score(self, selected):
         return self.score_origins(selected)
@@ -61,6 +53,25 @@ class SearchProblem(ShortestPathCoverage):
         self.query_work["origin_dag_arcs"] += 2 * sum(self.origin_arcs[d.source] for d in dags)
         contributions = {v: [] for v in self.nodes if v not in selected}
         for dag in dags:
+            if isinstance(dag.predecessors, CompactPredecessors):
+                avoid = _compact_avoid(dag, selected)
+                pred = dag.predecessors
+                index, offsets, arcs = pred._index, pred._offsets, pred._arcs
+                counts = dag.counts._values
+                dependency = [0.0] * len(index)
+                for t, q in dag.destinations:
+                    dependency[index[t]] = q
+                for v in reversed(dag.order):
+                    if v in selected:
+                        continue
+                    i = index[v]
+                    mass = dependency[i]
+                    contributions[v].append((avoid[i] / counts[i]) * mass)
+                    for j in range(offsets[i], offsets[i + 1]):
+                        u = arcs[j]
+                        if u not in selected:
+                            dependency[index[u]] += mass * (counts[index[u]] / counts[i])
+                continue
             avoid = {}
             for v in dag.order:
                 avoid[v] = (0 if v in selected else 1 if v == dag.source else
