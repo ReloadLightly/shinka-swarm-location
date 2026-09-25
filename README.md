@@ -104,8 +104,16 @@ routes in topological order. Positive intrazonal trips are excluded with exact m
 accounting; no supplied interzonal demand is rescaled. GoldCoast's pinned rows sum
 to 139,256.434, versus 139,253 in its header: a source-specific tolerance records
 that 3.434 discrepancy without changing rows. The general header-rounding
-tolerance is relative $10^{-9}$; exact discrepancies are recorded. Parallel
-directed links remain an explicit unsupported representation. The minimum-link
+check uses relative and absolute tolerances of $10^{-9}$: accept exactly when
+$|T-H|\leq\max(a,r\max(|T|,|H|))$, where $T$ is the exact sum of **all** supplied
+OD rows before intrazonal exclusion, $H$ the header, and $a,r$ the effective
+tolerances. Equality is accepted; a larger discrepancy is rejected. Tolerances
+must be finite and nonnegative. The import audit records both tolerances, the
+allowed discrepancy, the observed absolute/relative discrepancy, and excluded
+versus retained demand. Dataset-specific tolerances override the general pair.
+The [Chicago-Regional header audit](results/chapter_search/header_audit_2026-09-25.json)
+records a complete pinned-file import and independent decimal summation.
+Parallel directed links remain an explicit unsupported representation. The minimum-link
 convention resolves zero-time cycles without perturbing link costs. It excludes
 **every equally fast route with more links**, including ties in graphs with only
 positive link times. This secondary rule is a project adaptation, not specified
@@ -242,6 +250,10 @@ A local pinned TransportationNetworks checkout can replace `--download` with
 `--raw-dir /path/to/TransportationNetworks`. The model asset command verifies the
 pinned revision and checksums before reuse. No dependencies are installed, shared
 settings changed, or login flows started automatically by the run command.
+The expanded header audit is embedded in dataset provenance. If rebuilding an
+older prepared dataset, use a fresh `--output` directory and pass its `suite.json`
+to the launcher; different dataset hashes require their own control references.
+Existing prepared files and results are never silently overwritten.
 
 Set `CODEX_MODEL` to an available model identifier. This **single run command**
 builds/resumes all development fixed-control references first, then starts native

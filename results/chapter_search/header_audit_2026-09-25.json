@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-09-25T19:12:20.350717+00:00",
+  "scope": "Step 2: Chicago-Regional demand-header validation and full-file import only; no route-DAG construction, deployments, scoring, held-out file access, or evolution.",
+  "base_commit": "f905636af277e60ccd10cb8ca2157665ecbc885d",
+  "implementation_sha256": {
+    "swarm_location/tntp_v2.py": "b3681987159784b0b9724dc816bf569e68189eeaa5296c5e56658e37720c3066",
+    "scripts/prepare_search.py": "60fa1c1774c12156e015bedf58c24f8344ec10bcf9838e815864c1fb7b60ce9c"
+  },
+  "upstream_repository": "bstabler/TransportationNetworks",
+  "upstream_commit": "d1639b4ef218c17928ba573e806ddf8ba5e7ae6d",
+  "catalog_sha256": "bdf58b413aee9bf343f6e553fe8cfb1dedbd19c8c0e120d5dd656c6372850445",
+  "source_files": {
+    "network": {
+      "path": "chicago-regional/ChicagoRegional_net.tntp",
+      "git_blob_sha1": "1d6ea05b34f34299db0963ddac146cc95c54400f"
+    },
+    "trips": {
+      "path": "chicago-regional/ChicagoRegional_trips.tntp",
+      "git_blob_sha1": "aa25589272b9d61a29dc051427b6629edf10dd61"
+    }
+  },
+  "source_blob_hashes_verified": true,
+  "reproduction_command": "python scripts/prepare_search.py --download --ids Chicago-Regional --output data/search_step2_chicago",
+  "audit": {
+    "dataset": "Chicago-Regional",
+    "nodes": 12982,
+    "edges": 39018,
+    "positive_od_pairs": 2296227,
+    "origins": 1771,
+    "zero_weight_edges_preserved": 3650,
+    "declared_total_demand_exact": "680213940008729/500000000",
+    "parsed_total_demand_exact": "34010697/25",
+    "header_discrepancy_exact": "8729/500000000",
+    "intrazonal_policy": "exclude",
+    "header_absolute_tolerance_exact": "1/1000000000",
+    "header_relative_tolerance_exact": "1/1000000000",
+    "header_allowed_discrepancy_exact": "680213940008729/500000000000000000",
+    "header_relative_discrepancy_exact": "1247/97173420001247",
+    "excluded_intrazonal_demand_exact": "2221907/50",
+    "od_entries_dropped": 1718,
+    "retained_interzonal_demand_exact": "65799487/50",
+    "source_values_modified": false,
+    "header_first_thru_node": 1791,
+    "effective_first_thru_node": 1791,
+    "header_number_of_zones": 1790,
+    "centroid_override": null,
+    "shortest_path_ties": "min_time_min_hops"
+  },
+  "independent_decimal_check": {
+    "method": "Independent streaming Decimal summation; colon/semicolon splitting, no importer reuse",
+    "declared_total_decimal": "1360427.8800174580",
+    "parsed_total_decimal": "1360427.88",
+    "discrepancy_decimal": "0.0000174580",
+    "intrazonal_decimal": "44438.14",
+    "retained_decimal": "1315989.74",
+    "supplied_records": 3136441,
+    "positive_interzonal_pairs": 2296227,
+    "route_origins": 1771
+  },
+  "independent_totals_and_counts_match": true,
+  "header_checks": {
+    "absolute_only_1e_9_would_accept": false,
+    "configured_relative_and_absolute_rule_accepts": true,
+    "allowed_discrepancy_decimal": "0.001360427880017458"
+  },
+  "prepared_dataset_sha256": "e5c7bc8788c6c824d0c83b7285c454029fa0d5c7d5f4c7545538268e265cdf27",
+  "validation": {
+    "targeted_unittest_modules": [
+      "test_header_tolerance",
+      "test_scientific_repair"
+    ],
+    "tests_passed": 26
+  }
+}

@@ -31,6 +31,13 @@ def parse_documented(network, trips, name, tolerance, *, schema_version=2, intra
                      shortest_path_ties="all_min_time", centroid_override=None):
     if schema_version != 2 or intrazonal not in ("exclude", "reject"):
         raise ValueError("this importer requires schema 2 and an explicit intrazonal policy")
+    try:
+        absolute_tolerance = Fraction(str(tolerance.get("absolute", 0)))
+        relative_tolerance = Fraction(str(tolerance.get("relative", 0)))
+    except (ValueError, ZeroDivisionError) as exc:
+        raise ValueError("header tolerances must be finite nonnegative numbers") from exc
+    if absolute_tolerance < 0 or relative_tolerance < 0:
+        raise ValueError("header tolerances must be finite nonnegative numbers")
     metadata = dict(re.findall(r"<([^>]+)>\s*([^\n]*)", network))
     n = int(metadata["NUMBER OF NODES"].strip())
     first = int(metadata.get("FIRST THRU NODE", "1").strip())
@@ -55,6 +62,8 @@ def parse_documented(network, trips, name, tolerance, *, schema_version=2, intra
         raise ValueError("TNTP link count mismatch")
     demand_meta = dict(re.findall(r"<([^>]+)>\s*([^\n]*)", trips))
     declared = Fraction(demand_meta["TOTAL OD FLOW"].strip())
+    if declared < 0:
+        raise ValueError("declared total OD flow must be nonnegative")
     body = trips.split("<END OF METADATA>", 1)[1]
     source, total, dropped, seen, od, dropped_pairs = None, Fraction(), Fraction(), set(), [], 0
     for line in body.splitlines():
@@ -82,16 +91,21 @@ def parse_documented(network, trips, name, tolerance, *, schema_version=2, intra
             elif q > 0:
                 od.append([source, target, int(q) if q.denominator == 1 else float(q)])
     error = abs(total-declared)
-    allowed = max(Fraction(str(tolerance.get("absolute", 0))),
-                  max(abs(total), abs(declared))*Fraction(str(tolerance.get("relative", 0))))
+    scale = max(abs(total), abs(declared))
+    allowed = max(absolute_tolerance, scale * relative_tolerance)
     if error > allowed:
-        raise ValueError(f"OD total differs from declared header by {error}")
+        raise ValueError(f"OD total differs from declared header by {error}; "
+                         f"allowed discrepancy is {allowed} (parsed={total}, declared={declared})")
     data = {"schema_version": 2, "name": name + "-free-flow", "nodes": list(range(1,n+1)),
             "edges": edges, "od": od, "first_thru_node": first,
             "shortest_path_ties": shortest_path_ties}
     Instance.from_dict(data)
     audit = {"declared_total_demand_exact": str(declared), "parsed_total_demand_exact": str(total),
              "header_discrepancy_exact": str(error), "intrazonal_policy": intrazonal,
+             "header_absolute_tolerance_exact": str(absolute_tolerance),
+             "header_relative_tolerance_exact": str(relative_tolerance),
+             "header_allowed_discrepancy_exact": str(allowed),
+             "header_relative_discrepancy_exact": str(error / scale if scale else Fraction()),
              "excluded_intrazonal_demand_exact": str(dropped), "od_entries_dropped": dropped_pairs,
              "retained_interzonal_demand_exact": str(total-dropped), "source_values_modified": False,
              "header_first_thru_node": source_first, "effective_first_thru_node": first,
