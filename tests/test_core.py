@@ -15,13 +15,16 @@ def make(nodes, edges, od, first_thru_node=None):
 
 
 def independent_routes(instance):
-    """Enumerate ALL simple paths, then minimize length. Small test graphs only.
+    """Enumerate ALL simple paths, then apply the declared route convention.
 
     Does not use the production shortest-path algorithm or its predecessor DAG.
     """
     adjacency = {v: [] for v in instance.nodes}
     for u, v, w in instance.edges:
         adjacency[u].append((v, w))
+    non_transit = (set(instance.non_thru_nodes) if instance.non_thru_nodes is not None
+                   else {n for n in instance.nodes
+                         if instance.first_thru_node is not None and n < instance.first_thru_node})
     weighted = []
     total = sum(q for _, _, q in instance.od)
     for source, target, demand in instance.od:
@@ -32,9 +35,11 @@ def independent_routes(instance):
         while stack:
             v, path, length = stack.pop()
             if v == target:
-                paths.append((length, set(path)))
+                key = ((length, len(path) - 1)
+                       if instance.shortest_path_ties == 'min_time_min_hops' else length)
+                paths.append((key, set(path)))
                 continue
-            if instance.first_thru_node and v != source and v < instance.first_thru_node:
+            if v != source and v in non_transit:
                 continue
             for u, w in adjacency[v]:
                 if u not in path:
