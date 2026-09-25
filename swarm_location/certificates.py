@@ -58,6 +58,10 @@ class ExactCoverage:
                      'first_thru_node': instance.first_thru_node}
         if instance.non_thru_nodes is not None or instance.allow_zero_weights:
             canonical.update(non_thru_nodes=instance.non_thru_nodes, allow_zero_weights=instance.allow_zero_weights)
+        # Preserve historical time-only identities, but never allow a witness
+        # for that route population to masquerade as a fewest-links witness.
+        if instance.shortest_path_ties != 'all_min_time':
+            canonical['shortest_path_ties'] = instance.shortest_path_ties
         self.identity = sha256(json.dumps(canonical, sort_keys=True,
                                          separators=(',', ':')).encode()).hexdigest()
         self._score_cache: dict[tuple[int, ...], Fraction] = {}

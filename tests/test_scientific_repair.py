@@ -98,8 +98,8 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(ShortestPathCoverage(Instance.from_dict(data)).score([3]), 1)
 
     def test_declared_minimum_hops_resolves_zero_cycles_and_keeps_equal_routes(self):
-        # Independent simple routes: 0-1-3, 0-2-3 and 0-1-2-3 all take two
-        # time units. The first two have two links; the third has three.
+        # Routes 0-1-3, 0-2-3, 0-1-2-3 and 0-2-1-3 all take two time
+        # units. Only the first two also minimize the number of links.
         data = {'schema_version': 2, 'name': 'zero-pair', 'nodes': [0, 1, 2, 3],
                 'edges': [[0, 1, 1], [0, 2, 1], [1, 2, 0], [2, 1, 0],
                           [1, 3, 1], [2, 3, 1]], 'od': [[0, 3, 1]],
@@ -114,6 +114,41 @@ class RepairTests(unittest.TestCase):
             changed, mapping = relabel(instance, seed)
             self.assertEqual(changed.shortest_path_ties, 'min_time_min_hops')
             self.assertEqual(ShortestPathCoverage(changed).score([mapping[1]]), .5)
+
+    def test_minimum_hops_matches_independent_simple_path_enumeration(self):
+        from test_core import independent_routes
+        # Includes a zero-time road cycle, tied routes, a centroid shortcut
+        # that is forbidden as transit, unequal OD weights and relabeling.
+        data = {'schema_version': 2, 'name': 'route-convention-check',
+                'nodes': list(range(6)), 'edges': [[0, 1, 1], [0, 2, 1],
+                    [1, 2, 0], [2, 1, 0], [1, 3, 1], [2, 3, 1],
+                    [0, 4, 0], [4, 3, 0], [3, 5, 1]],
+                'od': [[0, 5, 3], [4, 5, 1]], 'non_thru_nodes': [0, 4, 5],
+                'shortest_path_ties': 'min_time_min_hops'}
+        for padded in (False, True):
+            instance = Instance.from_dict(dict(data, nodes=list(range(1050)) if padded else data['nodes']))
+            for seed in (0, 7):
+                changed, mapping = relabel(instance, seed)
+                active = [mapping[v] for v in data['nodes']]
+                routes = independent_routes(changed)
+                problem, exact = SearchProblem(changed), ExactCoverage(changed)
+                for size in range(3):
+                    for selected in itertools.combinations(active, size):
+                        expected = sum(q for route, q in routes if route.intersection(selected))
+                        self.assertAlmostEqual(problem.score(selected), expected, places=14)
+                        self.assertAlmostEqual(float(exact.score(selected)), expected, places=14)
+                        gains = problem.marginal_gains(selected)
+                        for node in set(active) - set(selected):
+                            with_node = sum(q for route, q in routes
+                                            if route.intersection((*selected, node)))
+                            self.assertAlmostEqual(gains[node], with_node - expected, places=14)
+
+    def test_minimum_hops_never_overrides_a_strict_time_improvement(self):
+        instance = Instance.from_dict({'schema_version': 2, 'name': 'time-first',
+            'nodes': [0, 1, 2], 'edges': [[0, 1, '0.1'], [1, 2, '0.2'],
+                [0, 2, '0.30000000000000000000000000001']], 'od': [[0, 2, 1]],
+            'shortest_path_ties': 'min_time_min_hops'})
+        self.assertEqual(ShortestPathCoverage(instance).score([1]), 1)
 
     def test_compact_kernel_matches_route_fraction_and_marginals(self):
         data = {'schema_version': 2, 'name': 'padded-zero-pair',

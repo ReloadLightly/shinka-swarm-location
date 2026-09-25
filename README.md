@@ -106,8 +106,10 @@ to 139,256.434, versus 139,253 in its header: a source-specific tolerance record
 that 3.434 discrepancy without changing rows. The general header-rounding
 tolerance is relative $10^{-9}$; exact discrepancies are recorded. Parallel
 directed links remain an explicit unsupported representation. The minimum-link
-convention resolves zero-time cycles without perturbing link costs; it excludes
-time-shortest simple routes with extra zero-cost detours.
+convention resolves zero-time cycles without perturbing link costs. It excludes
+**every equally fast route with more links**, including ties in graphs with only
+positive link times. This secondary rule is a project adaptation, not specified
+by the chapter; the experiment is not an exact reproduction of its route model.
 
 [Development headroom, route-import timings, and current execution limits](results/chapter_search/feasibility_2026-09-24.md)
 are recorded separately. Held-out checks built routes without scoring deployments.

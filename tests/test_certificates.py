@@ -1,5 +1,6 @@
 """Exact arithmetic/proof tests; synthetic fixtures are not experiment results."""
 from copy import deepcopy
+from dataclasses import replace
 from fractions import Fraction
 from itertools import combinations
 import json
@@ -97,6 +98,22 @@ class ExactBoundsTests(unittest.TestCase):
                 verify_bound(oracle,1,wrong)
         other = ExactCoverage(make([1,2,3,4], [[1,2,1],[1,3,2],[2,4,1],[3,4,1]], [[1,4,10]]))
         with self.assertRaises(ValueError):verify_bound(other,1,witness)
+
+    def test_route_convention_is_part_of_certificate_identity(self):
+        instance = make([0, 1, 2], [[0, 1, 1], [1, 2, 1], [0, 2, 2]], [[0, 2, 1]])
+        time_only = ExactCoverage(instance)
+        fewest_links = ExactCoverage(replace(instance, shortest_path_ties='min_time_min_hops'))
+        # Even with strictly positive links, the two route populations differ.
+        self.assertEqual(time_only.score([1]), Fraction(1, 2))
+        self.assertEqual(fewest_links.score([1]), 0)
+        self.assertNotEqual(time_only.identity, fewest_links.identity)
+        for source, target in [(time_only, fewest_links), (fewest_links, time_only)]:
+            witness = bound_witness(source, 1)
+            self.assertEqual(verify_bound(source, 1, witness), 1)
+            # Both bounds happen to be 1; numeric agreement must not bypass
+            # the requirement that a certificate belongs to its route model.
+            with self.assertRaisesRegex(ValueError, 'instance.*mismatch'):
+                verify_bound(target, 1, witness)
 
     def test_route_limit_does_not_force_sampling_or_prevent_DAG_bound(self):
         layers=30

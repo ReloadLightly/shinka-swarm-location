@@ -44,13 +44,20 @@ identify any boundary or equation amendments separately.
 
 Exactly minimum free-flow-time routes on the original graph, with a declared
 secondary fewest-links criterion on the TNTP corpus; uniform probability over
-all routes tied on **both** criteria. This secondary criterion is our explicit
-adaptation to zero-time cycles: infinitely many shortest walks otherwise exist,
-while counting every simple shortest path inside cyclic components would require
-another representation. It excludes longer zero-time detours, and thus is not
-identical to counting every time-shortest simple route. No epsilon is inserted
-and no edge or node is deleted. All-minimum-time remains available for acyclic
-synthetic data; relevant cycles fail under that convention. Zero-time centroid
+all routes tied on **both** criteria. The chapter does not specify this secondary
+criterion. It is our adaptation to zero-time cycles: infinitely many shortest
+walks otherwise exist, while counting every simple shortest path inside cyclic
+components would require another representation. The criterion excludes every
+equally fast route with more links, **even with strictly positive link times**;
+its effect is not limited to zero-time detours. For example, a direct link of time
+2 and two links of time 1 tie under the chapter's time-only definition; our TNTP
+convention retains only the direct route. A monitor at the intermediate node
+therefore covers zero rather than half of this OD flow. This changes the route
+population and is not an exact reproduction of the chapter's route model.
+Travel time always takes precedence over link count, however small the exact
+time difference. No epsilon is inserted and no edge or node is deleted.
+All-minimum-time remains available whenever the relevant shortest-route
+subgraph is acyclic; relevant cycles fail under that convention. Zero-time centroid
 connectors are preserved. Chicago-Sketch's source header says first through node
 1 despite its 387 zones; our catalog explicitly makes zones 1-387 endpoint-only
 and records both the source and effective header values. This is an interpretive
@@ -68,6 +75,13 @@ approximation. The independent evaluator counts paths on original shortest-path
 DAGs. It never computes shortest paths in a graph with monitor nodes deleted.
 Rational arithmetic decides shortest-path ties; normalized demand sums use
 floating point. This is not exact rational arithmetic for every reported metric.
+
+Certificate identities include nondefault route conventions, and prepared-cache
+identities also distinguish them. Certificates produced under the former identity
+calculation for `min_time_min_hops` must be regenerated before reuse. Their old
+hashes do not establish which route convention produced them, so software cannot
+reliably distinguish every legacy artifact. Historical `all_min_time` certificate
+identities remain unchanged.
 
 ## Reproduction claim boundary
 
